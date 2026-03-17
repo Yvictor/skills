@@ -73,7 +73,7 @@ Execute the plan following project-specific patterns from CLAUDE.md and memory.
 
 ## Phase 4: Commit + PR/MR
 
-1. **Rebase** onto latest default branch (`git fetch origin && git rebase origin/master` or `origin/main`)
+1. **Rebase** onto latest default branch (`git fetch origin && git rebase origin/master` or `origin/main`). If conflicts arise, enter plan mode to analyze the conflicts and plan the resolution strategy before proceeding.
 2. **Stage specific files** — never `git add -A` or `git add .`
 3. **Commit** with descriptive message
 4. **Push** to remote with `-u` flag (use `--force-with-lease` if rebased)
@@ -159,7 +159,7 @@ If the review found B-level issues:
 
 ### Step 5: Re-review
 
-Rebase onto latest default branch if needed, then run the same review strategy again on the updated code. Post the new review to the PR/MR.
+Rebase onto latest default branch if needed (enter plan mode if conflicts arise), then run the same review strategy again on the updated code. Post the new review to the PR/MR.
 
 ### Step 6: Repeat
 
