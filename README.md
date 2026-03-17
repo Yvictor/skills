@@ -13,13 +13,20 @@
 ### Claude Code
 
 ```bash
-claude plugins add Yvictor/skills
+claude plugins marketplace add yvictor/skills
+claude plugins install dev-workflow@yvictor-skills
 ```
 
-### npx (agentskills CLI)
+### OpenAI Codex
 
 ```bash
-npx skills add Yvictor/skills/skills/review-driven-development
+npx skills add yvictor/skills --all
+```
+
+### npx skills (any agent)
+
+```bash
+npx skills add yvictor/skills
 ```
 
 ### Manual
