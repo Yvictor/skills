@@ -10,23 +10,19 @@
 
 ## Installation
 
-### Claude Code
+### npx skills (all agents)
 
-```bash
-claude plugins marketplace add yvictor/skills
-claude plugins install dev-workflow@yvictor-skills
-```
-
-### OpenAI Codex
+Installs to all supported agents (Codex, Claude Code, Cursor, Cline, Gemini CLI, Amp, and 30+ more):
 
 ```bash
 npx skills add yvictor/skills --all
 ```
 
-### npx skills (any agent)
+### Claude Code (plugin)
 
 ```bash
-npx skills add yvictor/skills
+claude plugins marketplace add yvictor/skills
+claude plugins install dev-workflow@yvictor-skills
 ```
 
 ### Manual
