@@ -73,13 +73,14 @@ Execute the plan following project-specific patterns from CLAUDE.md and memory.
 
 ## Phase 4: Commit + PR/MR
 
-1. **Stage specific files** — never `git add -A` or `git add .`
-2. **Commit** with descriptive message + `Co-Authored-By` trailer
-3. **Push** to remote with `-u` flag
-4. **Create PR/MR**:
+1. **Rebase** onto latest default branch (`git fetch origin && git rebase origin/master` or `origin/main`)
+2. **Stage specific files** — never `git add -A` or `git add .`
+3. **Commit** with descriptive message
+4. **Push** to remote with `-u` flag (use `--force-with-lease` if rebased)
+5. **Create PR/MR**:
    - GitHub: `gh pr create --title "..." --body-file /tmp/pr_body.md`
    - GitLab: `glab mr create --title "..." --description "$(cat /tmp/pr_body.md)"`
-5. **PR/MR body format**:
+6. **PR/MR body format**:
 
 ```markdown
 ## Summary
@@ -154,10 +155,11 @@ If the review found B-level issues:
 2. Implement fixes
 3. Re-run tests
 4. Commit + push (new commit, don't amend)
+5. **Update PR/MR body** to reflect current state (updated test counts, fixed issues, etc.)
 
 ### Step 5: Re-review
 
-Run the same review strategy again on the updated code. Post the new review to the PR/MR.
+Rebase onto latest default branch if needed, then run the same review strategy again on the updated code. Post the new review to the PR/MR.
 
 ### Step 6: Repeat
 
