@@ -1,0 +1,22 @@
+{
+  "name": "yvictor-skills",
+  "owner": {
+    "name": "Yvictor",
+    "email": "yvictor3141@gmail.com"
+  },
+  "metadata": {
+    "description": "Development workflow skills for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "dev-workflow",
+      "description": "Development workflow skills including review-driven development for issue-to-merge lifecycle with iterative review cycles",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/review-driven-development"
+      ]
+    }
+  ]
+}
