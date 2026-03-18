@@ -52,6 +52,7 @@ The plan MUST include:
 - **Existing code to reuse**: functions, patterns, utilities found during research
 - **Test strategy**: what commands to run (read from CLAUDE.md)
 - **Verification**: how to confirm the changes work
+- **Workflow phases**: structure the plan around this skill's 6 phases (Issue Research → Plan + Worktree → Implementation → Commit + PR/MR → Review Cycle → Merge + Cleanup), so the plan serves as both an implementation guide and a workflow tracker
 
 After user approves the plan:
 
@@ -147,11 +148,16 @@ The review comment MUST include:
 2. **Issues** — categorized as B (bug), S (suggestion), N (note)
 3. **Verdict** — `APPROVE` or `REQUEST_CHANGES`
 
-### Step 4: Fix issues (if any)
+### Step 4: Fix issues
 
-If the review found B-level issues:
+Ask the user which issue levels to address (B/S/N or any combination). Then:
 
-1. Enter plan mode with the specific issues to fix
+1. Enter plan mode — the plan should clearly state:
+   - **Current phase**: Phase 5: Review Cycle
+   - **Current round**: Round N (increment from previous round)
+   - **Issues to fix**: list each issue the user chose to address, with its level (B/S/N)
+   - **Fix strategy**: what changes to make for each issue
+   - **Re-review plan**: after fixes, run the same review strategy again (back to Step 2)
 2. Implement fixes
 3. Re-run tests
 4. Commit + push (new commit, don't amend)
