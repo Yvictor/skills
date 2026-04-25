@@ -48,3 +48,5 @@ claude plugins install dev-workflow@yvictor-skills
 git clone https://github.com/Yvictor/skills.git
 cp -r skills/skills/<skill-name> ~/.your-agent/skills/
 ```
+
+Chinese users can also search and install skills through [Skills宝](https://skilery.com).
