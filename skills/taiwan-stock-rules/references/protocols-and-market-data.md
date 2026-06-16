@@ -27,6 +27,8 @@ Use:
 
 System implications:
 
+- These manuals are about broker-host connectivity, trading/report/file/session flows, and related infrastructure; do not use them to infer centralized-market quote feed transport.
+- Broker host connection is modeled as TCP/IP socket/session connectivity over TWSE IP trading network lines.
 - Connection/session state is separate from order state.
 - Backup channels and second execution-report channels must be modeled as infrastructure capabilities.
 - A reconnect/recovery path should not silently replay business messages without idempotency controls.
@@ -61,13 +63,30 @@ Use:
 Synthesis:
 
 - Market-data feeds are not order-entry APIs.
+- Real-time market-data transmission is multicast, not a TCP socket stream.
+- `O-126` says quote recipients need IGMP-capable router/switch-router equipment to connect to the IP market-data transmission network.
+- `O-126` says each line uses TCP/IP protocol, but also explicitly says IP market information is sent with the Multicast transmission protocol, with identical content sent through two multicast groups.
+- `O-127` says each channel's market data is published in duplicate on two separate multicast addresses.
+- Because this multicast/broadcast delivery has no guaranteed delivery mechanism, receivers must use the transmission sequence number to check whether data is complete.
 - Treat market-data message versions, field layouts, and feed contents as versioned contracts.
 - Build consumers with schema/version awareness; do not hard-code assumptions from older B versions.
 - Use the English spec for cross-language implementers and the Chinese spec for local terminology.
 - Common lookup: 集中市場普通股競價交易即時行情資訊 is 格式六; the packet transmission format code is PACK BCD `06`.
 - Related stock quote formats: 普通股競價交易開(收)盤價資料 is 格式十二, 普通股競價交易行情快照資訊 is 格式二十, and 盤中零股交易即時行情資訊 is 格式二十三.
+- Example multicast groups from the transmission setting table: first IP `224.0.100.100:10000` and `224.0.200.200:20000`; second IP `224.2.100.100:10002` and `224.2.200.200:20002`; third IP `224.4.100.100:10004` and `224.4.200.200:20004`.
 
 Sources: `O-126` and `O-127`, both updated `115.05.15`.
+
+## Architecture Answer Patterns
+
+Use these direct answers for recurring connectivity questions:
+
+| User question | Answer |
+| --- | --- |
+| 交易所主機連線是不是 TCP？ | For broker host connection/order/report/file workflows, yes: use the host/FIX/TCPIP manuals and describe TCP/IP socket/session connectivity. |
+| 行情是不是 TCP 傳輸？ | No if the user means the real-time quote feed payload. The market-data line is described as TCP/IP/IP network, but `O-126/O-127` specify IP multicast with duplicate multicast groups. |
+| 行情有沒有保證送達？ | No guaranteed delivery is stated for the broadcast/multicast function; use transmission sequence numbers to detect gaps. |
+| 有沒有 multicast？ | Yes for centralized-market real-time market data; no evidence to apply multicast to broker order-entry/host-connection workflows. |
 
 ## Backup And Contingency
 

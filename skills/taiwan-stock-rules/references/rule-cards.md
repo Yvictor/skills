@@ -187,13 +187,16 @@ Synthesized rule:
 - Market information specs describe versioned market-data message contracts, not order entry.
 - Host connection manuals describe infrastructure state and file/message connectivity, not product eligibility.
 - Backup and second-channel manuals describe continuity/recovery paths, not primary trading semantics.
+- Do not infer market-data transport from host-connection manuals.
 - Common market-data lookup: 集中市場普通股競價交易即時行情資訊 is 格式六; its packet transmission format code is PACK BCD `06`.
+- Real-time centralized-market quote transmission uses IP multicast with duplicate multicast groups; it is not a TCP socket stream.
 
 Implementation implication:
 
 - Validate market segment, account/product eligibility, price type, and time-in-force before building FIX messages.
 - Pin market-data parser implementation to the spec version, e.g. B.12.13 in the current `O-126/O-127` specs.
 - Keep connection/session state separate from order state.
+- Build market-data receivers for multicast, IGMP/network setup, sequence-gap detection, and duplicate-feed handling.
 - Make reconnect/recovery idempotent.
 
 Sources: `O-124` updated `114.05.05`; `O-125` updated `114.09.03`; `O-126/O-127` updated `115.05.15`; `O-101` updated `115.03.16`.

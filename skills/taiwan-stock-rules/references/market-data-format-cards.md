@@ -14,6 +14,14 @@ If the user asks "交易所即時行情傳輸股票會是格式幾", answer:
 - 集中市場普通股競價交易即時行情資訊: 格式六.
 - The transmission format code in the packet is PACK BCD `06`.
 
+If the user asks whether real-time market data is TCP or multicast, answer:
+
+- The market-data transmission line is described as TCP/IP/IP market-data network.
+- The real-time market-data feed itself uses IP multicast, not a TCP socket stream.
+- Recipients need IGMP-capable router/switch-router equipment.
+- Each channel's market data is published in duplicate on two separate multicast groups/addresses.
+- Delivery is not guaranteed by the multicast/broadcast function, so receivers must check transmission sequence numbers.
+
 Related stock-market data formats:
 
 | Question intent | TWSE format |
@@ -77,8 +85,19 @@ For the "盤中即時行情傳送線路及對應格式" table in `O-126`:
 
 Use this table when the question is about feed line mapping. Use the format catalog when the question is about product/message identity. In the current B.12.13 catalog, format 17/18 are also described under warrant quote/open-close data, so quote the exact table or field section being used when answering implementation questions.
 
+## Multicast Line Settings
+
+`O-126/O-127` describe market-data channels as duplicate multicast groups. Common settings from Appendix E / 附錄五:
+
+| Line | Transmission category | Multicast groups |
+| --- | --- | --- |
+| 1st IP | Stock real-time market data and basic data | `224.0.100.100:10000`, `224.0.200.200:20000` |
+| 2nd IP | Call/put warrant real-time market data and basic data | `224.2.100.100:10002`, `224.2.200.200:20002` |
+| 3rd IP | Stock and warrant snapshot/basic data | `224.4.100.100:10004`, `224.4.200.200:20004` |
+
 ## Implementation Notes
 
 - Do not infer field positions from the format number alone; read the relevant format section in `assets/extracted-text/03_O-126-A10_TWSE集中市場即時交易資訊傳輸規格書_B.12.13_202612.txt`.
+- Do not implement the real-time market-data feed as a TCP client just because the spec says TCP/IP protocol for lines; implement multicast receive with IGMP-capable network equipment and sequence-gap detection.
 - For format six, confirm variable record length, transmission format code, stock code sentinel behavior, status bits, price/quantity encoding, and trial calculation behavior from the source section.
 - Pin parser behavior to spec version `B.12.13` and source update date `115.05.15`.

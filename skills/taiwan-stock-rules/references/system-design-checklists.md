@@ -47,6 +47,8 @@ Use these checklists when building or reviewing code that implements Taiwan stoc
 
 - Protocol family is identified: broker operation files/messages, host connection, FIX, market data, second report channel, backup system.
 - Version is pinned.
+- Transport model is explicit: host/order/report/FIX connectivity uses TCP/IP socket/session manuals; centralized-market real-time market data uses IP multicast per `O-126/O-127`.
+- Market-data receiver design includes IGMP-capable network equipment, multicast group/port configuration, duplicate multicast groups per channel, sequence-gap detection, and recovery/reconciliation behavior.
 - Field names and code values are copied from source text, not paraphrased.
 - Message/file layout tests include length, padding, date/time format, numeric units, and encoding.
 - Reconnect/replay behavior is explicit and idempotent.
