@@ -94,6 +94,8 @@ Use this table when the question is about feed line mapping. Use the format cata
 | 1st IP | Stock real-time market data and basic data | `224.0.100.100:10000`, `224.0.200.200:20000` |
 | 2nd IP | Call/put warrant real-time market data and basic data | `224.2.100.100:10002`, `224.2.200.200:20002` |
 | 3rd IP | Stock and warrant snapshot/basic data | `224.4.100.100:10004`, `224.4.200.200:20004` |
+| 4th IP | Statistics, announcements, securities-borrowing sell information | `224.6.100.100:10006`, `224.6.200.200:20006` |
+| 5th IP | Intraday odd-lot market data and intraday odd-lot basic data | `224.8.100.100:10008`, `224.8.200.200:20008` |
 
 ## Implementation Notes
 

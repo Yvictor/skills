@@ -16,6 +16,8 @@ This skill is built from the TWSE `證券商作業手冊` listing. Use these res
 
 - `references/rule-model.md`: integrated mental model for interpreting the broker manuals.
 - `references/rule-cards.md`: concrete synthesized rule cards for common Taiwan stock market and broker-system questions.
+- `references/broker-exchange-integration.md`: professional integration handbook for TWSE-broker connectivity, market data, host sockets, FIX, execution reports, file transfer, backup, and operational fault diagnosis.
+- `references/expert-self-exam.md`: source-grounded exam bank for validating whether the skill can answer architecture and broker-integration questions, not only text lookup questions.
 - `references/knowledge-qa-100.md`: 100 concrete original-source-file-derived QA checks used to test whether the skill can answer TWSE broker-manual fact questions.
 - `references/trading-markets.md`: synthesized guide for regular, odd-lot, after-hours, block, auction, and subscription markets.
 - `references/financing-lending-and-shortfall.md`: synthesized guide for credit trading, day trading, securities lending, tender borrow/purchase, and shortfall repair.
@@ -38,10 +40,11 @@ When exact rules, field names, message formats, cutoff times, or recent changes 
 ## Workflow
 
 1. Identify the user’s domain: general trading, odd lots, after-hours fixed-price, block trading, margin trading, securities lending, day trading, account opening, ETF/ETN, default handling, FIX/TCPIP/market data, or broker back-office operations.
-2. Read `references/rule-cards.md` for the closest concrete rule card.
-3. Read `references/rule-model.md` to frame the answer as market segment + actor/account + lifecycle + protocol + risk/exception control.
-4. If the user asks a short fact question like "格式幾", "哪一本手冊", "哪個作業", "能不能用", or "限制是多少", check `references/knowledge-qa-100.md` for a matching QA before opening full extracted text.
-5. Read the synthesized topic reference that matches the domain:
+2. For exchange-broker architecture, connectivity, market data, protocol, recovery, or implementation questions, read `references/broker-exchange-integration.md` before answering.
+3. Read `references/rule-cards.md` for the closest concrete rule card.
+4. Read `references/rule-model.md` to frame the answer as market segment + actor/account + lifecycle + protocol + risk/exception control.
+5. If the user asks a short fact question like "格式幾", "哪一本手冊", "哪個作業", "能不能用", or "限制是多少", check `references/knowledge-qa-100.md` for a matching QA before opening full extracted text.
+6. Read the synthesized topic reference that matches the domain:
    - Trading market workflows: `references/trading-markets.md`
    - Credit/day trading/lending/shortfalls: `references/financing-lending-and-shortfall.md`
    - Accounts/settlement/defaults/exceptions: `references/accounts-settlement-and-exceptions.md`
@@ -49,14 +52,15 @@ When exact rules, field names, message formats, cutoff times, or recent changes 
    - FIX/TCPIP/market data/connectivity: `references/protocols-and-market-data.md`
    - Market-data format numbers: `references/market-data-format-cards.md`
    - Implementation review: `references/system-design-checklists.md`
-6. For connectivity architecture questions, do not collapse protocol families:
+7. For connectivity architecture questions, do not collapse protocol families:
    - Host connection, order, report, and FIX workflows use point-to-point TCP/IP socket/session style manuals.
    - TWSE centralized-market real-time market-data transmission (`O-126/O-127`) uses IP multicast with IGMP-capable routers/switch routers, duplicate multicast groups per channel, and sequence numbers because delivery is not guaranteed.
    - If the user asks whether "行情" is TCP, answer that the line/network is described as TCP/IP, but the market-data feed itself is multicast, not a TCP socket stream.
-7. Open `references/topic-map.md`, `references/manual-index.md`, or `references/source-manifest.json` to confirm source manuals and update dates.
-8. Use `references/query-guide.md` for search patterns, then read the relevant extracted text file when the answer needs exact numbers, field names, message formats, cutoff times, or edge-case rules.
-9. Answer with the synthesized rule, applicable scope, implementation implication, and source manual title/update date.
-10. If multiple manuals conflict, prefer the newest manual for that topic and call out the conflict.
+8. For self-checking, use `references/expert-self-exam.md`; if a proposed answer fails one of those patterns, reopen the cited source manual before answering.
+9. Open `references/topic-map.md`, `references/manual-index.md`, or `references/source-manifest.json` to confirm source manuals and update dates.
+10. Use `references/query-guide.md` for search patterns, then read the relevant extracted text file when the answer needs exact numbers, field names, message formats, cutoff times, or edge-case rules.
+11. Answer with the synthesized rule, applicable scope, implementation implication, and source manual title/update date.
+12. If multiple manuals conflict, prefer the newest manual for that topic and call out the conflict.
 
 ## Maintenance
 
@@ -88,4 +92,10 @@ Regenerate the 100-question source-file QA bank with:
 ```bash
 uv run --with pypdf python scripts/build_source_file_qa.py
 uv run python scripts/audit_qa_bank.py
+```
+
+Audit the professional integration self-exam with:
+
+```bash
+uv run python scripts/audit_expert_self_exam.py
 ```

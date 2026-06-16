@@ -2,6 +2,8 @@
 
 This file synthesizes the computer-operation and protocol manuals. Use full extracted text for exact layouts.
 
+For professional exchange-broker integration questions, read `broker-exchange-integration.md` first. This file is the shorter protocol family summary; the integration handbook has the transport/session/backup decision model.
+
 ## Protocol Families
 
 The TWSE manual bundle includes several protocol surfaces:

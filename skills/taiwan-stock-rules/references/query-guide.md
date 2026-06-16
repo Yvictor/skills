@@ -22,6 +22,14 @@ rg -n "ETF|ETN|權證|流動量|造市者" assets/extracted-text
 rg -n "FIX|TCPIP|主機連線|行情|即時交易資訊|成交回報" assets/extracted-text
 ```
 
+Architecture and transport questions:
+
+```bash
+rg -n "IGMP|Multicast|TCP/IP|Socket|Source Port|防火牆|主機房|備援機房|測試機房|PVC|VC|Heartbeat|第二路|成交回報" assets/extracted-text
+```
+
+When the question sounds like "到底是不是 TCP/multicast", route first to `references/broker-exchange-integration.md`, then verify exact facts in `O-105` for host sockets or `O-126/O-127` for market data.
+
 ## Answer Requirements
 
 When answering:
