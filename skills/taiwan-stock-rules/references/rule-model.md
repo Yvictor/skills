@@ -41,6 +41,8 @@ Use these source families before opening full text:
 - ETF/ETN/warrants/liquidity/market making: `O-026`, `O-030`, `O-031`, `O-033`, `O-034`, `O-035`, `O-038`
 - Connectivity, protocols, and data: `O-016`, `O-101`, `O-104`, `O-105`, `O-106`, `O-107`, `O-108`, `O-121`, `O-124`, `O-125`, `O-126`, `O-127`, `O-128`
 
+For complete per-manual routing, read `manual-domain-matrix.md`. It maps every downloaded manual to its expert role and common confusion boundaries.
+
 ## Answer Pattern
 
 For factual answers:

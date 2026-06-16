@@ -15,6 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 EXAM = ROOT / "references" / "expert-self-exam.md"
 HANDBOOK = ROOT / "references" / "broker-exchange-integration.md"
+MATRIX = ROOT / "references" / "manual-domain-matrix.md"
+MANIFEST = ROOT / "references" / "source-manifest.csv"
 
 
 def fail(message: str) -> None:
@@ -24,6 +26,7 @@ def fail(message: str) -> None:
 def main() -> None:
     exam = EXAM.read_text(encoding="utf-8")
     handbook = HANDBOOK.read_text(encoding="utf-8")
+    matrix = MATRIX.read_text(encoding="utf-8")
 
     ids = re.findall(r"\| ([A-Z]\d{2}) \|", exam)
     if len(ids) < 40:
@@ -68,7 +71,40 @@ def main() -> None:
         if term not in handbook:
             fail(f"missing handbook guardrail term: {term}")
 
-    print(f"Expert self-exam audit passed: {len(ids)} items across {len(required_prefixes)} domains.")
+    # Every source-manual row should appear in the manual domain matrix.
+    manifest_lines = MANIFEST.read_text(encoding="utf-8").splitlines()[1:]
+    titles = []
+    for line in manifest_lines:
+        parts = line.split(",", 3)
+        if len(parts) < 2:
+            fail(f"could not parse manifest line: {line}")
+        titles.append(parts[1])
+    if len(titles) != 48:
+        fail(f"expected 48 source manuals, found {len(titles)}")
+    for title in titles:
+        if title not in matrix:
+            fail(f"source manual missing from manual-domain-matrix.md: {title}")
+
+    manual_prompts = re.findall(r"\| W\d{2} \|", exam)
+    if len(manual_prompts) < 48:
+        fail(f"expected at least 48 whole-manual prompts, found {len(manual_prompts)}")
+
+    required_matrix_terms = [
+        "違約",
+        "借券",
+        "開戶",
+        "標借",
+        "Do not answer \"借券\"",
+        "all-source-manual coverage matrix",
+    ]
+    for term in required_matrix_terms:
+        if term not in matrix:
+            fail(f"missing matrix guardrail term: {term}")
+
+    print(
+        f"Expert self-exam audit passed: {len(ids)} integration items, "
+        f"{len(manual_prompts)} manual-coverage prompts, and {len(titles)} source manuals."
+    )
 
 
 if __name__ == "__main__":

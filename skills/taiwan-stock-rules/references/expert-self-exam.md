@@ -95,3 +95,57 @@ These prompts are good final validation prompts because they expose whether the 
 - 「行情掉包要怎麼偵測，跟 TCP retransmission 是同一件事嗎？」
 - 「FIX 的 TargetSubID 跟 TMP 的 AP-CODE 有什麼關係？」
 
+## Whole-Manual Coverage Prompts
+
+Use these prompts to verify the agent has the whole manual set in its mental model, not only connectivity.
+
+| ID | Manual | Prompt | Expected routing answer |
+| --- | --- | --- | --- |
+| W01 | O-010 | 客戶交割失敗算一般下單錯誤嗎？ | Route to ordinary/credit default handling, not order reject or error-account correction. |
+| W02 | O-016 | 我要吃每日統計檔，該看行情 multicast 嗎？ | Route to statistics/report file manual, not real-time market data. |
+| W03 | O-126 | 股票即時行情格式和傳輸方式怎麼判斷？ | Route to market-data spec: format 6 and IP multicast. |
+| W04 | O-127 | 英文實作團隊要確認行情架構，看哪本？ | Use English market information specification as cross-check. |
+| W05 | O-101 | AP 開機通知、登錄、啟動這類主機流程看哪本？ | Route to main host connection manual. |
+| W06 | O-001 | 一般交易委託、回報、取消減量查詢看哪本？ | Route to regular trading manual. |
+| W07 | O-104 | 主機房切備援後要做全量檢核看哪本？ | Route to full-day backup manual. |
+| W08 | O-021 | 借券後台結算/管理看哪本？ | Route to SBL back-office manual. |
+| W09 | O-027 | 證券業務借貸款項是不是借券？ | No; route to money-lending operations, not SBL. |
+| W10 | O-007 | 融資融券、信用交易檔案看哪本？ | Route to credit/margin trading manual. |
+| W11 | O-026 | 權證/ETF 流動量提供者專線申報看哪本？ | Route to LP dedicated-line workflow. |
+| W12 | O-125 | FIX 英文 tag/session 規格看哪本？ | Route to English FIX specification. |
+| W13 | O-128 | 證券商備用競價設備怎麼用看哪本？ | Route to spare auction equipment manual. |
+| W14 | O-008 | 投資人開戶資料交換看哪本？ | Route to investor account-opening computer workflow. |
+| W15 | O-124 | FIX 中文規格、CompID/SubID 看哪本？ | Route to Chinese FIX 4.4 manual. |
+| W16 | O-037 | 盤中零股看哪本？ | Route to intraday odd-lot manual. |
+| W17 | O-002 | 盤後零股/零股交易看哪本？ | Route to after-hours odd-lot manual, not intraday odd-lot. |
+| W18 | O-019 | 盤後定價 AP-CODE=7 這種問題看哪本？ | Route to after-hours fixed-price manual. |
+| W19 | O-031 | 投信 ETF 端申購買回看哪本？ | Route to investment-trust ETF manual. |
+| W20 | O-030 | 證券商 ETF 作業看哪本？ | Route to broker ETF manual. |
+| W21 | O-020 | 有價證券借貸前台看哪本？ | Route to SBL front-office manual. |
+| W22 | O-022 | 證券商有價證券借貸制度看哪本？ | Route to broker SBL system manual. |
+| W23 | O-011 | 補正借券是一般借券嗎？ | No; route to shortfall repair borrowing manual. |
+| W24 | O-006 | 公開申購配售看哪本？ | Route to public subscription/allocation manual. |
+| W25 | O-034 | ETN 發行人端看哪本？ | Route to ETN issuer-side platform manual. |
+| W26 | O-033 | ETN 證券商端看哪本？ | Route to ETN broker-side platform manual. |
+| W27 | O-038 | 股票造市者獎勵/月費折讓檔看哪本？ | Route to stock market maker/incentive participant manual. |
+| W28 | O-035 | 流動量提供者報價規則看哪本？ | Route to LP quote-rule manual, not line declaration. |
+| W29 | O-029 | 現股當沖短券缺口怎麼處理看哪本？ | Route to day-trading manual and then repair/lending manuals as needed. |
+| W30 | O-036 | 聯徵中心負面資料查詢看哪本？ | Route to negative-data query manual. |
+| W31 | O-121 | 借券相關資料查詢平台看哪本？ | Route to information-exchange platform SBL query manual. |
+| W32 | O-024 | 證金標購看哪本？ | Route to securities-finance tender purchase manual. |
+| W33 | O-004 | 標借看哪本？ | Route to tender borrowing manual, not generic SBL. |
+| W34 | O-018 | 標購看哪本？ | Route to tender purchase manual. |
+| W35 | O-005 | 上市證券拍賣看哪本？ | Route to auction manual. |
+| W36 | O-012 | 借戶賣出股票申報看哪本？ | Route to borrower sell-stock declaration manual. |
+| W37 | O-025 | 綜合交易帳號看哪本？ | Route to comprehensive trading account manual. |
+| W38 | O-032 | 定期定額買賣看哪本？ | Route to DCA/periodic fixed-amount trading manual. |
+| W39 | O-009 | 錯帳和更正帳號看哪本？ | Route to error-account/account-correction manual. |
+| W40 | O-003 逐筆 | 鉅額逐筆交易看哪本？ | Route to sequential block-trading manual. |
+| W41 | O-003 配對 | 鉅額配對交易看哪本？ | Route to paired block-trading manual. |
+| W42 | O-013 | 證券商聯合徵信看哪本？ | Route to joint credit information manual. |
+| W43 | O-108 | 第二路檔案傳輸看哪本？ | Route to second file-transfer manual. |
+| W44 | O-107 | 第二成交回報和擴充版成交回報看哪本？ | Route to second execution-report/expanded report manual. |
+| W45 | O-106 | 資訊交換平台主機連線看哪本？ | Route to information-exchange platform host connection manual. |
+| W46 | O-105 | Source IP/Port、socket heartbeat、防火牆架構看哪本？ | Route to TCP/IP host connection manual. |
+| W47 | O-023 | 證金議借看哪本？ | Route to securities-finance negotiated lending manual. |
+| W48 | O-028 | 客戶委託保管及運用款項看哪本？ | Route to customer entrusted fund custody/use operations manual. |
