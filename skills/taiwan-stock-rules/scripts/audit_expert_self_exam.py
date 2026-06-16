@@ -17,6 +17,7 @@ EXAM = ROOT / "references" / "expert-self-exam.md"
 HANDBOOK = ROOT / "references" / "broker-exchange-integration.md"
 MATRIX = ROOT / "references" / "manual-domain-matrix.md"
 MANIFEST = ROOT / "references" / "source-manifest.csv"
+MIND_MAP = ROOT / "references" / "twse-broker-mind-map.md"
 
 
 def fail(message: str) -> None:
@@ -27,6 +28,7 @@ def main() -> None:
     exam = EXAM.read_text(encoding="utf-8")
     handbook = HANDBOOK.read_text(encoding="utf-8")
     matrix = MATRIX.read_text(encoding="utf-8")
+    mind_map = MIND_MAP.read_text(encoding="utf-8")
 
     ids = re.findall(r"\| ([A-Z]\d{2}) \|", exam)
     if len(ids) < 40:
@@ -100,6 +102,21 @@ def main() -> None:
     for term in required_matrix_terms:
         if term not in matrix:
             fail(f"missing matrix guardrail term: {term}")
+
+    required_mind_map_terms = [
+        "```mermaid",
+        "48 TWSE Source Manuals",
+        "Ambiguity Map",
+        "O-010 ordinary and credit default",
+        "O-004 tender borrowing",
+        "O-126 market data Chinese",
+        "Source IP plus Source Port",
+        "IP multicast",
+        "B40 discretionary investment account",
+    ]
+    for term in required_mind_map_terms:
+        if term not in mind_map:
+            fail(f"missing mind-map term: {term}")
 
     print(
         f"Expert self-exam audit passed: {len(ids)} integration items, "
