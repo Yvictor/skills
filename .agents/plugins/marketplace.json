@@ -1,0 +1,20 @@
+{
+  "name": "yvictor-skills",
+  "interface": {
+    "displayName": "Yvictor Skills"
+  },
+  "plugins": [
+    {
+      "name": "dev-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/dev-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

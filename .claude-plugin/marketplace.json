@@ -12,11 +12,11 @@
     {
       "name": "dev-workflow",
       "description": "Development workflow skills including review-driven development for issue-to-merge lifecycle with iterative review cycles",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/review-driven-development"
-      ]
+      "source": "./plugins/dev-workflow",
+      "version": "1.0.1",
+      "author": {
+        "name": "Yvictor"
+      }
     }
   ]
 }

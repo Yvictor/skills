@@ -1,0 +1,24 @@
+{
+  "name": "dev-workflow",
+  "version": "1.0.1",
+  "description": "Development workflow skills including review-driven development for issue-to-merge lifecycle with iterative review cycles.",
+  "author": {
+    "name": "Yvictor",
+    "email": "yvictor3141@gmail.com"
+  },
+  "homepage": "https://github.com/Yvictor/skills",
+  "repository": "https://github.com/Yvictor/skills",
+  "license": "MIT",
+  "keywords": [
+    "development-workflow",
+    "code-review",
+    "pull-request",
+    "merge-request",
+    "github",
+    "gitlab",
+    "codex",
+    "claude-code",
+    "skills"
+  ],
+  "skills": "./skills/"
+}

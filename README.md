@@ -42,6 +42,13 @@ claude plugins marketplace add yvictor/skills
 claude plugins install dev-workflow@yvictor-skills
 ```
 
+### Codex (plugin)
+
+```bash
+codex plugin marketplace add yvictor/skills
+codex plugin add dev-workflow@yvictor-skills
+```
+
 ### Manual
 
 ```bash

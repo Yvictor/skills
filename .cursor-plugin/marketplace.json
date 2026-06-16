@@ -1,0 +1,16 @@
+{
+  "name": "yvictor-skills",
+  "owner": {
+    "name": "Yvictor"
+  },
+  "metadata": {
+    "description": "Agent skills for development workflows."
+  },
+  "plugins": [
+    {
+      "name": "dev-workflow",
+      "source": "plugins/dev-workflow",
+      "description": "Development workflow skills including review-driven development for issue-to-merge lifecycle with iterative review cycles."
+    }
+  ]
+}
