@@ -1,0 +1,5204 @@
+# O-124-A10 FIX4.4電文規範作業手冊
+
+- 更新日期: 114.05.05
+- 來源檔案: assets/source-files/O-124-A10_FIX4.4電文規範作業手冊.doc
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/computerPlanningOperationsDepartment/O-124-A10 FIX4.4電文規範作業手冊_TWSE_20250430_20250505095204.doc
+- SHA256: 9f50b49f80cad41cc3d90c0ed08e0fe4ab1454bc5f13a8708b1093ec30e975d4
+- 抽取方式: textutil
+
+---
+
+臺灣證券交易所
+
+FIX 4.4電文規範
+作業手冊
+
+
+台灣證券交易所編製
+版本更新記錄
+
+序號說明版本制/修訂人日期1
+配合新交易系統，修改委託格式。
+NEW FIX平台預計於103年5月上線。
+1.0
+電規部
+2013/08/13
+2.
+新增異常處理說明。
+1.1
+電規部
+2014/08/13
+3
+STATUS CODE “0050” 預計於103年12月29日上線。
+1.2
+電規部
+2014/12/17
+4
+TwseIvacnoFlag新增欄位值‘6’ API(FIX)，預計於104年9月14日上線。
+1.3
+電規部
+2015/07/29
+5
+新增盤後定價、零股交易格式。
+1.4
+電規部
+2015/10/06
+6
+增修盤後定價、零股錯誤訊息。
+1.5
+電規部
+2016/05/12
+7
+配合借券賣出委託設限改為盤中控管，修改盤後定價交易錯誤訊息代碼38之定義。
+1.6
+電規部
+2016/07/14
+8
+配合實施逐筆交易，放寬數量及價格等相關欄位長度，增加「委託方式」與「委託有效期間」等欄位值，並增加「改價」功能。
+1.7
+電規部
+2018/09/05
+9
+一般、盤後定價、零股交易
+改單時，原始委託類別TwseOrdType(10001)改為必要欄位。
+調整委託狀態代碼回覆訊息。
+一般交易
+改價時，數量與價格欄位需擇一輸入，配合新增委託狀態碼0011。
+改價時，回覆訊息之實際委託成功數量OrderQty(38)同委託剩餘有效量LeavesQty(151)，其欄位值為改價成功之委託數量。
+市價單時，價格須輸入0。
+零股交易
+零股調整為減量交易。
+1.8
+電規部
+2019/07/04
+10
+新增盤中零股交易格式及錯誤訊息
+補充錯誤訊息代碼89之中文說明
+1.9
+電規部
+2020/04/10
+11
+新增委託量監控機制說明
+預計於110年9月6日上線實施。
+2.0
+電規部
+2021/08/01
+12
+新增標借、拍賣、一般標購、證金標購交易。
+預計於111年10月24日上線實施。
+2.1
+電規部
+2022/03/31
+13
+新增自營商0000000不可下單證券類股錯誤訊息。
+預計於114年6月30日上線實施
+2.2
+電規部
+2025/04/30
+目		錄
+ TOC \O "1-2" \H \Z \U  HYPERLINK \L "_TOC97123570" 一、	概說	 PAGEREF _TOC97123570 \H 6
+ HYPERLINK \L "_TOC97123571" (一)	前言	 PAGEREF _TOC97123571 \H 6
+ HYPERLINK \L "_TOC97123572" (二)	本作業手冊的範圍	 PAGEREF _TOC97123572 \H 6
+ HYPERLINK \L "_TOC97123573" (三)	本作業手冊的訂定與修改	 PAGEREF _TOC97123573 \H 6
+ HYPERLINK \L "_TOC97123574" (四)	網際網路文件下載	 PAGEREF _TOC97123574 \H 6
+ HYPERLINK \L "_TOC97123575" 二、	連線架構說明	 PAGEREF _TOC97123575 \H 7
+ HYPERLINK \L "_TOC97123576" (一)	TCP/IP證券交易資訊網路(簡稱IP交易網路)架構	 PAGEREF _TOC97123576 \H 7
+ HYPERLINK \L "_TOC97123577" (二)	架構圖	 PAGEREF _TOC97123577 \H 7
+ HYPERLINK \L "_TOC97123578" 三、	FIX概論說明	 PAGEREF _TOC97123578 \H 8
+ HYPERLINK \L "_TOC97123579" (一)	FIX協定	 PAGEREF _TOC97123579 \H 8
+ HYPERLINK \L "_TOC97123580" (二)	FIX Session流程	 PAGEREF _TOC97123580 \H 10
+ HYPERLINK \L "_TOC97123581" (三)	FIX 訊息類別	 PAGEREF _TOC97123581 \H 14
+ HYPERLINK \L "_TOC97123582" (四)	一般訊息流程	 PAGEREF _TOC97123582 \H 15
+ HYPERLINK \L "_TOC97123583" 四、	與FIX 4.4標準主要差異	 PAGEREF _TOC97123583 \H 17
+ HYPERLINK \L "_TOC97123584" (一)	委託回報與成交回報	 PAGEREF _TOC97123584 \H 17
+ HYPERLINK \L "_TOC97123585" (二)	OrderID(37)的差異	 PAGEREF _TOC97123585 \H 19
+ HYPERLINK \L "_TOC97123586" (三)	FIX Latest使用欄位	 PAGEREF _TOC97123586 \H 19
+ HYPERLINK \L "_TOC97123587" (四)	使用者自定欄位(User Defined Fields)	 PAGEREF _TOC97123587 \H 19
+ HYPERLINK \L "_TOC97123588" 五、	標準的表頭及表尾(Standard Header and Trailer)	 PAGEREF _TOC97123588 \H 21
+ HYPERLINK \L "_TOC97123589" (一)	標準表頭格式(Standard Header)	 PAGEREF _TOC97123589 \H 21
+ HYPERLINK \L "_TOC97123590" (二)	標準表尾格式(Standard Trailer)	 PAGEREF _TOC97123590 \H 24
+ HYPERLINK \L "_TOC97123591" 六、	交談層訊息(Session Level Messages)	 PAGEREF _TOC97123591 \H 25
+ HYPERLINK \L "_TOC97123592" (一)	登入訊息(Logon)	 PAGEREF _TOC97123592 \H 25
+ HYPERLINK \L "_TOC97123593" (二)	心跳訊息(Heartbeat)	 PAGEREF _TOC97123593 \H 27
+ HYPERLINK \L "_TOC97123594" (三)	測試請求訊息(Test Request)	 PAGEREF _TOC97123594 \H 27
+ HYPERLINK \L "_TOC97123595" (四)	重送請求訊息(Resend Request)	 PAGEREF _TOC97123595 \H 28
+ HYPERLINK \L "_TOC97123596" (五)	Session拒絕訊息(Reject – Session Level)	 PAGEREF _TOC97123596 \H 29
+ HYPERLINK \L "_TOC97123597" (六)	序號重設訊息(Sequence Reset)	 PAGEREF _TOC97123597 \H 30
+ HYPERLINK \L "_TOC97123598" (七)	登出訊息(Logout)	 PAGEREF _TOC97123598 \H 32
+ HYPERLINK \L "_TOC97123599" 七、	應用類訊息(Application Messages)	 PAGEREF _TOC97123599 \H 34
+ HYPERLINK \L "_TOC97123600" (一)	新單委託訊息(New Order Single)	 PAGEREF _TOC97123600 \H 34
+ HYPERLINK \L "_TOC97123601" (二)	改單委託訊息(Order Cancel / Replace Request)	 PAGEREF _TOC97123601 \H 40
+ HYPERLINK \L "_TOC97123602" (三)	刪單委託訊息(Order Cancel Request)	 PAGEREF _TOC97123602 \H 44
+ HYPERLINK \L "_TOC97123603" (四)	委託狀態查詢訊息(Order Status Request)	 PAGEREF _TOC97123603 \H 47
+ HYPERLINK \L "_TOC97123604" (五)	委託/成交回報訊息(Execution Report)	 PAGEREF _TOC97123604 \H 49
+ HYPERLINK \L "_TOC97123605" (六)	刪單/改單委託失敗訊息(Order Cancel Reject)	 PAGEREF _TOC97123605 \H 57
+ HYPERLINK \L "_TOC97123606" (七)	業務檢核失敗訊息(Business Message Reject)	 PAGEREF _TOC97123606 \H 59
+ HYPERLINK \L "_TOC97123607" 八、	回報訊息處理說明	 PAGEREF _TOC97123607 \H 60
+ HYPERLINK \L "_TOC97123608" (一)	Session拒絕訊息(Reject – Session Level) 回覆訊息狀態代碼	 PAGEREF _TOC97123608 \H 60
+ HYPERLINK \L "_TOC97123609" (二)	登入作業回覆訊息狀態代碼	 PAGEREF _TOC97123609 \H 61
+ HYPERLINK \L "_TOC97123610" (三)	一般交易回覆訊息狀態代碼	 PAGEREF _TOC97123610 \H 61
+ HYPERLINK \L "_TOC97123611" (四)	盤後定價交易回覆訊息狀態代碼	 PAGEREF _TOC97123611 \H 63
+ HYPERLINK \L "_TOC97123612" (五)	盤後零股交易回覆訊息狀態代碼	 PAGEREF _TOC97123612 \H 64
+ HYPERLINK \L "_TOC97123613" (六)	盤中零股交易回覆訊息狀態代碼	 PAGEREF _TOC97123613 \H 66
+ HYPERLINK \L "_TOC97123614" (七)	標借交易回覆訊息狀態代碼	 PAGEREF _TOC97123614 \H 67
+ HYPERLINK \L "_TOC97123615" (八)	拍賣交易回覆訊息狀態代碼	 PAGEREF _TOC97123615 \H 68
+ HYPERLINK \L "_TOC97123616" (九)	一般標購交易回覆訊息狀態代碼	 PAGEREF _TOC97123616 \H 69
+ HYPERLINK \L "_TOC97123617" (十)	證金標購交易回覆訊息狀態代碼	 PAGEREF _TOC97123617 \H 70
+ HYPERLINK \L "_TOC97123618" (十一)	共同回覆訊息狀態代碼	 PAGEREF _TOC97123618 \H 71
+ HYPERLINK \L "_TOC97123619" 九、	異常處理注意事項	 PAGEREF _TOC97123619 \H 73
+ HYPERLINK \L "_TOC97123620" (一)	證券商端備援	 PAGEREF _TOC97123620 \H 73
+ HYPERLINK \L "_TOC97123621" (二)	同地FIX Gateway異常	 PAGEREF _TOC97123621 \H 73
+ HYPERLINK \L "_TOC97123622" (三)	異地備援中心切換	 PAGEREF _TOC97123622 \H 73
+ HYPERLINK \L "_TOC97123623" 十、	其它注意事項	 PAGEREF _TOC97123623 \H 75
+ HYPERLINK \L "_TOC97123624" (一)	網路頻寬考量	 PAGEREF _TOC97123624 \H 75
+ HYPERLINK \L "_TOC97123625" (二)	流量控管	 PAGEREF _TOC97123625 \H 75
+ HYPERLINK \L "_TOC97123626" (三)	委託量監控機制	 PAGEREF _TOC97123626 \H 76
+ HYPERLINK \L "_TOC97123627" 十一、	附錄	 PAGEREF _TOC97123627 \H 77
+ HYPERLINK \L "_TOC97123628" (一)	Order State Change Matrices	 PAGEREF _TOC97123628 \H 77
+ HYPERLINK \L "_TOC97123629" (二)	FIX欄位摘要說明	 PAGEREF _TOC97123629 \H 87
+ HYPERLINK \L "_TOC97123630" (三)	FIX 4.4欄位差異比較表	 PAGEREF _TOC97123630 \H 91
+
+概說
+
+前言
+為與國際證券交易市場接軌並提昇業務處理效能及服務品質，本公司規劃建置「FIX通訊協定作業平台」， 提供國內外證券商更方便快速的服務。交易所係參考FIX標準，訂定本FIX電文規範作業手冊，提供給各證券商，以利進行各項業務。關於FIX協定詳細規格可參考The FIX Trading Community (https://www.fixtrading.org)。
+
+本作業手冊的範圍
+本作業手冊規範FIX 協定相關設定、訊息傳遞方式及訊息格式，有關證券商申請測試及正式上線等相關規定請參閱「申請競價設備連線及異動作業」作業手冊。
+
+本作業手冊的訂定與修改
+本系統規範由臺灣證券交易所電腦規劃部研訂，實施後得視實際需要由臺灣證券交易所修訂公布。
+
+網際網路文件下載
+本作業手冊可於證交所國內業務宣導官方網站https://dsp.twse.com.tw下載。請於進入網站首頁後，選擇「電腦資訊」「證券商作業手冊」。
+連線架構說明
+
+TCP/IP證券交易資訊網路(簡稱IP交易網路)架構
+ TCP/IP證券交易資訊網路以中華電信公司、遠傳電信公司(新世紀資通)及台灣大哥大電信公司(台灣固網)提供MPLS架構，證券商與交易所之間連線都設定成點對點固定IP位址的VC(Virtual Circuit)，具備優越效能與高度安全的特性。
+
+架構圖
+
+
+FIX概論說明
+
+FIX協定
+訊息格式
+FIX中的訊息格式是不固定長度，所有的訊息都必需要依循規範組成傳送資料，才能使收送雙方可以正確解析格式。FIX訊息格式是由標準的表頭(Standard Header)加上訊息內容本身(Body)，最後由標準的表尾(Standard Trailer)結尾，欄位需依循該順序傳送，例如屬於表頭的欄位，不可放置於訊息內容本身。每一個訊息都由一連串的<tag>=<value>所組成，彼此間使用分隔符號(SOH)分開。表頭中的前三個欄位與最後一個表尾欄位，順序需固定，其它的欄位則無固定順序，如下表所述。
+
+Tag
+Field Name
+Data Type
+Req'd
+Standard Header
+8
+BeginString
+String
+Y
+9
+BodyLength
+String
+Y
+35
+MsgType
+String
+Y
+表頭的其它欄位，順序可不固定。
+Body
+依實際情況填入的表身欄位，順序可不固定。
+Standard Trailer
+10
+CheckSum
+String
+Y
+另因為FIX格式中的欄位定義與交易所的主機連線TMP協定，命名方式略有不同，為利大家交互參考，本手冊中採[ ]的方式，用以表達在TMP協定中的欄位名稱，例如委託書編號於FIX規範中為OrderID(37)，但在原有的主機連線TMP協定中則命名[ORDER-NO]。
+
+分隔符號：(ASCII “SOH”, 0x01)
+FIX訊息中所有的欄位都必需以分隔符號區分開來。採用ASCII “SOH”(字碼為0x01，本規範中表示為<SOH>)用來做為分隔符號，所有的訊息都會由“8=FIX.4.4<SOH>”開始，最後結束則是“10=nnn<SOH>”，nnn是CheckSum計算出來的結果。
+
+範例格式如下：
+8=FIX.4.4<SOH>9=80<SOH>35=A<SOH>49=T1020X2<SOH>56=XTAI<SOH>34=1<SOH>52=20150213-10:22:13.301<SOH>98=0<SOH>108=10<SOH>95=5<SOH>96=57194<SOH>10=086<SOH>
+
+資料型態
+FIX協定之資料型態係由下述類型組成，除“data”類型外，其他類型均以ASCII碼表示，詳細分類如下：
+int:整數數值；序列數字，不包含逗號或是小數。且可表示正負號(ASCII符號“ - ”和“ 0 ” - “ 9 ”所組成)。正負號佔用一個位元組(Byte)(舉例來說：正數是“99999”，而負數是“-99999”。)int可以包含前置字元0(例：“00023”=“23”)。
+例:723在Tag 16的表示上為|16=723|。
+ -723在Tag 16的表示上為|16=-723|。
+
+float:浮點數；序列數字，可包含小數點。且可表示正負號(ASCII符號“-” ， “0” - “9”和“.”)，沒有小數點的浮點數等同整數。浮點數可容納最多15位有效數字。浮點數可以包含前置字元0(例：“00023.23”=“23.23”)，也可以包含或省略小數點後之0(例：“23.0”=“23.0000”=“23”)。
+
+Qty:數量；浮點數(float)。
+
+Price:價格；浮點數(float)。
+
+char:字元，可包含任何字母數字或是標點符號除了分隔符號<SOH>。大小寫皆代表不同意義(例: m ≠ M)。
+
+Boolean:布林值，一個字元(char)所組成，只有下列二個值。            ‘Y’ = True真/Yes是
+‘N’ = False假/No否
+
+String:字串，任意字元組成的一組字串，可以包含任何符號或標點符號，除了分隔符號<SOH>。大小寫皆代表不同意義(例：morstatt ≠ Morstatt )。
+
+UTCTimestamp:時間/日期組合代表UTC(國際標準時間，也被稱為“格林威治標準時間”)，格式為YYYYMMDD–HH:MM:SS或YYYYMMDD-HH:MM:SS.sss(毫秒)，格式中的冒號、破折號、以及所需時間皆為必要欄位。
+
+data:沒有格式或是內容限制的資料形態，該欄位必需緊接在一個資料長度欄位後，而該資料長度欄位指的是data欄位中，存在的資料bytes數（不包含分隔符號(SOH)）。
+
+訊息序號(Sequence Numbers)
+本規範中的FIX訊息序號編碼原則，每日假開盤作業與正常開盤作業時，都會重新由1開始。
+簡單來說，序號之使用設計是確保FIX訊息傳送之連續性。如果當一方接收到序號的號碼大於其所預期的序號。則可認定對方的訊息有所遺漏。
+如果收到的序號比預期小，這樣的狀況是很嚴重的，並且是不被FIX協定所允許的。此時需即刻停止連線，狀況排除後才得進行連線作業。
+
+欄位優先性
+每一筆FIX訊息包含必要、非必要、條件式必要欄位(依其他欄位的有無與值決定其必要性)。
+
+使用者自訂欄位
+FIX協定提供極具彈性的使用者自訂欄位，從5000到9999是保留給使用者    自訂欄位使用，可以透過FIX官方網站註冊/保留；大於或等於10000是保留使用者內部使用，不需要透過FIX網站註冊/保留。
+
+FIX Session流程
+一個FIX Session包含三個作業：登入作業(Logon)、訊息交換作業(Message exchange)及登出作業(Logout)。 
+登入作業(Logon)
+建立FIX連線涉及三種動作：建立通訊層連線(telecommunication link)，Session acceptor(以下稱接收端亦指交易所)需要驗證/接受Session initiator(以下稱發起端亦指證券商)，及訊息同步。
+建立通訊層連線
+驗證/接受連線
+建立通訊層連線後，發起端應傳送登入訊息(Logon)給接收端，若超過60秒未傳送登入訊息(Logon)，接收端會主動中斷連線。發起端需再重啟連線。
+正常情況下，發起端傳送登入訊息(Logon)給接收端，接收端要驗證發起端的登入訊息(Logon)。
+驗證成功：接收端會回覆登入訊息(Logon)。
+驗證失敗：接收端將會回覆登出訊息(Logout)(包含失敗原因，例如：KEY-VALUE ERROR)給發起端，並中斷連線。
+發起端必須收到接收端回覆的登入訊息(Logon)後，才可以傳送其它訊息。
+訊息同步
+發起端與接收端在傳送任何訊息前，必須以訊息序號欄位執行訊息同步檢核作業，例如發起端可用接收端回覆之登入訊息(Logon)序號與本身預期收到的序號比較是否一致，即可得知訊息是否有缺漏。
+建議證券商登入動作後，可等一段時間或立即傳送測試請求訊息(Test Request)給對方，檢核交易所回覆的心跳訊息(Heartbeat)序號，如果序號不一致，證券商立即傳送重送請求訊息(Resend Request)，將缺漏訊息補收完成。
+ EMBED Visio.Drawing.11
+
+訊息交換(Message exchange)
+完成登入作業(Logon)後，一般訊息即可開始交換，訊息詳細內容請參考第六章交談層訊息(Session Level Messages)、第七章應用類訊息(Application Messages)章節說明。
+登出作業(Logout)
+正常終止訊息交換連線的方式為透過登出訊息(Logout)完成；其他停止連線方式會視為異常狀況並產生錯誤，發起端如未收到接收端的登出訊息(Logout)即視為接收端已登出。
+發起端登出前應先傳送測試請求訊息(Test Request)，依接收端回覆之心跳訊息(Heartbeat)序號，確保雙方沒有訊息缺漏。
+
+登出作業程序如下：
+發起端傳送測試請求訊息(Test Request)。
+接收端回覆心跳訊息(Heartbeat)。
+發起端檢查收到的心跳訊息(Heartbeat)的訊息序號，確認是否有序號缺漏。
+發起端若發現有訊息缺漏，立即傳送重送請求訊息(Resend Request)。
+接收端回覆需要重送的訊息。
+發起端檢核訊息序號皆無缺漏後，傳送登出訊息(Logout)。發起端若超過timeout時間(5秒)，未收到回覆登出訊息(Logout)，則中斷連線。
+接收端檢查登出訊息(Logout)之訊息序號，確認是否有序號缺漏。
+接收端若發現有訊息缺漏，立即傳送重送請求訊息(Resend Request)。
+發起端回覆需要重送的訊息。
+接收端檢核訊息序號皆無缺漏後，回覆登出訊息(Logout)。
+發起端中斷連線。
+
+      EMBED Visio.Drawing.11
+FIX 訊息類別
+證券商發動的FIX訊息類別
+訊息類別
+MsgType
+(tag 35)
+訊息名稱
+備註
+Session Level Message
+A
+Logon
+登入訊息
+0
+Heartbeat
+心跳訊息
+1
+Test Request
+測試請求訊息
+2
+Resend Request
+重送請求訊息
+3
+Reject – Session Level
+Session拒絕訊息
+4
+Sequence Reset
+序號重設訊息
+5
+Logout
+登出訊息
+Application Message
+D
+New Order Single
+新單委託訊息
+G
+Order Cancel/Replace Request
+改單委託訊息
+F
+Order Cancel Request
+刪單委託訊息
+H
+Order Status Request
+委託狀態查詢訊息
+交易所發動的FIX訊息類別
+訊息類別
+MsgType
+(Tag 35)
+訊息名稱
+備註
+Session Level Message
+A
+Logon
+登入訊息
+0
+Heartbeat
+心跳訊息
+1
+Test Request
+測試請求訊息
+2
+Resend Request
+重送請求訊息
+3
+Reject – Session Level
+Session拒絕訊息
+4
+Sequence Reset
+序號重設訊息
+5
+Logout
+登出訊息
+Application Message
+8
+Execution Report
+委託/成交回報訊息
+9
+Order Cancel Reject
+刪單/改單委託失敗訊息
+j
+Business Message Reject
+業務檢核失敗訊息
+
+一般訊息流程
+
+本章節說明證券商傳送訊息至交易所後，預期各項回覆訊息的流程說明。在委託回報/成交回報(Execution Report)中，需依欄位ExecType(150)表示此次回報的目的，欄位值說明如下：
+0
+4
+5
+8
+F
+I
+D
+委託成功
+刪單成功
+改單成功
+委託失敗
+部分成交/
+全部成交
+委託狀態
+狀態更新
+
+證券商
+交易所
+備註
+Logon
+登入訊息
+Logon
+登入成功
+Logout
+登入失敗
+New Order Single
+新單委託訊息
+Reject – Session
+FIX tag驗證錯誤
+Execution Report:
+ExecType(150) = 8
+委託失敗
+Execution Report:
+ExecType(150) = 0
+委託成功
+Execution Report:
+ExecType(150) = 0
+OrdRejReason(103)=99
+Text(58)=0031-QUANTITY WAS CUT
+部分委託數量有效
+Execution Report:
+ExecType(150) = 0
+OrdRejReason(103)=99
+Text(58)=0051-QUANTITY WAS CUT
+部分委託數量有效
+Order Cancel/Replace Request
+改單委託訊息
+Reject – Session
+FIX tag驗證錯誤
+Cancel Reject
+改單失敗
+Execution Report:
+ExecType(150) = 5
+改單成功
+Order Cancel Request
+刪單委託訊息
+Reject – Session
+FIX tag驗證錯誤
+Cancel Reject
+刪單失敗
+Execution Report:
+ExecType(150) = 4
+刪單成功
+Order Status Request
+委託狀態查詢訊息
+Reject – Session
+FIX tag驗證錯誤
+Execution Report:
+ExecType(150) = I
+查詢成功
+成交回報接收
+Execution Report:
+ExecType(150) = F
+部分成交/全部成交
+交易所主動傳送
+交易所主動回報
+Execution Report:
+ExecType(150) = D
+ExecRestatementReason = 8
+狀態更新
+證券進入價格穩定措施或尾盤集合競價時段，交易所系統主動取消留存委託簿之市價委託單資料並回報（FIX委託資料）
+其它訊息類別
+Business Message Reject
+業務檢核失敗訊息
+交易所未提供該項訊息類別
+Logout
+登出訊息
+Logout
+登出
+與FIX 4.4標準主要差異
+
+交易所目前採用FIX 4.4為主要標準，但仍有許多部分，為與現行交易系統配合，需修改調整符合現況，在此說明本規範與FIX 4.4間之主要差異，使證券商能更迅速的建置相關系統。詳細訊息流程說明及各欄位在進行交易時，會回覆的訊息與欄位值，請參考附錄中的Order State Change Matrices。
+
+委託回報與成交回報
+委託回報無Pending訊息
+FIX 4.4協定中，系統收到新單委託、刪單、改單等訊息時，均會先回Pending的訊息，表示系統收到委託正在處理中，但在本規範中，Pending New、Pending Cancel、Pending Replace等訊息是不會回覆給證券商，證券商下單後，將比照現行系統，待交易系統處理後，回覆委託回報訊息，證券商將會接收到委託成功或是委託失敗的訊息，請參考下列新單委託流程。
+ EMBED Visio.Drawing.11
+ OrdStatus(39) = ExecType(150)，例外情況如下
+大多數的情況下，OrdStatus(39)的值會與ExecType(150)相同。
+例外情況如下所述：
+改單委託成功時，ExecType(150) = Replace，OrderStatus(39)則為New。
+委託狀態查詢成功時，ExecType(150) = OrderStatus，OrderStatus(39)則為New。
+成交回報時，ExecType(150) = Trade，部分成交OrdStatus(39) = Partially Filled；全部成交OrdStatus(39) = Filled。
+主動刪單回報時，ExecType(150) = Restated，OrderStatus(39)則為Canceled。
+委託回報與成交回報時相關欄位之使用
+委託回報與成交回報都使用Execution Report(MsgType=8)的格式。
+委託回報時，請參考委託數量OrderQty(38)與委託剩餘有效量LeavesQty(151)來取得可用的值，此時本次成交數量LastQty(32)會回覆0。
+成交回報時，請參考目前已成交數量CumQty(14)和本次成交數量LastQty(32)來取得可用的值，此時委託數量OrderQty(38)與委託剩餘有效量LeavesQty(151)都會回覆0。
+
+
+目前已成交數量
+CumQty(14)
+本次成交數量
+LastQty(32)
+委託數量
+OrderQty(38)
+委託剩餘有效量
+LeavesQty(151)
+委託回報
+Actual value
+0
+Actual value
+Actual value
+成交回報
+Actual value
+Actual value
+0
+0
+
+成交回報只回覆FIX委託單
+現行主機連線TMP成交回報將包含所有TMP及FIX完整回報資料。
+FIX的成交回報只回覆經由FIX作業平台進行新單委託的回報資料。
+標借、拍賣、一般標購、證金標購交易成交回報同現有機制，仍透過現有FT方式回覆，不會透過FIX。
+
+AvgPx(6) = 0
+目前不支援均價計算，該欄位永遠為0。
+
+CxlRejReason(102)、OrdRejReason(103)使用欄位值99 - Other
+詳細錯誤訊息請參考Text(58)。
+
+IOC、FOK委託採一階段回報，委託狀態回報方式請詳見一般交易回覆訊息狀態代碼表與附錄中的ORDER STATE CHANGE MATRICES。
+
+OrderID(37)的差異
+FIX 4.4協定中，證券商下單後，交易所會產生一個唯一的委託書編號OrderID(37)於委託回報中。為配合現行的交易系統，交易所仍採行目前作法，證券商於下單時需自行產生一個單日不重複之委託書編號OrderID(37)，與現行主機連線TMP的委託書編號[ORDER-NO]用法相同且皆不得重覆。
+
+Tag
+System Specification
+FIX 4.4 Specification
+OrderID(37)
+同現行主機連線TMP的[ORDER-NO]。
+由證券商產生並於新單委託時代入。
+此欄位為必要欄位。
+FIX協定中，此值由交易所產生。
+
+FIX Latest使用欄位
+Tag
+System Specification
+FIX 4.4 Specification
+RefOrderID
+(1080)
+標購序號。
+此欄位為一般標購與證金標購必要欄位。
+該欄位FIX 4.4未提供，因FIX Latest已提供該欄位，故不再另行自訂該欄位。
+
+使用者自定欄位(User Defined Fields)
+現行主機連線TMP委託格式中，有些欄位並沒有適合的FIX欄位可使用，故於本規範中新增四個自定欄位(Tag號碼大於等於10000)，以符合現行交易系統之運作，欄位說明如下所述：
+
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’  Normal(FIX)
+‘2’  ATM(FIX)
+‘3’  DMA Order(FIX)
+‘4’  Internet(FIX)
+‘5’  Voice(FIX)
+‘6’  API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+標準的表頭及表尾(Standard Header and Trailer)
+
+每一筆訊息都必須包含標準的表頭及表尾。訊息格式中若有FIX 4.4標準不支援之Tag格式，會回覆Session拒絕訊息(Reject – Session)，若符合FIX 4.4標準但本規範不支援之Tag格式，交易所會忽略該欄位值。
+
+標準表頭格式(Standard Header)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+8
+BeginString
+String
+Y
+FIX.4.4
+9
+BodyLength
+String
+Y
+
+35
+MsgType
+String
+Y
+
+34
+MsgSeqNum
+Int
+Y
+Max 8 digits
+43
+PossDupFlag
+Boolean
+N
+
+97
+PossResend
+Boolean
+N
+
+49
+SenderCompID*
+String
+Y
+Market + Broker-ID + FIX Socket ID
+Broker who establish the session connection
+Market (T:TWSE O:TPEx)
+1 char + 4 char + 2 char
+50
+SenderSubID*
+String
+N
+Broker-ID
+Broker who owns this order
+Required for New/Replace/Cancel/Query/Execution
+4 char
+52
+SendingTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+56
+TargetCompID*
+String
+Y
+TWSE : XTAI
+TPEx : ROCO
+57
+TargetSubID*
+String
+N
+Trading session
+Required for New/Replace/Cancel/Query/Execution
+“0” Regular
+“2” Odd Lots
+“7” Fixed Price
+“C” Intrady odd lot trading
+“4” Lending Auction
+“5” Auction
+“6” Reverse Auction
+“B” Reverse Auction by Securities Finance Enterprises
+122
+OrigSendingTime
+UTCTimestamp
+N
+YYYYMMDD-HH:MM:SS.sss
+BeginString：必須是訊息的第一個欄位，其值請填FIX.4.4。
+BodyLength：必須是訊息的第二個欄位，其值為計算訊息長度欄位後至CheckSum欄位之前的位元組(Byte)總長度。
+MsgType：必須是訊息的第三個欄位，說明表身之FIX訊息類別。
+MsgSeqNum：訊息序號(每日流水編號，從1開始)，最大8位數字。
+PossDupFlag：資料重複傳送註記(Y =可能重複)。
+PossResend：資料重新發送註記(Y=可能重新發送)，交易所僅檢查OrderID有無重複。
+SenderCompID：傳送端代號，市場別(1碼)+證券商代號(4碼)+FIX Socket ID(2碼) 共7碼，表示建立此FIX Session之證券商，亦稱之為FIX Session ID。
+市場別：表示此FIX Session所要交易的市場代號(T：證交所 O：櫃檯)。
+證券商代號：表示建立FIX Session連線的證券商。
+FIX Socket ID：證券商在FIX競價設備申請表填入的FIX Socket ID，等同主機連線TMP格式中的[SOCKET-ID]。
+例如：填入T116001，代表是集中市場，證券商1160，FIX Socket ID為01的線路。
+SenderSubID：證券商代號(4碼)，表示委託所屬證券商代號。新單/改單/刪單/查詢時均為必要欄位。
+SendingTime：訊息傳送時間 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+TargetCompID：接收端代號，集中：XTAI及櫃檯：ROCO。(依據ISO 10383 Market Identifier Code標準)
+TargetSubID：交易盤別(1碼)，一般交易為0、盤後零股交易為2、盤後定價交易為7、盤中零股為C、標借為4、拍賣為5、一般標購為6、證金標購為B，等同現行主機連線TMP格式中的 [AP-CODE]。
+OrigSendingTime：原始訊息傳送時間 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。如為重送訊息時，該欄位必須存在。
+
+*對於SenderCompID、SenderSubID與TargetCompID、TargetSubID等欄位是依據訊息的發送方來決定資料內容，如果是證券商傳送訊息給交易所，SenderCompID代表的則是連線證券商的(市場別+券商代號＋FIX Socket ID)，TargetCompID則是集中：XTAI(或是櫃檯：ROCO)，反之，如果是交易所傳送訊息給證券商，SenderCompID則是集中：XTAI(或是櫃檯：ROCO)，TargetCompID為連線證券商的(市場別+券商代號＋FIX Socket ID)。
+
+參考訊息範例如下：
+範例1：
+證券商分公司1161透過總公司1160申請的FIX連線(FIX Socket ID為01)，進行集中市場一般交易委託作業，當證券商下單時，SenderCompID表示FIX連線的券商，SenderSubID則表示實際接受客戶委託下單的證券商。
+
+         Tag
+Direction
+SenderCompID
+(tag 49)
+SenderSubID
+(tag 50)
+TargetCompID
+(tag 56)
+TargetSubID
+(tag 57)
+Broker  TWSE
+T116001
+1161
+XTAI
+0
+TWSE  Broker
+XTAI
+0
+T116001
+1161
+
+範例2：
+證券商總公司1160的投資人使用總公司申請的FIX連線(FIX Socket ID為02)，進行集中市場零股委託作業，當證券商下單時，SenderCompID表示FIX連線的券商，SenderSubID則表示實際接受客戶委託下單的證券商。
+
+         Tag
+Direction
+SenderCompID
+(tag 49)
+SenderSubID
+(tag 50)
+TargetCompID
+(tag 56)
+TargetSubID
+(tag 57)
+Broker  TWSE
+T116002
+1160
+XTAI
+2
+TWSE  Broker
+XTAI
+2
+T116002
+1160
+
+標準表尾格式(Standard Trailer)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+10
+CheckSum
+String
+Y
+
+Checksum檢核機制
+是把每個字元的二進位元組(Byte)值，從訊息第一個欄位開始相加至Checksum欄位之前，得出總合除以256得到的餘數放入tag 10中做為Checksum檢核值。為了傳輸，Checksum需以可見字元傳送，所以轉換為三個ASCII數字。
+舉例來說，如果Checksum的檢核機制得出的數字為274，除以256取其餘數。這數值將會被帶在tag 10裡。
+
+Char *GenerateCheckSum( char *buf, long bufLen )
+{
+		static char tmpBuf[ 4 ];
+		long idx;
+		unsigned int cks;
+
+		for( idx=0L, cks=0; idx < bufLen; cks += (unsigned int)buf[ idx++ ] );
+			sprintf( tmpBuf, “%03d”, (unsigned int)( cks % 256 ) );
+		return( tmpBuf );	}
+交談層訊息(Session Level Messages)
+
+FIX協定中的交談層(Session Layer)類似現行主機連線中的“連線子系統”，用來建立連線、登入身份驗證檢查及訊息資料的一致性，包括登入訊息(Logon)、心跳訊息(Heartbeat)、測試請求訊息(Test Request)、重送請求訊息(Resend Request)、Session拒絕訊息(Reject – Session)、序號重設訊息(Sequence Reset)、登出訊息 (Logout)，以上訊息等同為管理類訊息(Administrative Messages)，各項訊息詳細說明如後。
+訊息格式中若有FIX 4.4不支援之Tag格式，會回覆Session拒絕訊息(Reject – Session)，若符合FIX 4.4之Tag格式，但本規範不支援，則交易所會忽略該欄位值。
+
+登入訊息(Logon)
+證券商要建立連線時，必需要先傳送登入訊息至交易所端，交易所端會依據登入訊息中的資料來驗證證券商的身份，如果檢查通過身份認證後，交易所即會回覆一個登入訊息給證券商，登入完成後即可開始後續作業。
+
+登入訊息(Logon)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = A
+98
+EncryptMethod
+Int
+Y
+‘0’ (no encryption)
+108
+HeartBtInt
+Int
+Y
+Heartbeat interval in seconds
+‘10’
+95
+RawDataLength
+Int
+Y
+Length of RawData
+‘5’
+96
+RawData
+data
+Y
+APPEND-NO + KEY-VALUE
+3 digits + 2 digits
+
+Standard Trailer
+
+Y
+
+
+MsgType：ALogon。
+Encrypt Method：0加密方法設定，目前為不加密。
+HeartBtInt：10心跳訊息間隔時間設定。在沒有傳送其他訊息的期間，固定傳送心跳訊息(HeartBeat)，為10秒傳送一次。
+RawDataLength：5 表示RawData中資料的位元組(Byte)長度(有效值=5)。
+RawData：RawData = APPEND-NO及KEY-VALUE。
+                  APPEND-NO由證券商每次隨機產生一組三位數字。                                       001 <= APPEND-NO <= 999。
+                  KEY-VALUE (APPEND-NO * PASSWORD)取千與
+百二位數字。
+PASSWORD  指證券商針對各FIX Session申請連線時所填入之密碼。
+ EMBED Visio.Drawing.11
+
+心跳訊息(Heartbeat)
+心跳訊息有下列二種使用時機：
+當連線任一方在(10秒，心跳訊息間隔)時間內沒有發送任何資料的時候，必須主動傳送一筆心跳訊息確認雙方連線正常。
+當連線任一方在心跳訊息間隔(HeartBtInt) +合理傳輸時間(20%  HeartBtInt)內都沒有收到任何訊息時，將傳送一筆測試請求訊息(Test Request)，此時接收端需要回覆一筆帶有TestReqID的心跳訊息，若在心跳訊息間隔(HeartBtInt) +合理傳輸時間(20% HeartBtInt)內，發起端仍未收到任何訊息，即認為此次連線失敗，發起端主動斷線後需再重新建立連線。
+
+心跳訊息(Heartbeat)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 0
+112
+TestReqID
+String
+N
+Required when the heartbeat is the result of a Test Request message.
+
+Standard Trailer
+
+Y
+
+
+TestReqID：請填入與測試請求訊息(Test Request)相同之TestReqID。為確認連線正常而傳送之心跳訊息，不需代入此欄位。
+
+測試請求訊息(Test Request)
+測試請求訊息可由連線任何一方發送，該訊息用來檢查訊息序號是否連續或是確認連線狀態，一旦收到此訊息後，接收端須回覆帶有TestReqID的心跳訊息(Heartbeat)。
+
+測試請求訊息(Test Request)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 1
+112
+TestReqID
+String
+Y
+This identifier should be returned in the Heartbeat response.
+
+Standard Trailer
+
+Y
+
+
+ TestReqID：為測試請求訊息序號。
+重送請求訊息(Resend Request)
+任何一方皆可由訊息序號(MsgSeqNum)的檢核察覺到是否有訊息缺漏，當有訊息缺漏時，可發送重送請求訊息(Resend Request)透過起始訊息序號與結束訊息序號來要求補傳訊息。
+
+重送請求訊息有以下三種使用方式：
+要求重送單筆訊息：BeginSeqNo = EndSeqNo。
+要求重送特定範圍內訊息：BeginSeqNo = 起始訊息序號，EndSeqNo = 結束訊息序號。
+例如：BeginSeqNo = 7, EndSeqNo = 9，此時表示重送第7筆資料到第9筆資料。
+要求重送某一特定訊息後的所有訊息：BeginSeqNo = 起始訊息序號，EndSeqNo = 0(至資料結束)。
+例如：BeginSeqNo = 7, EndSeqNo = 0，此時表示從第7筆資料到資料結束為止。
+
+重送請求訊息(Resend Request)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 2
+7
+BeginSeqNo
+int
+Y
+
+16
+EndSeqNo
+int
+Y
+
+
+Standard Trailer
+
+Y
+
+
+BeginSeqNo：起始訊息序號。
+EndSeqNo：結束訊息序號，當其值為0時表示重送起始訊息序號(含)後所有訊息。
+
+Session拒絕訊息(Reject – Session Level)
+當接收端收到一筆未通過FIX tag檢核之訊息時，應發送Session拒絕訊息。訊息未通過檢核之錯誤內容會置於Text(58)中。RefTagID(371)表示該tag欄位未通過驗證，RefSeqNum(45)表示被拒絕之訊息序號。
+
+Session拒絕訊息(Reject – Session Level)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 3
+45
+RefSeqNum
+int
+Y
+MsgSeqNum of rejected message
+371
+RefTagID
+int
+N
+The tag failing validation
+372
+RefMsgType
+String
+N
+MsgType of the message in error
+373
+SessionRejectReason
+int
+N
+Refer to FIX documentation
+58
+Text
+String
+N
+Message to explain the error
+
+Standard Trailer
+
+Y
+
+
+RefSeqNum：被拒絕之訊息序號。
+RefTagID：被拒絕之tag欄位。
+RefMsgType：被拒絕之訊息類別。
+SessionRejectReason：Session層reject的原因。
+0= Invalid tag number
+1 = Required tag missing
+2 = Tag not defined for this message type
+3 = Undefined Tag
+4 = Tag specified without a value
+5 = Value is incorrect (out of range) for this tag
+6 = Incorrect data format for value
+9 = CompID problem
+10 = SendingTime accuracy problem
+11 = Invalid MsgType
+Text：回覆訊息說明(無特定長度)。
+格式：Message Direction + “-” + Reject Status + “-” + Reject Modifier
+訊息來源(Message Direction)：1: Inbound messages
+錯誤代碼(Reject Status)：請參考第八章Session拒絕訊息(Reject – Session Level)。
+詳細回覆訊息說明(Reject Modifier)。
+例如：58=CODE: 1-1-21 VALUE OUT OF BOUNDS: Value out of bounds. Field: HandlInst (tag #21) Value: 4 Bounds: handlinst
+序號重設訊息(Sequence Reset)
+序號重設訊息(Sequence Reset)依訊息遺失填補標誌GapFillFlag(123)可分為兩種方式，填補模式或重設模式。
+填補模式(Gap Fill) – Y
+接收端收到重送要求訊息(Resend Request)後，不想重複發送某些訊息時使用(例如：過時的委託、Heart Beats、Test Requests)。
+舉例來說，如果發起端發送一筆重送請求訊息(Resend Request)，請求重發5~10筆訊息。訊息序號及訊息類別如下:
+訊息序號
+訊息類別
+訊息內容
+5
+交談層訊息(Session Level Message)
+心跳訊息(Heartbeat)
+35=0
+6
+交談層訊息(Session Level Message)
+心跳訊息(Heartbeat)
+35=0
+7
+應用類訊息(Application Message)
+新單委託訊息
+(New Order Single)
+35=D
+8
+應用類訊息(Application Message)
+改單委託訊息
+(Order Cancel/Replace Request)
+35=G
+9
+交談層訊息(Session Level Message)
+心跳訊息(Heartbeat)
+35=0
+10
+交談層訊息(Session Level Message)
+心跳訊息(Heartbeat)
+35=0
+
+接收端回覆方式：
+交談層訊息(Session Level Message)僅傳送Session拒絕訊息(Reject – Session)；應用類訊息(Application Message)全部重送。
+35=4 | 34=5 | 36=7 | 123=Y  原要求重送序號第5筆，重設新序號為第7筆
+35=D | 34=7 | 43=Y        重送第7筆資料，資料重複傳送註記設為Y
+35=G | 34=8 | 43=Y        重送第8筆資料，資料重複傳送註記設為Y
+35=4 | 34=9 |36=11 |123=Y  原要求重送序號第9筆，重設新序號為第11筆
+
+重設模式(Reset) – N或欄位值不存在
+只能用在災難復原的情況下，當發起端的資料已經損毁無法回復，需使用重設模式，設定新序號。
+
+序號重設訊息(Sequence Reset)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 4
+123
+GapFillFlag
+Boolean
+N
+Normally present and set to “Y”
+36
+NewSeqNo
+int
+Y
+Must only increase expected SeqNo
+
+Standard Trailer
+
+Y
+
+
+GapFillFlag：‘Y’(填補模式)，‘N’(重設模式)。
+NewSeqNo：新訊息序號，於重設模式(Reset)時，需大於既有序號。
+登出訊息(Logout)
+使用時機有下列三種情況：
+證券商登入失敗時，交易所回覆登出訊息，tag 58代入登出原因。
+每日業務處理完畢，證券商可透過登出訊息來進入離線狀態。
+交易所主動發送的登出訊息(Logout)，例如每日日結、異常狀況處理時，tag 58代入登出原因。
+
+沒有送出登出訊息(Logout)就斷線會被視為不正常的斷線。當發起端送出登出訊息(Logout)給接收端後，接收端必須回覆登出訊息(Logout)，以利接收端確認連線正常結束，這段時間除了接收端要求的重送訊息，發起端不能再送出任何訊息。
+如果發起端超過Timeout時間(目前設定5秒)都沒有收到接收端的登出訊息(Logout)，會主動中斷連線。
+
+登出訊息(Logout)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 5
+58
+Text
+String
+N
+
+
+Standard Trailer
+
+Y
+
+
+Text：登出訊息說明(無特定長度)。
+請參考登入作業回覆訊息狀態代碼。
+
+例如：
+Ex.   58=1202-KEY-VALUE ERROR。
+Ex.   58=<license-id> + Connection close on socket。
+ EMBED Visio.Drawing.11
+應用類訊息(Application Messages)
+
+FIX協定中的應用層(Application Layer)則類似現行主機連線中的“交易子系統”。提供新單委託訊息(New Order Single)、改單委託訊息(Order Cancel/Replace Request)、刪單委託訊息(Order Cancel Request)、委託狀態查詢訊息(Order Status Request)、委託/成交回報訊息(Execution Report)、刪單/改單委託失敗訊息(Order Cancel Reject)。
+訊息格式中若有FIX 4.4不支援之Tag格式，會回覆Session拒絕訊息(Reject – Session)，若符合FIX 4.4之Tag格式，但本規範不支援，則交易所會忽略該欄位值。
+新單委託訊息(New Order Single)
+
+新單委託訊息(New Order Single)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = D
+11
+ClOrdID
+String
+Y
+ClOrdID is a unique ID code provided by the broker when placing an order. In cancel and quantity change order, ClOrdID and OrigClOrdID are correlated.
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 char
+1
+Account
+String
+Y
+Exchange Account No
+[IVACNO]
+7 digits
+55
+Symbol
+String
+Y
+[STOCK-NO]
+6 char
+54
+Side
+Char
+Y
+‘1’ Buy
+‘2’ Sell
+
+Auction
+‘1’ Buy only
+Lending Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Sell only
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+38
+OrderQty
+Qty
+Y
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+Y
+Regular
+‘1’ Market Price
+
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Limit Price
+59
+TimeInForce
+Char
+Y
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Day
+
+Regular
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+44
+Price
+Price
+Y
+Max 5 digits + 4 decimals
+Regular(Limit Price), OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+
+Order Price
+Regular(Market Price)
+Fill 0 only
+FixedPrice
+Ignored
+1080
+RefOrderID
+Char
+N
+Reverse Auction, Reverse Auction by Securities Finance Enterprises Only
+[STK-SEQ-NO]
+2 char
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Trailer
+
+Y
+
+
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)，在刪單/改單委託時，原始ClOrdID (11)需帶入OrigClOrdID(41)。
+OrderID：委託書編號(5碼文數字) ，範圍為0~9、A~Z、a~z，SenderSubID+OrderID在每個交易日中必須是唯一的。
+Account：投資人帳號(7位數字)。
+Symbol：股票代號(6碼)。
+Side：買賣別‘1’ Buy、‘2’Sell。
+TransactTime：委託時間 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+OrderQty：委託數量。一般、盤後定價交易(交易單位)、盤後零股交易(股數)、盤中零股交易(股數)、標借(交易單位)，最多6位數字；拍賣、一般標購與證金標購(交易單位)，最多12位數字。
+OrdType：委託方式，‘1’ 市價、‘2’ 限價。
+TimeInForce：委託時效類別註記。
+一般、盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購、證金標購
+‘0’ 當日有效
+一般
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+Price：委託價格(5位整數+4位小數)，當盤後定價交易時，交易所忽略此欄位；一般交易的市價委託時，須輸入0。
+TwseIvacnoFlag：委託管道。
+‘1’ 一般(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ 網際網路(FIX)
+‘5’ 語音(FIX)
+‘6’ API(FIX)
+TwseOrdType：委託類別。
+一般、盤後定價
+‘0’ 一般(非融資融券)
+‘1’ 融資(證金)
+‘2’ 融券(證金)
+‘3’ 融資(自辦)
+‘4’ 融券(自辦)
+‘5’ 借券賣出(券5)
+‘6’ 借券賣出(券6)
+盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+‘0’ 一般(非融資融券)
+TwseExCode：
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+TwseRejStaleOrd：逾時註記，當交易所FIX Gateway傳送證券商委託訊息至內部撮合引擎時，是否檢核TransactTime已超過交易所FIX Gateway系統時間五秒鐘。（執行時間另行公告）
+一般
+Y 檢查TransactTime是否逾時，如已逾時，則回覆委託失敗。
+N 不檢查TransactTime。
+盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+忽略。
+
+改單委託訊息(Order Cancel / Replace Request)
+改單委託訊息含改(減)量委託、改價委託、改量委託和改價量委託四種訊息。
+改(減)量委託：一般、盤後零股、盤中零股、盤後定價，可執行改(減)量委託，價格欄位需輸入0。
+改價委託：一般交易可執行改價委託，數量欄位需輸入0。
+改量委託：標借交易僅可以改量，價格欄位需輸入原始價格。
+改價量委託：拍賣、一般標購與證金標購交易可同時更改價格與數量。
+
+改單委託訊息(Order Cancel / Replace Request)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = G
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order (NOT the initial order of the day) when canceling or replacing an order.
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 char
+Must match original order.
+1
+Account
+String
+Y
+Must match original order.
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+38
+OrderQty
+Qty
+Y
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+Y
+Regular
+‘1’ Market Price
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Limit Price
+44
+Price
+Price
+Y
+Max 5 digits + 4 decimals
+Regular
+If change OrderQty, Price must be 0
+
+Fixed Price
+Ignored
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin (Via Securities Finance)
+‘2’ Short Sell (Via Securities Finance)
+‘3’ Purchase on Margin (Via Securities Firms)
+‘4’ Short Sell (Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Trailer
+
+Y
+
+
+OrigClOrdID：在刪單/改單委託時，請填入上一筆委託單之唯一識別碼ClOrdID。
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)。
+OrderID：委託書編號(5碼文數字) ，範圍為0~9、A~Z、a~z。
+Account：投資人帳號。
+Symbol：股票代號(6碼)。
+Side：買賣別‘1’ Buy、‘2’Sell。
+TransactTime：委託時間 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+OrderQty：委託數量，一般、盤後定價、盤後零股、盤中零股、標借，最多6位數字；拍賣、一般標購與證金標購，最多12位數字。改(減)量委託數量為欲減少之數量（交易單位）。
+OrdType：委託方式，‘1’ 市價、‘2’ 限價。
+Price：委託價格(5位整數+4位小數)。
+TwseIvacnoFlag：委託管道。
+‘1’ 一般(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ 網際網路(FIX)
+‘5’ 語音(FIX)
+‘6’ API(FIX)
+TwseExCode：
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+TwseRejStaleOrd：逾時註記，當交易所FIX Gateway傳送證券商委託訊息至內部撮合引擎時，是否檢核TransactTime已超過交易所FIX Gateway系統時間五秒鐘。（執行時間另行公告）
+一般
+Y 檢查TransactTime是否逾時，如已逾時，則回覆委託失敗。
+N 不檢查TransactTime。
+盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+忽略。
+刪單委託訊息(Order Cancel Request)
+
+刪單委託訊息(Order Cancel Request)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = F
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order (NOT the initial order of the day) when canceling or replacing an order.
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 char
+Must match original order
+1
+Account
+String
+Y
+Must match original order
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Trailer
+
+Y
+
+
+OrigClOrdID：在刪單委託時，請填入上一筆委託單之唯一識別碼ClOrdID。
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)。
+OrderID：委託書編號(5碼文數字) ，範圍為0~9、A~Z、a~z。
+Account：投資人帳號。
+Symbol：股票代號(6碼)。
+Side：買賣別‘1’ Buy、‘2’Sell。
+TransactTime：委託時間 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+TwseIvacnoFlag：委託管道。
+‘1’ 一般(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ 網際網路(FIX)
+‘5’ 語音(FIX)
+‘6’ API(FIX)
+TwseExCode：
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+TwseRejStaleOrd：逾時註記，當交易所FIX Gateway傳送證券商委託訊息至內部撮合引擎時，是否檢核TransactTime已超過交易所FIX Gateway系統時間五秒鐘。（執行時間另行公告）
+一般
+Y 檢查TransactTime是否逾時，如已逾時，則回覆委託失敗。
+N 不檢查TransactTime。
+盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+忽略。
+委託狀態查詢訊息(Order Status Request)
+
+證券商可透過委託狀態查詢訊息查詢該筆委託目前狀態，交易所將透過委託/成交回報訊息(Execution Report)回覆，可由委託剩餘有效量LeavesQty(151)取得委託剩餘有效量，由目前已成交數量CumQty(14)取得目前已成交數量。此時實際委託成功數量OrderQty(38)與委託剩餘有效量LeavesQty(151)相同。
+
+委託狀態查詢訊息(Order Status Request)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = H
+11
+ClOrdID
+String
+Y
+ClOrdID of the order to query
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 char
+Must match original order
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice
+‘2’ OddLots, Intraday odd lot trading
+
+Standard Trailer
+
+Y
+
+
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)。
+OrderID：委託書編號(5碼文數字) ，範圍為0~9、A~Z、a~z。
+Symbol：股票代號(6碼)。
+Side：買賣別‘1’ Buy、‘2’Sell。
+TwseIvacnoFlag：委託管道
+‘1’  一般(FIX)
+‘2’  ATM(FIX)
+‘3’  DMA Order(FIX)
+‘4’  網際網路(FIX)
+‘5’  語音(FIX)
+‘6’  API(FIX)
+TwseExCode：。
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+委託/成交回報訊息(Execution Report)
+
+委託/成交回報訊息(Execution Report)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 8
+37
+OrderID
+String
+Y
+[ORDER-NO]
+11
+ClOrdID
+String
+N
+Unique ID
+12 char
+41
+OrigClOrdID
+String
+N
+ClOrdID of the previous order
+(NOT the initial order of the day) when canceling or replacing an order.
+17
+ExecID
+String
+Y
+Order reports
+unique serial number
+ClOrdID
+(will be 0(zero) for ExecType=I))
+12 char
+
+Trade reports
+Unique number
+Side + Market trx no
+12 char
+150
+ExecType
+Char
+Y
+‘0’ New
+‘4’ Canceled
+‘5’ Replace
+‘8’ Rejected(Ref. Tag 58)
+‘F’ Trade
+‘I’ Order Status
+‘D’ Restated(Ref. Tag 378)
+39
+OrdStatus
+Char
+Y
+‘0’ New
+‘1’ Partial fill
+‘2’ Fill
+‘4’ Canceled
+‘8’ Rejected(Ref. Tag 58)
+103
+OrdRejReason
+int
+N
+Only exists when status code != 00
+99 = Other
+378
+ExecRestatementReason
+int
+N
+Only exists when unsolicited cancel by Exchange
+8 Exchange option
+1
+Account
+String
+N
+Exchange Account No
+[IVACNO]
+7 digits
+55
+Symbol
+String
+Y
+[STOCK-NO]
+6 char
+54
+Side
+Char
+Y
+‘1’ Buy
+‘2’ Sell
+
+Auction
+‘1’ Buy only
+Lending Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Sell only
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+Order Report
+[ORDER-TIME]
+
+Trade Report
+[MTHTIME]
+38
+OrderQty
+Qty
+N
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+N
+Regular
+‘1’ Market Price
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Limit Price
+59
+TimeInForce
+Char
+N
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Day
+Regular
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+44
+Price
+Price
+N
+Order Price
+Max 5 digits + 4 decimals
+32
+LastQty
+Qty
+N
+Match quantity
+Max 6 digits
+[MTHQTY]
+Regular, FixedPrice
+trading unit
+
+OddLots, Intraday odd lot trading
+Shares
+
+Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+  0
+31
+LastPx
+Price
+N
+Match price
+Max 5 digits + 4 decimals
+151
+LeavesQty
+Qty
+Y
+Amount of quantity open for further execution
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+[AFTER-QUANTITY]
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+trading unit
+
+OddLots, Intraday odd lot trading
+Shares
+14
+CumQty
+Qty
+Y
+Currently executed quantity
+Max 6 digits
+Regular, FixedPrice
+trading unit
+
+OddLots, Intraday odd lot trading
+shares
+
+Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+  0
+6
+AvgPx
+Price
+Y
+‘0’
+58
+Text
+String
+N
+status code + status msg text Maximum 100 char
+1080
+RefOrderID
+Char
+N
+Reverse Auction, Reverse Auction by Securities Finance Enterprises Only
+[STK-SEQ-NO]
+2 char
+10000
+TwseIvacnoFlag
+Char
+N
+Order reports only
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+N
+[ORDER-TYPE]
+Regular, FixedPrice
+‘0’ Normal‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+N
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+
+Standard Trailer
+
+Y
+
+
+OrderID：委託書編號(5碼文數字) ，範圍為0~9、A~Z、a~z。
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)。
+OrigClOrdID：上一筆委託單之唯一識別碼ClOrdID。
+ExecID： 委託回報(ClOrdID，12碼)。委託狀態查詢回報時，該值為0。 成交回報(12碼序號)，唯一識別碼。
+ExecType：委託執行狀態
+“0” 委託成功
+“4” 刪單成功
+“5” 改單成功
+“8” 錯誤，參考Text(58)
+“F” 部分成交/全部成交
+“I” 委託狀態
+“D” 狀態更新
+OrdStatus：委託狀態。
+OrdRejReason：委託回覆代碼，當[STATUS-CODE]不為00時，該欄位為必要欄位，欄位值固定為99 - Other，詳細原因請參考Text(58)。
+Account：投資人帳號。
+Symbol：股票代號(6碼)。
+Side：買賣別‘1’ Buy、‘2’Sell。
+TransactTime：交易時間(委託回報[ORDER-TIME]/成交回報[MTHTIME]) 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+OrderQty：委託數量，一般、盤後定價、盤後零股、盤中零股、標借，最多6位數字；拍賣、一般標購與證金標購，最多12位數字。改(減)量委託數量為欲減少之數量（交易單位）。 等同現行主機連線TMP格式中([BEFORE-QUANTITY]-[AFTER-QUANTITY]後取絕對值)
+OrdType：委託方式，‘1’ 市價、‘2’ 限價。
+TimeInForce：委託時效類別註記。
+一般、盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+‘0’ 當日有效
+一般
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+Price：委託價格(5位整數+4位小數)。
+LastQty：本次成交數量，同現行主機連線TMP格式中的[MTHQTY]，最多6位數字，一般、盤後定價交易、標借、拍賣、一般標購與證金標購(交易單位)，盤後零股交易、盤中零股交易(股數)。
+LastPx：成交價格，(5位整數+4位小數)。
+LeavesQty：委託剩餘有效量，同現行主機連線TMP格式中的[AFTER-QUANTITY ]，一般、盤後定價、盤後零股、盤中零股、標借，最多6位數字；拍賣、一般標購與證金標購，最多12位數字。
+CumQty：目前已成交數量，最多6位數，一般、盤後定價交易、標借、拍賣、一般標購與證金標購(交易單位)，盤後零股交易及盤中零股交易(股數)。
+AvgPx：均價，其值為0。
+Text：訊息說明(最多100位字元)。Status Code + 訊息內容，請參考第八章各交易子系統回報訊息代碼。
+TwseIvacnoFlag：委託管道。 ‘1’ 一般(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ 網際網路(FIX)
+‘5’ 語音(FIX)
+‘6’ API(FIX)
+TwseOrdType：委託類別。
+一般、盤後定價
+‘0’ 一般(非融資融券)
+‘1’ 融資(證金)
+‘2’ 融券(證金)
+‘3’ 融資(自辦)
+‘4’ 融券(自辦)
+‘5’ 借券賣出(券5)
+‘6’ 借券賣出(券6)
+盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+‘0’ 一般(非融資融券)
+TwseExCode：
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+注意事項：
+委託回報
+新單委託回報不回Pending New。
+請參考實際委託成功數量OrderQty(38)及委託剩餘有效量LeavesQty(151) 。
+本次成交數量LastQty(32)為0。
+請透過訊息說明Text(58)取得訊息詳細說明。
+
+成交回報
+現行主機連線TMP成交回報將包含所有TMP及FIX完整回報資料，FIX的成交回報只回覆經由FIX作業平台進行新單委託的回報資料。
+請參考目前已成交數量CumQty(14)及本次成交數量LastQty(32)。
+委託數量OrderQty(38)及委託剩餘有效量LeavesQty(151)皆會為0。
+不計算均價AvgPx (6)，其值皆為0。
+刪單/改單委託失敗訊息(Order Cancel Reject)
+
+刪單/改單委託失敗訊息(Order Cancel Reject)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = 9
+37
+OrderID
+String
+Y
+[ORDER-NO]
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order
+(NOT the initial order of the day) when canceling or replacing an order.
+39
+OrdStatus
+Char
+Y
+Current order status.
+‘8’ Rejected(Ref. Tag 58)
+1
+Account
+String
+N
+Exchange Account No
+[IVACNO]
+7 digits
+60
+TransactTime
+UTCTimestamp
+N
+YYYYMMDD-HH:MM:SS.sss
+Order Report
+[MESSAGE-TIME]
+434
+CxlRejResponseTo
+Char
+Y
+Identifies the type of request
+1 – Order Cancel Request
+2 – Order Cancel/Replace Request
+102
+CxlRejReason
+int
+N
+99 = Other
+58
+Text
+String
+N
+status code + msg text
+Maximum 100 char
+
+Standard Trailer
+
+Y
+
+
+OrderID：委託書編號(5碼文數字)，範圍為0~9、A~Z、a~z。
+ClOrdID：唯一識別碼，12位文數字(在每個交易日中必須是唯一的)。
+OrigClOrdID：上一筆委託單之唯一識別碼ClOrdID。
+OrdStatus：委託狀態。
+Account：投資人帳號。
+TransactTime：交易時間[MESSAGE-TIME] 年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)。
+CxlRejResponseTo：回覆訊息要求類別，‘1’ 刪單委託訊息(Order Cancel Request)、‘2’ 改單委託訊息(Order Cancel/Replace Request)。
+CxlRejReason：委託錯誤代碼，99 = Other。
+Text：訊息說明(最長100字元)。Status Code + 訊息內容請參考第八章各交易子系統訊息代碼。
+業務檢核失敗訊息(Business Message Reject)
+
+業務檢核失敗訊息(Business Message Reject)
+Tag
+Field Name
+Data Type
+Req’d
+Comments
+
+Standard Header
+
+Y
+MsgType = j
+45
+RefSeqNum
+int
+N
+MsgSeqNum of rejected message
+372
+RefMsgType
+String
+Y
+The MsgType of the FIX message being referenced.
+380
+BusinessRejectReason
+Int
+Y
+Code to identify reason for a Business Message Reject message.
+3 = Unsupported Message Type
+58
+Text
+String
+N
+status code + msg text
+Maximum 100 char
+
+Standard Trailer
+
+Y
+
+
+RefSeqNum：被拒絕之訊息序號。
+RefMsgType：被拒絕之訊息類別。
+BusinessRejectReason：Reject的原因 3 – 不支援的訊息類別。
+Text：訊息說明(最長100字元)。Status Code + 訊息內容請參考第八章各交易子系統錯誤訊息代碼。
+回報訊息處理說明
+因證券商端之畫面及報表皆是由提供系統之資訊公司或證券商之電腦部門所設計，所以畫面及訊息各家不同，由前面之介紹可了解交易所與證券商之間資料傳遞之基本架構及格式，如果有異常情況發生時，請先依提供系統之資訊公司或證券商電腦部門所編之使用手冊處理，如果狀況仍無法排除，請記住當時的狀況及訊息，並與交易所電腦規劃部連絡。以下訊息是由交易所電腦主機傳給證券商，證券商所看到的訊息不一定與下表完全相同(因所採用之電腦系統而有所差別)，在此僅將交易所電腦主機所產生之訊息及處理方式說明如下，以供參考。
+
+Session拒絕訊息(Reject – Session Level) 回覆訊息狀態代碼
+Reject Status
+訊息內容
+證券商應辦理事項
+0
+格式錯誤(Bad Format)
+檢查並更正FIX格式
+1
+值超出範圍(Value out of Bounds)
+檢查並更正錯誤欄位內容
+2
+必要欄位缺漏(Missing Required Fields)
+檢查並更正缺漏欄位
+4
+未知欄位(Unknown Field)
+檢查並更正錯誤欄位
+5
+欄位空白(Field Empty)
+檢查並更正錯誤欄位內容
+6
+欄位失序(Field Out of Order)
+檢查並更正欄位次序
+10
+不正確標籤號碼(Invalid Tag Number)
+檢查並更正錯誤欄位
+11
+非RawData欄位包含SOH區隔符號(Non-RawData Field Contains SOH-Delimiter)
+檢查並更正錯誤欄位內容
+100
+訊息組合錯誤(Message Malformed)
+檢查並更正訊息內容
+101
+未知訊息類別(Message Type Unknown)
+檢查並更正訊息類別
+110
+非法或遺漏CompID
+(Illegal or Missing CompID)
+檢查並更正CompID
+114
+資料長度錯誤(Incorrect Data Length)
+檢查並更正Checksum欄位
+201
+違反選擇性Session規則
+(Optional Session Rule Violated)
+前三欄位檢核(tag 8/9/35)檢查並更正上述欄位順序
+204
+Session登入封鎖(Session Logon Blocked) Suspend
+聯絡交易所
+205
+Session約束(Session On Hold)
+聯絡交易所
+
+
+登入作業回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+1201
+RawData NOT FOUND
+ 35=5
+檢查並更正RawData
+1202
+KEY-VALUE ERROR
+ 35=5
+檢查並更正KEY-VALUE
+1203
+APPEND-NO EQUAL 0
+35=5
+檢查並更正APPEND NO
+1204
+RawDataLength NOT FOUND
+35=5
+檢查並更正RawDataLength
+1205
+TargetSubID ERROR
+35=8/9
+檢查並更正TargetSubID
+1206
+MsgType ERROR
+35=j
+檢查並更正MsgType
+1207
+HeartBtInt Value ERROR
+35=5
+檢查並更正HeartBtInt
+1208
+RawDataLength Value ERROR
+35=5
+檢查並更正RawDataLength
+1209
+HeartBtInt NOT FOUND
+35=5
+檢查並更正HeartBtInt
+1286
+TRADE SUSPENDED
+35=5
+進入離線狀態
+一般交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+0001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+0002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+0003
+QUERY LATER ON
+35=8
+撮合中，稍待再查詢
+0004
+WAIT FOR MATCH
+35=8/9
+撮合中，稍待再輸入委託
+0005
+ORDER NOT FOUND
+35=8/9
+檢查成交回報是否已成交或檢查各欄位是否有誤
+0011
+CHANGE ORDER ERROR
+35=9
+改單時，價格與數量不可同時輸入值或零。
+0012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+0013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+0014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+0016
+TERM-ID ERROR
+35=8/9
+檢查並更正終端機代號
+FIX欄位OrderID第一碼
+0018
+SEQ-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID後四碼
+0019
+IVACNO-FLAG
+35=8/9
+檢查並更正投資人下單類別註記
+FIX欄位TwseIvacnoFlag
+0020
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+0021
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+0022
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+0024
+BUY-SELL-CODE ERROR
+35=8/9
+檢查並更正買賣別
+FIX欄位Side
+0025
+ORDER TYPE ERROR
+35=8/9
+檢查並更正委託種類
+FIX欄位TwseOrdType
+0026
+EXCHANGE-CODE ERROR
+35=8/9
+檢查並更正交易別
+FIX欄位TwseExCode
+0027
+Dealer is not allowed to trade
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+0028
+FOREIGNER NOT ALLOWED
+35=8
+該股票不允許外資交易
+0029
+TRUST TRADE VIOLATE
+35=8/9
+檢查並更正委託種類
+FIX欄位TwseOrdType
+0030
+QUANTITY OVER LIMIT
+35=8
+外資買進或借券賣出超過委託額度
+0031
+QUANTITY WAS CUT
+35=8
+外資買進、借券賣出委託數量被刪減
+IOC委託可成交部分之委託數量生效，剩餘委託數量剔退
+0032
+DELETE OVER QUANTITY
+35=8
+取消數量超過原有數量
+0033
+CHANGE，DELETE OR QUERY ONLY
+35=8
+總委託金額超過限額，只允許取消，改單及查詢
+0035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+檢查並更正委託數量 (異常股票6000萬)
+0036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+檢查並更正委託數量(異常股票6000萬)
+0038
+Short sell forbidden
+35=8
+檢查委託資料，該股票非借券標的，或不允許借券賣出
+FIX欄位TwseOrdType
+0040
+Duplicate OrderID
+35=8
+請按順序編委託書編號
+FIX欄位OrderID
+0043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+0045
+Stock closed
+35=8
+請檢查委託資料，該股票已收盤不允許輸入委託。
+0046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+0047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+0048
+IOC, FOK Not Fill
+35=8
+IOC、FOK委託未能成交，請重新輸入委託
+0049
+Market, IOC, FOK forbidden
+35=8
+集合競價時段不可輸入市價、IOC、FOK委託
+0050
+No LeavesQty
+35=8/9
+檢查成交回報是否已成交
+0051
+QUANTITY WAS CUT
+35=8
+委託觸及價格穩定措施上、下限價格，市價、IOC委託可成交部分之委託數量生效，剩餘委託數量剔退
+0052
+Intra-day Volatility Interruption
+35=8
+委託觸及價格穩定措施上、下限價格，市價、IOC、FOK未能成交，請重新輸入委託
+0053
+Change Price Forbidden
+35=9
+改價僅可限價改限價，委託申報受限證券不接受改價委託，請取消原委託後再新增
+0089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+0097
+Time Difference
+35=8/9
+傳送時間逾時,請重新輸入委託
+FIX欄位TransactTime
+盤後定價交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+7001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+7002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+7005
+ORDER NOT FOUND
+35=8/9
+檢查成交回報是否已成交或檢查各欄位是否有誤
+7012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+7013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+7014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+7016
+TERM-ID ERROR
+35=8/9
+檢查並更正終端機代號
+FIX欄位OrderID第一碼
+7018
+SEQ-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID後四碼
+7019
+IVACNO-FLAG
+35=8/9
+檢查並更正投資人下單類別註記
+FIX欄位TwseIvacnoFlag
+7020
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+7021
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位 Price
+7022
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+7024
+BUY-SELL-CODE ERROR
+35=8/9
+檢查並更正買賣別
+FIX欄位Side
+7025
+ORDER TYPE ERROR
+35=8/9
+檢查並更正委託種類
+FIX欄位TwseOrdType
+7026
+EXCHANGE-CODE ERROR
+35=8/9
+檢查並更正交易別
+FIX欄位TwseExCode
+7027
+Dealer is not allowed to trade
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+7029
+TRUST TRADE VIOLATE
+35=8/9
+檢查並更正委託種類
+FIX欄位TwseOrdType
+7030
+QUANTITY OVER LIMIT
+35=8
+外資買進或借券賣出已無委託額度
+7031
+QUANTITY WAS CUT
+35=8
+外資買進或借券賣委託數量被刪減
+7032
+DELETE OVER QUANTITY
+35=8
+取消數量超過原有數量
+7033
+CHANGE，DELETE OR QUERY ONLY
+35=8
+總委託金額超過限額，只允許取消，改量及查詢
+7035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+檢查並更正委託數量 (異常股票6000萬)
+7036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+檢查並更正委託數量(異常股票6000萬)
+7038
+Short sell forbidden
+35=8
+盤後定價交易價格低於參考價，不得融券或借券賣
+FIX欄位TwseOrdType
+7039
+Proprietary trade forbidden
+35=8
+盤後定價交易價格為漲跌停，自營商不得買賣
+7040
+Duplicate OrderID
+35=8
+請按順序編委託書編號
+FIX欄位OrderID
+7041
+SBL NOT ALLOWED
+35=8
+檢查委託資料，該股票非借券標的，或不允許借券賣出
+7043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+7046
+OrdType Error
+35=8/9
+檢查並更正委託方式
+FIX欄位OrdType
+7047
+TimeInForce Error
+35=8
+檢查並更正委託時效類別註記
+FIX欄位TimeInForce
+7089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+盤後零股交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+2001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+2002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+2012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+2013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+2014
+OrderQty ERROR
+35=8/9
+委託股數須為1至999
+FIX欄位OrderQty
+2017
+OrderID ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID後四碼
+2018
+BUY-SELL-CODE ERROR
+35=8/9
+檢查並更正買賣別
+FIX欄位Side
+2019
+EXCHANGE-CODE ERROR
+35=8/9
+檢查並更正交易種類
+FIX欄位TwseExCode
+2020
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+2021
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+2022
+STOCK-NO NOT ALLOWED
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+2023
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+2024
+ORDER NOT FOUND
+35=8/9
+檢查委託書編號是否有誤
+FIX欄位OrderID
+2025
+Account NOT ALLOWED
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+2026
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位 Price
+2027
+Dealer is not allowed to trade
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+2030
+FOREIGNER NOT ALLOWED
+35=8
+該股票不允許外資交易
+2031
+QUANTITY OVER LIMIT
+35=8
+外資買進已無委託額度
+2032
+QUANTITY WAS CUT
+35=8
+外資買進委託數量被刪減
+2033
+WAIT A MOMENT
+35=8
+處理中，稍待再輸入委託
+2035
+CHANGE，DELETE OR QUERY ONLY
+35=8
+總委託金額超過限額，只允許取消，改量(減量)及查詢
+2036
+DELETE OVER QUANTITY
+35=8
+減量委託數量超過原有數量
+2037
+IVACNO-FLAG
+35=8/9
+檢查並更正投資人下單類別註記
+FIX欄位TwseIvacnoFlag
+2043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+2045
+ORDER TYPE ERROR
+35=8/9
+檢查並更正委託類別註記
+FIX欄位TwseOrdType
+2046
+OrdType Error
+35=8/9
+檢查並更正委託方式
+FIX欄位OrdType
+2047
+TimeInForce Error
+35=8
+檢查並更正委託時效類別註記
+FIX欄位TimeInForce
+2089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+盤中零股交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+C001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+C002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+C005
+ORDER NOT FOUND
+35=8/9
+檢查成交回報是否已成交或檢查各欄位是否有誤
+C011
+CHANGE ORDER ERROR
+35=9
+改單時，價格與數量不可同時輸入值或零。
+C012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+C013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+C014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+C018
+ORDER-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+C019
+IVACNO-FLAG
+35=8/9
+檢查並更正投資人下單類別註記
+FIX欄位TwseIvacnoFlag
+C020
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+C021
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+C022
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+C024
+BUY-SELL-CODE ERROR
+35=8/9
+檢查並更正買賣別
+FIX欄位Side
+C025
+ORDER TYPE ERROR
+35=8/9
+檢查並更正委託種類
+FIX欄位TwseOrdType
+C026
+EXCHANGE-CODE ERROR
+35=8/9
+檢查並更正交易別
+FIX欄位TwseExCode
+C027
+Dealer is not allowed to trade
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+C028
+FOREIGNER NOT ALLOWED
+35=8
+該股票不允許外資交易
+C030
+QUANTITY OVER LIMIT
+35=8
+外資買進超過委託額度
+C031
+QUANTITY WAS CUT
+35=8
+外資買進委託數量被刪減
+C032
+DELETE OVER QUANTITY
+35=8
+減量數量超過原有數量
+C033
+CHANGE，DELETE OR QUERY ONLY
+35=8
+總委託金額超過限額，只允許取消，改量及查詢
+C035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+今日買入委託申報受限股票金額超過證券商可買入金額，請檢查數量
+C036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+今日賣出委託申報受限股票金額超過證券商可賣出金額，請檢查數量
+C040
+Duplicate OrderID
+35=8
+請按順序編委託書編號
+FIX欄位OrderID
+C043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+C046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+C047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+C050
+No LeavesQty
+35=8/9
+檢查成交回報是否已成交
+C089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+C097
+Time Difference
+35=8/9
+傳送時間逾時,請重新輸入委託
+FIX欄位TransactTime
+
+標借交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+4001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+4002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+4012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+4013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+4014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+4017
+ORDER-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+4018
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+4019
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+4020
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量
+FIX欄位OrderQty
+4021
+STOCK-NO NOT ALLOWED
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+4022
+Duplicate OrderID
+35=8
+檢查並更正委託書編號
+FIX欄位OrderID
+4046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+4047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+4089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+
+拍賣交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+5001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+5002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+5012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+5013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+5014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+5017
+ORDER-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+5018
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+5019
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+5020
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+5021
+QUANTITY NOT MULTIPLE
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+5022
+Duplicate OrderID
+35=8
+檢查並更正委託書編號
+FIX欄位OrderID
+5023
+STOCK-NO NOT ALLOWED
+35=8
+此股票不為拍賣股票，檢查並更正股票代號
+FIX欄位Symbol
+5024
+ORDER NOT FOUND
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+5025
+QUANTITY WAS CUT
+35=8
+外資買進委託數量被刪減
+5026
+FOREIGNER NOT ALLOWED
+35=8
+該股票不允許外資交易
+5027
+QUANTITY OVER LIMIT
+35=8
+外資買進超過委託額度
+5043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+5046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+5047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+5089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+
+一般標購交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+6001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+6002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+6012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+6013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+6014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+6017
+ORDER-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+6018
+STOCK-NO ERROR
+35=8/9
+檢查並更正股票代號
+FIX欄位Symbol
+6019
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+6020
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+6021
+QUANTITY NOT MULTIPLE
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+6022
+Duplicate OrderID
+35=8
+檢查並更正委託書編號
+FIX欄位OrderID
+6023
+STOCK-NO NOT ALLOWED
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+6024
+ORDER NOT FOUND
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+6027
+QUANTITY OVER LIMIT
+35=8/9
+檢查並更正委託數量
+6043
+Stock suspended
+35=8
+請檢查委託資料，該股票已不允許輸入委託。
+6046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+6047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+6089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+
+證金標購交易回覆訊息狀態代碼
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+B001
+TIME IS OVER
+35=8/9
+時間超過收盤時間結束交易子系統
+B002
+TIME IS EARLY
+35=8
+時間未到，稍待再輸入委託
+B012
+BROKER-NO ERROR
+35=8/9
+檢查並更正證券商代號
+FIX欄位SenderSubID
+B013
+BRANCH-NO ERROR
+35=8/9
+檢查並更正分公司代號
+FIX欄位SenderSubID
+B014
+IVACNO ERROR
+35=8/9
+檢查並更正投資人帳號
+FIX欄位Account
+B017
+ORDER-NO ERROR
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+B018
+STOCK-NO ERROR
+35=9
+檢查並更正股票代號
+FIX欄位Symbol
+B019
+PRICE ERROR
+35=8/9
+檢查並更正單價
+FIX欄位Price
+B020
+QUANTITY ERROR
+35=8/9
+檢查並更正委託數量;
+FIX欄位OrderQty
+B021
+QUANTITY NOT MULTIPLE
+35=8/9
+檢查並更正委託數量
+FIX欄位OrderQty
+B022
+Duplicate OrderID
+35=8
+檢查並更正委託書編號
+FIX欄位OrderID
+B023
+STOCK-NO NOT ALLOWED
+35=8
+檢查並更正股票代號
+FIX欄位Symbol
+B024
+ORDER NOT FOUND
+35=8/9
+檢查並更正委託書編號
+FIX欄位OrderID
+B046
+OrdType Error
+35=8/9
+檢查並更正委託方式註記
+B047
+TIME-IN-FORCE ERROR
+35=8
+請檢查並更正委託時效類別註記
+B089
+Error Over Limit
+35=8/9
+錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定。
+
+共同回覆訊息狀態代碼
+第一碼?表示系統別，如C表示盤中零股、4表示標借、5表示拍賣。
+Status Code
+訊 息 內 容
+
+FIX GW
+訊息類別
+證券商應辦理事項
+
+?099
+CALL COMPUTER CENTER
+35=8/9
+查詢委託是否已輸入成功或打電話到交易所詢問
+?200
+SYSTEM NOT READY
+35=8/9
+系統尚未READY, 請稍候
+?221
+SenderSubID Error
+35=8/9
+檢查並更正SenderSubID
+?222
+ClOrdID Length Error
+35=8/9
+檢查並更正ClOrdID
+?223
+TransactTime Error
+35=8/9
+檢查並更正TransactTime
+?224
+OrderID Length Error
+35=8/9
+檢查並更正OrderID
+?225
+Account Length Error
+35=8/9
+檢查並更正Account
+?226
+Symbol Length Error
+35=8/9
+檢查並更正Symbol
+?227
+OrderQty Length Error
+35=8/9
+檢查並更正OrderQty
+?228
+Price Length Error
+35=8/9
+檢查並更正Price
+?229
+TwseIvacnoFlag Length Error
+35=8/9
+檢查並更正TwseIvacnoFlag
+?230
+TwseOrdType Length Error
+35=8/9
+檢查並更正TwseOrdType
+?231
+TwseExCode Length Error
+35=8/9
+檢查並更正TwseExCode
+?232
+OrigClOrdID Length Error
+35=8/9
+檢查並更正OrigClOrdID
+?233
+TwseRejStaleOrd Length Error
+35=8/9
+檢查並更正TwseRejStaleOrd
+?234
+RefOrderID Length Error
+35=8
+檢查並更正RefOrderID
+?241
+SenderSubID Not Found
+35=8/9
+檢查並更正SenderSubID
+?242
+ClOrdID Not Found
+35=8/9
+檢查並更正ClOrdID
+?243
+TransactTime Not Found
+35=8/9
+檢查並更正TransactTime
+?244
+OrderID Not Found
+35=8/9
+檢查並更正OrderID
+?245
+Account Error
+35=8/9
+檢查並更正Account
+?246
+Symbol Not Found
+35=8/9
+檢查並更正Symbol
+?247
+Side Not Found
+35=8/9
+檢查並更正Side
+?248
+OrderQty Not Found
+35=8/9
+檢查並更正OrderQty
+?249
+OrdType Not Found
+35=8/9
+檢查並更正OrdType
+?250
+TimeInForce Not Found
+35=8/9
+檢查並更正TimeInForce
+?251
+Price Not Found
+35=8/9
+檢查並更正Price
+?252
+TwseIvacnoFlag Not Found
+35=8/9
+檢查並更正TwseIvacnoFlag
+?253
+TwseOrdType Not Found
+35=8/9
+檢查並更正TwseOrdType
+?254
+TwseExCode Not Found
+35=8/9
+檢查並更正TwseExCode
+?255
+OrigClOrdID Not Found
+35=8/9
+檢查並更正OrigClOrdID
+?256
+TwseRejStaleOrd Not Found
+35=8/9
+檢查並更正TwseRejStaleOrd
+?257
+RefOrderID Error
+35=8
+檢查並更正RefOrderID
+
+異常處理注意事項
+
+證券商端備援
+證券商端於競價設備申請時，可於申請FIX Session時，填寫二個證券商端交易IP做為證券商端備援的功能，同一路FIX Session在同時間只能有一個IP連入，第二個Socket連線在第一個Socket連線未中斷前，將會無法連線。
+當證券商端第一個（或第二個）IP因為系統或是網路異常時，可以繼續透過設定的第二個IP（或第一個）重新連線。
+同地FIX Gateway異常
+第一組FIX Gateway因不可抗力因素發生問題時，證券商仍然可以繼續透過第二組FIX Gateway的FIX Session或是現有TMP線路傳送委託訊息或是進行查詢等功能，並可透過TMP成交回報線路取得所有的成交回報資料。
+異常發生時，第一組FIX Gateway將會嘗試復原服務，證券商端需注意程序如下所述：
+FIX Session雙方序號將重設為1
+當發生同地端FIX Gateway切換時，證券商端會發生斷線的情況，交易所將立即透過T79公告，當FIX Gateway重新復原服務時，亦會將FIX Engine上的序號重設為1，此時證券商端亦需對被影響的FIX Session執行EOD，將序號重設為1，待備援FIX Gateway啟動後，即可正常連線。
+委託回報
+可能會有部分委託未回報的情況，此時需透過委託狀態查詢訊息取得未回報的委託單狀態。(查詢結果為Order Not Found時，可能是委託單不存在或委託單已全部成交)
+成交回報
+成交回報資料會在FIX Gateway復原重新提供服務後開始繼續傳送，完整成交回報資料，由TMP成交回報線路取得。
+異地備援中心切換
+主中心因不可抗力因素發生問題時，需待系統切換至異地備援中心。證券商端需注意程序如下：
+FIX Session雙方序號將重設為1
+當發生異地切換時，交易所將立即透過S10緊急公告，此時證券商端亦需對所有的FIX Session執行EOD，將序號重置，待異地端系統切換完成後，即可正常連線。
+委託回報
+交易所主動以FT檔案傳輸，送出FIX端最後五分鐘有效的委託資料。
+成交回報
+交易所主動以FT檔案傳輸傳送末筆成交資料(T39)。。
+其它注意事項
+網路頻寬考量
+因FIX協定為非同步傳輸方式，雖可連續傳送委託，但頻寬需求考量也要更嚴謹，以2Mb的實體線路為例，約可傳輸的訊息流量參考如下，實際情況則會因下單模式、頻寬大小及設備環境等因素影響而有所差異，故相關數值僅供參考。
+每一筆委託回報或是成交回報大小約為400 bytes。
+每秒的網路傳輸量約：262,144 bytes。
+每秒可處理的委託及回報筆數約：655筆。
+依目前現況委託筆數約為成交筆數的1.5倍，故每秒可以處理的委託筆數約為400筆。
+受限於網路瞬間流量頻寬，委託時應將資料儘量平均分散，避免網路發生擁塞情形，因而造成委託延遲回覆或斷線。
+證券商應該測試在特定的網路頻寬下，以及依據客戶的下單頻率，來調整其最佳下單模式，一般而言，在較小的頻寬時，適度的在每筆委託間Delay，能獲得較佳結果。
+流量控管
+每一路FIX Session依申請的流量單位數，控制每一秒可以傳送的訊息總筆數，計算方式包含了下、刪、改以及查詢訊息，每一個流量單位，依目前限制為每一秒最多20筆。
+當超出限制的委託筆數時，交易所端會將委託延遲傳送，此時並不會傳送警告訊息或是委託失敗訊息給證券商，也不會將證券商的FIX Session強迫斷線，但證券商會發現委託遲延(Latency)異常，更嚴重的情況，會因為底層Socket Buffer耗盡，導致Socket傳送時被阻斷(Block)，如果證券商程式沒有處理該情況，甚至可能會導致證券商程式異常，故證券商需要自行控管每一路FIX Session的流量。
+流量控管的單位雖然是依秒來控管，但因為作業系統、網路，甚至校時的精準度都可能會導致系統每一秒的開始控制的時間與證券商不同，故證券商應該在每一連續時間內都不應該有超過流量限制筆數的情況。例如一路8個流量單位的FIX Session下，在時間點09:10:11.010到09:10:12.010間不可以超過160筆，同時09:11:11.110到09:11:12.110間也不應該超過160筆，以此類推。
+另因考量技術上要精準的控制流量筆數相當複雜，故交易所在流量筆數的控管上，有適度的緩衝筆數，但是證券商仍應將筆數控制在設定的流量筆數上，以避免有委託延遲的情況發生。
+委託量監控機制
+單一FIX線路流量控管機制：每一路FIX Session當日超過流量控管限制30次，即電話通知證券商緊急連絡人，證券商應查明原因並改善，如有造成交易系統安全疑慮，再次通知證券商後仍未改善，則中斷該FIX Socket連線，暫停下單處置。
+證券商委託量監控機制：盤中監控證券商委託量，每秒委託量達6,000筆，即分析證券商委託情形，若有連續大量委託，即電話通知證券商緊急連絡人，證券商應查明原因並改善，如有造成交易系統安全疑慮，經再次通知證券商後仍未改善，先對FIX Session超過流量控管限制30次的線路，中斷該FIX Socket連線，暫停下單處置，後續再中斷其它連線，直至狀況改善。
+全市場委託總量監控機制：盤中即時監控全市場每秒委託量達20,000筆，即分析各證券商委託情形，對下單量前10名證券商，電話通知證券商緊急連絡人，證券商應查明原因並改善，如有造成交易系統安全疑慮，經再次通知證券商後仍未改善，先對FIX Session超過流量控管限制30次的線路，中斷該FIX Socket連線，暫停下單處置，後續再中斷其它連線，直至狀況改善。
+
+
+附錄
+
+Order State Change Matrices
+為配合交易所現行證券交易作業環境，依其回覆之委託/成交回報資料與各種委託/成交狀況，擬訂出在下列各項委託情境之下，FIX規格中各個tag的回覆資料內容。
+
+D1-Filled Order
+
+TimeMessage Received
+ (11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)　　　10　　　　2
+　
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+　
+Execution(X)
+New
+New
+10
+10
+0
+0
+　
+3
+　
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+2
+Execution of 2 trading units
+4
+　
+Execution(X)
+Trade
+Partiallly Filled
+0
+0
+3
+1
+Execution of 1 trading unit
+5
+　
+Execution(X)
+Trade
+Filled
+0
+0
+9
+6
+If the order was decreased 1 trading unit by other channel, then execution of 6
+5
+　
+Execution(X)
+Trade
+Filled
+0
+0
+10
+7
+Execution of 7 trading units
+
+D2-Order Qty Quota
+
+TimeMessage Received   (11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)　　　10　　　　2
+　
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+　
+Execution(X)
+New
+New
+8
+8
+0
+0
+8 trading units of Order Qty
+tag 103=99
+tag 58=0031
+3
+　
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit
+4
+　
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+5
+Execution of 5 trading units
+D3-Cancel request issued for a part-filled order – executions occur whilst cancel request is active
+
+TimeMessage Received   (11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected.
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit.
+4Cancel Request (Y,X)5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+5
+4
+Execution for 4 trading units. This execution passes the cancel request on the connection.
+6
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+1
+Execution for 1 trading unit.
+7
+
+Execution (Y,X)
+Canceled
+Canceled
+4
+0
+6
+0
+If deals are received before cancelation acknowledgement.
+D4-Cancel request issued for a part-filled order – executions occur whilst cancel request is active and cancellation is back earlier than residual deals
+TimeMessage Received   (11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit
+4Cancel Request (Y,X)5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+5
+4
+Execution for 4 trading units. This execution passes the cancel request on the connection.
+6
+
+Execution(Y,X)
+Canceled
+Canceled
+4
+0
+6
+0
+The cancellation is back before the residual deals.
+7
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+1
+If the last cancel request is done and execution for 1 trading unit.
+D5-Part-filled order followed by cancel/replace request to decrease order qty, execution occurs whilst order is pending replace
+TimeMessage Received
+(11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit.
+4Replace Request (Y,X)11 trading unit decreased.5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+1
+Execution of 1trading unit.
+6
+
+Execution(Y,X)
+Replace
+New
+1
+7
+2
+0
+
+7
+
+Execution(X)
+Trade
+Filled
+0
+0
+9
+7
+Execution of 7 trading units.
+D6-Cancel/replace request send whilst execution is being reported – the requested order qty equals the LeavesQty
+TimeMessage Received
+(11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3Replace Request (Y,X)22 trading units decreased.3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+8
+8
+Execution of 8 trading units.
+4
+
+Execution(Y,X)
+Replace
+New
+2
+0
+8
+0
+
+D7-Cancel/replace request sent whilst execution is being reported – the requested order qty is above the LeavesQty
+TimeMessage Received
+(11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected.
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3Replace Request (Y,X)55 trading units decreased.3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+8
+8
+Execution of 8 trading units.
+4
+
+Execution(Y,X)
+Replace
+New
+2
+0
+8
+0
+tag 103=99
+tag 58=0032
+D8-Order status request – for new order and cancel/replace request
+TimeMessage Received
+(11, 41)Message Sent (11,41)ExecType (150)OrdStatus (39)OrderQty (38)LeavesQty (151)CumQty (14)LastQty (32)Comment1New Order(X)102
+Order Status Request(X)
+
+
+3
+
+Execution(X)
+New
+New
+8
+8
+0
+0
+If order is accepted 8 trading units by TWSE.
+tag 103=99
+tag 58=0031
+4＊＊Execution(X)Order StatusNew88005Replace Request (Y,X)44 trading units decreased.6
+Order Status Request(X)
+
+
+7
+　
+Execution(Y,X)
+Replace
+New
+4
+4
+0
+0
+Reduce quantity.
+8
+＊＊
+Execution(X)
+Order Status
+New
+2
+2
+2
+0
+
+9
+　
+Execution(Y)
+Trade
+Partially Filled
+0
+0
+2
+2
+Execution of 2.
+＊＊In Order Status Query Request, please refer to the LeavesQty in order to get the results of OrderQty.
+D9-Order status request – for new order
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Comment1New Order(X)102
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+Order Status Request(X)
+
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+2
+2 trading units are dealed.
+4
+
+Execution(X)
+Order Status
+New
+8
+8
+2
+0
+
+Market Order
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Text
+(58)Comment1New Order(X)10Price(44) is ignored.2Execution(X)RejectedRejected100000049Call Auction.
+Market order is not allowed.2Execution(X)NewNew1010003Execution(X)TradePartially Filled00774Execution(X)TradeFilled00103
+FOK Order
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Text
+(58)Comment1New Order(X)102Execution(X)RejectedRejected100000048FOK order cannot be filled2Execution(X)RejectedRejected100000049Call Auction
+FOK order is not allowed 2Execution(X)NewNew10  10003Execution(X)TradePartially Filled00774Execution(X)TradeFilled00103
+
+
+IOC Order
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Text
+(58)Comment1New Order(X)102Execution(X)RejectedRejected100000048IOC order cannot be filled2Execution(X)RejectedRejected100000049Call Auction
+IOC order is not allowed 2Execution(X)NewNew77000031If order is accepted 7 trading units. 3Execution(X)TradePartially Filled00554Execution(X)TradeFilled0072
+Part-filled order followed by cancel/replace request to change order price
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Price
+(44)Comment1New Order(X)10212Execution(X)NewNew101000213Execution(X)TradePartially Filled001121Execution of 1 trading unit.4Replace Request (Y,X)0205Execution(X)TradePartially Filled002121Execution of 1trading unit.6Execution(Y,X)ReplaceNew8820207Execution(X)TradeFilled0010820Execution of 8 trading units.
+Unsolicited cancel of a part-filled order
+TimeMessage Received
+(11, 41)Message Sent
+(11,41)ExecType
+(150)OrdStatus
+(39)OrderQty
+(38)LeavesQty
+(151)CumQty
+(14)LastQty
+(32)Text
+(58)Comment1New Order(X)102Execution(X)NewNew1010003Execution(X)TradePartially Filled00774Execution(X)RestatedCanceled3070Cancel by TWSE.FIX欄位摘要說明
+各欄位的Data Type請參考FIX資料型態章節說明。
+Field ID
+(Tag)
+Field Name
+Data Type
+Description
+1
+Account
+String
+投資人帳號
+6
+AvgPx
+Price
+均價，其值為0
+7
+BeginSeqNo
+int
+起始訊息序號
+8
+BeginString
+String
+永遠為第一個欄位
+9
+BodyLength
+String
+訊息長度(位元組(Byte))
+永遠為第二個欄位
+10
+CheckSum
+String
+永遠為訊息最後的欄位
+3位元組(Byte)(請參考CheckSum計算方式章節之說明)
+11
+ClOrdID
+String
+唯一識別碼
+12位文數字(在每個交易日中必須是唯一的)
+14
+CumQty
+Qty
+目前已成交數量(一般)
+最多6位數
+16
+EndSeqNo
+int
+結束訊息序號
+當為0時表示重送起始訊息序號(含)後所有訊息
+17
+ExecID
+String
+委託回報(12碼) 成交回報(12碼)
+31
+LastPx
+Price
+成交價格
+(5位整數+4位小數)
+32
+LastQty
+Qty
+本次成交數量(一般、盤後定價)
+本次成交股數(盤後零股、盤中零股)
+最多6位數字
+34
+MsgSeqNum
+int
+訊息序號(每日流水編號，從1開始)
+35
+MsgType
+String
+訊息類別
+永遠為訊息的第三個欄位
+支援類別如下(區分大小寫)
+0 = Heartbeat
+1 = Test Request
+2 = Resend Request
+3 = Reject
+4 = Sequence Reset
+5 = Logout
+8 = Execution Report
+9 = Order Cancel Reject
+A = Logon
+D = Order – Single
+F = Order Cancel Request
+G = Order Cancel/Replace Request
+H = Order Status Request
+36
+NewSeqNo
+int
+新訊息序號
+37
+OrderID
+String
+委託書編號(5碼文數字)
+38
+OrderQty
+Qty
+委託數量
+一般、盤後定價、標借、拍賣、一般標購與證金標購 (交易單位)
+盤後零股、盤中零股(股數)
+39
+OrdStatus
+Char
+委託狀態
+40
+OrdType
+Char
+委託方式
+‘1’ 市價(一般)
+‘2’ 限價(一般、盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購)
+41
+OrigClOrdID
+String
+上一筆委託單之唯一識別碼ClOrdID
+43
+PossDupFlag
+Boolean
+資料重複傳送註記
+Y = 可能重複
+N = 原始傳送
+44
+Price
+Price
+委託價格
+(5位整數+4位小數)
+45
+RefSeqNum
+int
+被拒絕之訊息序號
+49
+SenderCompID
+String
+傳送端代號
+市場別(1碼)+證券商代號(4碼)+FIX Socket ID(2碼)
+50
+SenderSubID
+String
+證券商代號(4碼)
+表示委託所屬證券商代號
+新委託/改單/刪單/查詢時為必要欄位
+52
+SendingTime
+UTCTimeStamp
+訊息傳送時間
+年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)
+54
+Side
+Char
+買賣別
+‘1’ Buy
+‘2’ Sell
+55
+Symbol
+String
+股票代號(6碼)
+56
+TargetCompID
+String
+接收端代號
+證交所 : XTAI
+櫃檯 : ROCO
+57
+TargetSubID
+String
+交易盤別(1碼)
+“0” 一般
+“2” 盤後零股
+“4” 標借
+“5” 拍賣
+“6” 標購
+“7” 盤後定價
+“B” 證金標購
+“C” 盤中零股
+58
+Text
+String
+文字訊息資料(無特定長度)
+59
+TimeInForce
+Char
+委託時效類別註記
+一般、盤後定價、盤後零股、盤中零股、標借、拍賣、一般標購與證金標購
+‘0’ 當日有效
+一般
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+60
+TransactTime
+UTCTimeStamp
+交易時間
+年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)
+95
+RawDataLength
+int
+Tag 96資料長度(有效值=5)
+96
+RawData
+Data
+包含3碼APPEND-NO及2碼KEY-VALUE(檢核連線密碼之用)
+97
+PossResend
+Boolean
+資料重新發送註記
+98
+EncryptMethod
+int
+設定為0 (不加密)
+102
+CxlRejReason
+int
+刪單/改單委託錯誤代碼
+103
+OrdRejReason
+int
+委託錯誤代碼
+108
+HeartBtInt
+int
+心跳訊息間隔時間(秒)
+112
+TestReqID
+String
+回覆測試請求訊息的序號
+122
+OrigSendingTime
+UTCTimeStamp
+原始訊息傳送時間
+年月日-時:分:秒.毫秒(YYYYMMDD-HH:MM:SS.sss)
+123
+GapFillFlag
+Boolean
+訊息遺失填補標誌
+一般設定為‘Y’(序號重設用)
+150
+ExecType
+Char
+委託執行狀態
+‘0’ 新委託
+‘4’ 已取消
+‘5’ 已改單
+‘8’ 錯誤(參考Tag 58)
+‘F’ 成交(部分成交/全部成交)
+‘I’ 委託狀態
+‘D’ 狀態更新
+151
+LeavesQty
+Qty
+委託剩餘有效量
+一般、盤後定價、標借、拍賣、一般標購與證金標購(交易單位)
+盤後零股、盤中零股(股數)
+最多6位數字
+371
+RefTagID
+int
+被拒絕之tag欄位
+372
+RefMsgType
+String
+被拒絕之訊息類別
+373
+SessionRejectReason
+int
+Session層reject的原因
+0 = Invalid tag number
+1 = Required tag missing
+2 = Tag not defined for this message type
+3 = Undefined Tag
+4 = Tag specified without a value
+5 = Value is incorrect (out of range) for this tag
+6 = Incorrect data format for value
+9 = CompID problem
+10 = SendingTime accuracy problem
+11 = Invalid MsgType
+378
+ExecRestatementReason
+int
+主動回報原因
+8 Exchange option
+380
+BusinessRejectReason
+int
+Reject的原因
+3 – 不支援的訊息類別
+434
+CxlRejResponseTo
+int
+回覆訊息要求類別
+‘1’ 刪單委託訊息(Order Cancel Request)
+‘2’ 改單委託訊息(Order Cancel/Replace Request)
+1080
+RefOrderID
+Char
+標購序號
+10000
+TwseIvacnoFlag
+Char
+委託管道
+‘1’ 一般(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ 網際網路(FIX)
+‘5’ 語音(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+委託類別
+‘0’ 一般(非融資融券)
+‘1’ 融資(證金)
+‘2’ 融券(證金)
+‘3’ 融資(自辦)
+‘4’ 融券(自辦)
+‘5’ 借券賣出(券5)
+‘6’ 借券賣出(券6)
+10002
+TwseExCode
+Char
+‘0’ 一般、盤後定價、標借、拍賣、一般標購與證金標購
+‘2’ 盤後零股、盤中零股
+10004
+TwseRejStaleOrd
+Boolean
+Y 逾時註記檢查
+N 逾時註記不檢查
+
+以下空白
+
+
+FIX 4.4欄位差異比較表
+
+標準的表頭及表尾(Standard Header and Trailer)
+Standard Header
+Tag
+Field Name
+Data Type
+TWSE Req’d
+FIX Req’d
+8
+BeginString
+String
+Y
+Y
+9
+BodyLength
+String
+Y
+Y
+35
+MsgType
+String
+Y
+Y
+49
+SenderCompID
+String
+Y
+Y
+56
+TargetCompID
+String
+Y
+Y
+115
+OnBehalfOfCompID
+String
+[IGNORE]
+N
+128
+DeliverToCompID
+String
+[IGNORE]
+N
+90
+SecureDataLen
+Length
+[IGNORE]
+N
+91
+SecureData
+data
+[IGNORE]
+N
+34
+MsgSeqNum
+int
+Y
+Y
+50
+SenderSubID
+String
+N
+N
+142
+SenderLocationID
+String
+[IGNORE]
+N
+57
+TargetSubID
+String
+N
+N
+143
+TargetLocationID
+String
+[IGNORE]
+N
+116
+OnBehalfOfSubID
+String
+[IGNORE]
+N
+144
+OnBehalfOfLocationID
+String
+[IGNORE]
+N
+129
+DeliverToSubID
+String
+[IGNORE]
+N
+145
+DeliverToLocationID
+String
+[IGNORE]
+N
+43
+PossDupFlag
+Boolean
+N
+N
+97
+PossResend
+Boolean
+N
+N
+52
+SendingTime
+UTCTimestamp
+Y
+Y
+122
+OrigSendingTime
+UTCTimestamp
+N
+N
+212
+XmlDataLen
+Length
+[IGNORE]
+N
+213
+XmlData
+data
+[IGNORE]
+N
+347
+MessageEncoding
+String
+[IGNORE]
+N
+369
+LastMsgSeqNumProcessed
+int
+[IGNORE]
+N
+370
+OnBehalfOfSendingTime
+UTCTimestamp
+[IGNORE]
+N
+
+Standard Trailer
+Tag
+Field Name
+Data Type
+TWSE Req’d
+FIX Req’d
+93
+SignatureLength
+Length
+[IGNORE]
+N
+89
+Signature
+data
+[IGNORE]
+N
+10
+CheckSum
+String
+Y
+Y
+交談層訊息(Session Level Messages)
+Logon
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+98
+EncryptMethod
+int
+Y
+Y
+108
+HeartBtInt
+int
+Y
+Y
+95
+RawDataLength
+int
+Y
+N
+96
+RawData
+data
+Y
+N
+141
+ResetSeqNumFlag
+Boolean
+[IGNORE]
+N
+383
+MaxMessageSize
+int
+[IGNORE]
+N
+384
+NoMsgTypes
+int
+[IGNORE]
+N
+
+372
+RefMsgType
+String
+[IGNORE]
+N
+
+385
+MsgDirection
+char
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+
+Heartbeat
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+112
+TestReqID
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y
+
+Test Request
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+112
+TestReqID
+String
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+
+Resend Request
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+7
+BeginSeqNo
+int
+Y
+Y
+16
+EndSeqNo
+int
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+Reject – Session Level
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+45
+RefSeqNum
+int
+Y
+Y
+371
+RefTagID
+int
+N
+N
+372
+RefMsgType
+String
+N
+N
+373
+SessionRejectReason
+int
+N
+N
+58
+Text
+String
+N
+N
+354
+EncodedTextLen
+Length
+[IGNORE]
+N
+355
+EncodedText
+data
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+
+Sequence Reset
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+123
+GapFillFlag
+Boolean
+N
+N
+36
+NewSeqNo
+int
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+
+Logout
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+58
+Text
+String
+N
+N
+354
+EncodedTextLen
+Length
+[IGNORE]
+N
+355
+EncodedText
+data
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+應用類訊息(Application Messages)
+New Order Single
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+38
+OrderQty
+Qty
+Y
+N
+40
+OrdType
+Char
+Y
+Y
+59
+TimeInForce
+Char
+Y
+N
+44
+Price
+Price
+Y
+N
+1080
+RefOrderID
+Char
+N
+N
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10001
+TwseOrdType
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+Order Cancel/Replace Request
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+38
+OrderQty
+Qty
+Y
+N
+40
+OrdType
+Char
+Y
+Y
+44
+Price
+Price
+Y
+N
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10001
+TwseOrdType
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+Order Cancel Request
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+Order Status Request
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+Execution Report
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+37
+OrderID
+String
+Y
+Y
+11
+ClOrdID
+String
+N
+N
+41
+OrigClOrdID
+String
+N
+N
+17
+ExecID
+String
+Y
+Y
+150
+ExecType
+Char
+Y
+Y
+39
+OrdStatus
+Char
+Y
+Y
+103
+OrdRejReason
+int
+N
+N
+378
+ExecRestatementReason
+int
+N
+N
+1
+Account
+String
+N
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+N
+38
+OrderQty
+Qty
+N
+N
+40
+OrdType
+Char
+N
+N
+59
+TimeInForce
+Char
+N
+N
+44
+Price
+Price
+N
+N
+32
+LastQty
+Qty
+N
+N
+31
+LastPx
+Price
+N
+N
+151
+LeavesQty
+Qty
+Y
+Y
+14
+CumQty
+Qty
+Y
+Y
+6
+AvgPx
+Price
+Y
+Y
+58
+Text
+String
+N
+N
+1080
+RefOrderID
+Char
+N
+N
+10000
+TwseIvacnoFlag
+Char
+N
+N
+10001
+TwseOrdType
+Char
+N
+N
+10002
+TwseExCode
+Char
+N
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+Order Cancel Reject
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+37
+OrderID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+39
+OrdStatus
+Char
+Y
+Y
+1
+Account
+String
+N
+N
+60
+TransactTime
+UTCTimestamp
+N
+N
+434
+CxlRejResponseTo
+Char
+Y
+Y
+102
+CxlRejReason
+int
+N
+N
+58
+Text
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y
+
+Business Message Reject
+Tag
+Field Name
+Data Type
+TWSE Req'd
+FIX Req’d
+
+Standard Header
+
+Y
+Y
+45
+RefSeqNum
+int
+N
+N
+372
+RefMsgType
+String
+Y
+Y
+380
+BusinessRejectReason
+int
+Y
+Y
+58
+Text
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y
+
+
+版本更新記錄
+
+
+PAGE
+
+
+PAGE  73
+
+
+ PAGE   \* MERGEFORMAT 1

@@ -1,0 +1,1901 @@
+# O-105-A10 TCPIP網路主機連線電腦作業手冊
+
+- 更新日期: 104.12.09
+- 來源檔案: assets/source-files/O-105-A10_TCPIP網路主機連線電腦作業手冊.doc
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/brokerDepartment/b002000042.doc
+- SHA256: c469d4beb31867e69454ba1aba162651afdc54d42caa6ab82655f2d47e63867c
+- 抽取方式: textutil
+
+---
+
+台灣證券交易所
+TCP/IP證券交易資訊網路
+主機連線作業手冊
+
+
+版本：1.1
+2004.02.06
+
+
+台灣證券交易所TCP/IP證券交易資訊網路主機連線作業手冊
+增修紀錄
+
+日期
+說明
+2003.06.12
+版本：1.0
+2004.02.06
+版本：1.1
+修改證券商端Heartbeat傳送時間為：60秒內無TMP訊息時，傳送一次Heartbeat。證券商端等待證交所訊息的timeout為25秒。
+新增socket error “26”- Heartbeat次數過多
+修改第40頁及42頁擴充版檔案傳輸中繼作業傳送資料訊息DATA欄位長度為3976(取原994之4倍)
+新增櫃檯買賣中心的擴充版檔案傳輸訊息格式(第44頁至52頁)
+
+
+臺灣證券交易所TCP/IP證券交易資訊網路主機連線作業手冊目錄
+
+概說………………………………………………………….. 3
+TCP/IP證券交易資訊網路…………………………………. 4
+TCP/IP及Socket……………………………………………. 9
+Socket通訊協定…………………………………………….12
+與原X.25網路主機連線作業之差異…………………….. 29
+
+
+概說
+前言
+為方便證券商能以目前世界上最普遍使用的TCP/IP網路與臺灣證券交易所進行各項業務，臺灣證券交易所制定以TCP/IP網路為基礎的主機連線作業規範，並延續原以X.25網路為基礎的「臺灣證券交易所主機連線作業手冊」的精神與原則，繼續提供標準、開放及安全的連線作業環境。
+
+TCP/IP網路主機連線作業方式除針對TCP/IP網路的特性訂定相關的參數及訊息傳送方式外，其他與交易、結算、特殊交易及各項申報作業等的訊息流程及訊息內容都與X.25網路的規定相同。證券商由X.25網路轉換到TCP/IP網路時，只需更改與網路相關的接收及傳送介面程式，其他業務相關的應用程式都可以繼續使用。轉換到TCP/IP網路對證券商現有電腦系統及現行作業流程的影響已經被控制到最小的範圍。
+
+本作業手冊的範圍
+本作業手冊僅規範TCP/IP網路的相關設定、訊息傳遞方式及訊息格式，並不涉及交易或結算等業務內容。
+
+有關各項交易、結算、特殊交易或各項申報作業的業務內容及方式請參閱「臺灣證券交易所主機連線作業手冊」（簡稱TMP，TSEC Message Protocol）的第三章到第八章或各項業務的作業手冊。
+
+有關證券商申請數據線路、測試及正式上線等相關規定請參閱「申請競價設備連線及異動作業」。
+
+本作業手冊的訂定與修改
+本系統規範由台灣證券交易所電腦規劃部研訂，實施後得視實際需要由台灣證券交易所修訂公佈。
+
+網際網路文件下載
+本作業手冊及其他所有業務的作業手冊皆可於臺灣證券交易所官方網站www.tse.com.tw下載。請於進入網站首頁後，選擇「文件下載」，再選擇「電腦規劃部/電腦作業部作業手冊查詢一覽表」。
+
+TCP/IP證券交易資訊網路
+臺灣證券交易所TCP/IP證券交易資訊網路（簡稱IP交易網路）架構
+臺灣證券交易所IP交易網路採用中華電信數據通訊分公司以ATM架構為骨幹所建置的VPN（Virtual Private Network），證券商與證交所之間連線都設定成點對點固定IP位址的VC（Virtual Circuit），具備優越效能與高度安全的特性。
+
+
+圖2.1.-1 IP交易網路架構圖
+
+證券商端設備
+以下僅簡單描述證券商端數據線路、路由器、防火牆、IP位址等相關規定，詳細規格請參考「申請競價設備連線及異動作業」之附件十三「臺灣證券交易所TCP/IP證券交易資訊網路證券商端通訊設備建置規範草案」。
+
+證券商的數據線路
+IP交易網路提供多種不同頻寬及介面的數據線路供證券商選擇，如下表：
+頻寬
+連線介面
+備註
+128K
+Frame Relay
+保證頻寬
+256K
+Frame Relay
+保證頻寬
+512K
+Frame Relay
+保證頻寬
+2048K
+E1
+保證頻寬
+雙向512K ADSL
+ADSL
+較不能保證頻寬
+表2.2.-1 證券商可連接線路頻寬及連線介面
+
+證券商可依業務的需要或備援的考量申請多條數據線路或多條ADSL線路。
+
+證券商端的路由器
+證券商端Router必須為IP交易網路專用（簡稱專用路由器），具備至少一個WAN port及一個LAN port。
+
+證券商端的防火牆
+證券商端防火牆必須為IP交易網路專用（簡稱專用防火牆），安裝在證券商專用路由器與交易用主機之間。
+
+證券商端的IP位址分配
+證券商端的IP位址由臺灣證券交易所管理及發放。證券商申請使用的每一條數據線路都可分配到一個交易用的IP位址及一個測試用IP位址，不同的數據線路使用不同IP位址，但專為備援用的ADSL線路使用原線路所分配到的IP位址，不另外分配IP位址。
+
+一家證券商可視需要申請多個IP位址（多條線），也可多家總分公司共用一個IP位址（一條線）。
+
+證交所端的設備
+如圖2.1.-1所示，證交所端的設備包含主機房、備援機房及測試機房的三個主機。主機房有二個路由器互為備援，其中一個路由器故障時，另一個路由器仍可與證券商連線。備援機房也有二個路由器互為備援，測試機房則有一個路由器。證券商的每一條數據線路都會設定五個PVC到證交所端的每一個路由器上，但ADSL線路則只能建單一PVC連到一個證交所端的路由器。證券商若希望使用ADSL線路連到多個證交所端的路由器，則必須申請多條ADSL線路。
+
+正常情形下，連到備援機房的VC並不啟用，證券商只連線到主機房進行交易。當主機房發生問題無法進行交易時，證交所將關閉證券商連到主機房的VC，並啟用證券商連到備援機房的VC。主機房與備援機房主機採用同樣的IP位址，因此，當證交所從主機房切換到備援機房時，證券商的連線也自動由主機房切換到備援機房，證券商不必作任何線路或IP位址的調整就可以與證交所備援機房連線交易，惟證券商仍需依「集中市場當日全量備援電腦作業手冊」規定配合進行各項查詢檢核作業。
+
+證交所的測試機房可提供證券商上線前測試或假日測試使用，採用與主機房不同的IP位址，以避免發生錯誤。證券商進行測試時，也必須使用測試用IP位址。
+
+證券商連線架構及備援方式
+證券商可以依業務的需要及成本的考量，規劃證券商端的備援方式，以預防線路或主機發生問題時無法進行交易的情形。一般而言，除了總分公司的電腦系統可互為備援外，證券商尚可採取ADSL線路備援、多數據線路備援或異地備援等幾種備援方式。
+
+ADSL備援
+證券商線路發生問題時，可採用ADSL線路備援。每一路ADSL僅可設定一個VC連到證交所的某一個路由器。如圖2.7.-1所示，證券商若要同時使用ADSL連線到證交所主機房及備援機房，則必須申請二路ADSL。
+
+
+圖2.4.-1證券商採用ADSL線路備援
+多數據線路備援或異地備援
+證券商若因業務需要或備援考量而申請多條數據線路使用，任何線路發生問題時，其他線路仍可繼續進行交易。
+
+證券商若因業務需要或備援考量而設置多個主機，一旦任何主機發生問題，也可以另一主機進行交易。
+
+有關數據線路互相備援的詳細方法，請參閱本作業手冊第三章「3.5.Socket的備援」相關規定。
+
+
+圖2.4.-2多數據線路備援或異地備援
+
+TCP/IP及Socket
+TCP/IP及Socket相關設定
+Send Buffer建議值
+委託下單/成交回報：不小於1024 bytes
+檔案傳輸：不小於2048 bytes
+擴充版檔案傳輸：不小於8192 bytes（參考第五章5.2）
+Receive Buffer建議值
+委託下單/成交回報：不小於1024 bytes
+檔案傳輸：不小於2048 bytes
+擴充版檔案傳輸：不小於8192 bytes（參考第五章5.2）
+Time Wait建議值：	不大於15 秒
+
+Socket使用方式
+Socket的使用方式類似X.25網路主機連線的X.25 PVC （Permanent Virtual Circuit）使用方式，每一個Socket只能進行一項功能，不同的功能分配在不同的Socket上進行。證券商的任一數據線路（或任一IP位址）上要建立的Socket數量及進行的功能項目，都必須在申請使用時設定。每一數據線路（或每一個IP位址）上的Socket所使用的Source Port Number則由證券商申請時自行設定，不同的Socket必須設定不同的Source Port Number。原則上，Source Port Number的數值區間必須依照功能類別來劃分。
+
+Socket Session的建立由證券商主動發起，證券商為Client端，證交所為Server（或稱Listener）。證交所將以判斷Source IP加上Source Port Number作為辨別Socket的方法。每一個Source IP加上Source Port Number的組合只能建立一個Socket Session。證券商以相同的Source IP加上相同的Source Port Number來建Socket Session時，將被視為重建Socket Session，原已建立的Socket Session會被中止，在該Socket Session上進行的功能也會被中斷。
+
+Socket ID、密碼及分配的功能
+每一個Socket也訂定一個2-byte的Socket ID，用來區別Socket，類似X.25主機連線作業中的X.25 PVC ID。每一個Socket也必須設定密碼。Socket建立後，執行連線子系統的登錄作業時必須以Socket密碼進行運算，再將運算值傳給證交所。Socket配置查詢及密碼異動與原X.25 PVC配置查詢及密碼異動方式相同。
+
+每一個Socket都有自己的應用程式功能類別（AP-CODE）。證交所將依據證券商申請競價設備連線時所設定的AP-CODE，與證券商執行登入作業時必須傳送AP-CODE比對，證券商必須傳送正確的AP-CODE才可進行功能。
+
+證券商的Socket ID、Source Port Number及功能類別的對照表舉例如下：
+Socket ID
+Source Port Number
+功能類別
+01
+21001
+檔案傳輸-傳送
+02
+21002
+檔案傳輸-接收
+03
+21003
+成交回報
+04
+21004
+委託
+05
+21005
+委託
+06
+21006
+委託
+07
+21007
+委託
+08
+21008
+委託
+09
+21009
+委託
+表3.3.-1 Socket ID、Source Port Number及業務對照表
+
+表3.3. –1中的Source Port Number與各功能的關係：21xx1為檔案傳輸-傳送、21xx2為檔案傳輸-接收、21xx3為成交回報、21xx4~21xx9為委託下單。xx為二位數字識別碼，詳細規定請參考「申請競價設備連線及異動作業」作業手冊第四章。
+
+
+各Socket的作業時間表
+Socket ID
+時　　　間
+執　行　之　功　能
+01
+02
+03
+04
+
+
+05
+
+
+06
+
+
+07
+
+
+08
+
+
+09
+
+
+07:30－19:00
+07:30－19:00
+08:00－14:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+08:30－13:30
+14:00－14:30
+14:00－15:30
+單筆訊息及檔案傳輸(傳送)
+單筆訊息及檔案傳輸(接收)
+成交回報接收
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+普通股交易/標借交易
+盤後定價交易
+零股交易　/拍賣交易
+表3.4.-1 Socket作業時間表
+
+Socket的備援
+證券商若申請使用多數據線路，就可以利用數據線路互相備援。證券商可以預先填寫Socket/Port備援申請表（參閱「申請競價設備連線及異動作業」附件十一），指定某一線路（即某一個IP位址）上未設定執行任何業務的Source Port Number備援另一線路（另一個IP位址）上的某一個Source Port Number（Socket）。一旦有線路發生問題，證券商可以電話聯絡證交所機房進行轉換，以預設的備援用Source IP加上Source Port Number建的Socket取代故障線路上的Socket。Socket備援的作法類似X.25網路主機連線的X.25 PVC備援。
+Socket通訊協定
+Socket通訊處理層與業務應用程式及TCP/IP網路的關係
+
+圖 4.1 –1 Socket通訊處理層與業務應用程式關係圖
+
+	為了使證券商端的原來的各項功能之應用程式如委託下單、成交回報、檔案傳輸等（簡稱AP），不經過修改就可以連上TCP/IP網路，證券商必須在各項AP的前端加上具有處理Socket能力的介面程式（或稱Socket通訊處理層，簡稱Socket層），來負責Socket的建立與重建，以及各種資料的傳送與接收。
+
+	如圖4.1 –1所示，Socket層介於AP與TCP/IP網路之間，負責將來自AP的TMP資料加上頭尾的識別欄位，變成Socket通訊處理層訊息（簡稱Socket訊息或SLM，Socket Level Message），再透過TCP/IP網路的Socket將SLM傳送到對方。接收方的Socket層則必須將接收到的SLM去除頭尾的識別欄位，再將TMP資料交給AP。
+
+Socket通訊處理層的功能
+建立Socket Session
+根據各個Socket分配到的Source IP及Source Port Number連接(connect)到證交所的Destination IP及Destination Port Number，建立Socket Session。
+包裝及解包裝TMP訊息
+因TCP/IP網路上傳輸的資料為byte stream型式，沒有類似X.25網路資料封包的概念，為區別出一筆一筆的訊息，所有TMP的訊息都要加上啟始欄位及結束欄位，形成Socket訊息，請參考「4.5. Socket通訊處理層訊息格式」。
+確定Socket Session正常
+Socket Session建立後，若證券商或證交所任一方都一直沒有接收到對方傳來的資料時，很難判斷是因為當時並沒有任何AP需要傳送資料，或是有AP需要傳送資料卻因為網路元件發生故障而無法傳送，因此，在一段預設的時間內，若AP沒有任何訊息要傳送，Socket層必須主動傳送確定Socket Session連線訊息（簡稱Heartbeat），使Heartbeat的接收方可以確定Socket Session正常。
+重建Socket Session
+因網路元件或雙方的電腦軟硬體設備發生故障，造成Socket Session中斷時，Socket層必須判斷發生錯誤的原因，自動排除錯誤後重新建立Socket Session。
+結束Socket Session
+每日結束所有業務及作業後，結束Socket Session。
+
+Socket通訊處理層作業流程
+Socket通訊處理層的作業有：
+建立Socket Session作業
+TMP訊息傳送作業
+確定Socket連線作業
+TMP訊息接收作業
+結束Socket Session作業
+
+
+證券商的電腦系統啟動後，應該先執行建立Socket Session作業，才可以進行TMP訊息傳送作業、確定Socket連線作業或TMP訊息接收作業。證券商進行任何一項作業發生問題時，都必須先執行結束Socket Session作業，再重新執行建立Socket Session作業。證券商AP應於每次Socket Session建立之後，執行TMP連線子系統的開機通知作業，登錄作業及應用子系統啟動作業，才可進行各項應用子系統的作業。
+
+證券商於所有業務結束後，執行結束Socket Session作業，再停止電腦系統。
+
+建立socket Session作業
+一般流程
+
+
+說明
+證券商先發出建立socket session的要求（connect），再接收證交所傳回的建立Socket完成通知訊息，完成此作業。
+目的
+建立Socket Session，並確認證交所已接受此Socket的建立。
+發生條件
+證券商必須先將各功能的Socket Session建立，才可以開始進行各項業務，傳送業務相關的訊息。
+後續作業
+證券商可以開始傳送或接收訊息。
+
+訊息流程與訊息格式
+
+
+			(A). 建立Socket Session（呼叫connect()函數）
+發生情況
+證券商進行AP的TMP訊息傳送前，必須先建立Socket Session。
+訊息格式與內容
+無。請參考C語言與socket有關的bind()及connect()的作法。
+證券商後續應處理事項
+connect()完成後，證券商應設定timeout 25秒，等待證交所傳送接受Socket訊息或錯誤訊息。
+			(B). 建立Socket Session失敗（呼叫connect()錯誤）
+發生情況
+證券商呼叫connect()後，得到錯誤的回覆碼（return code）。
+訊息格式與內容
+無。請參考C語言與socket有關 connect()的作法。
+證券商後續應處理事項
+依return code判斷錯誤發生原因，排除錯誤後再重建Socket Session。
+			(C). 建立Socket完成通知訊息
+發生情況
+證券商建立Socket完成後，證交所確認Socket的正確性後，傳送建立Socket完成通知訊息。
+訊息格式與內容
+請參考4.5 Socket訊息ID：SLM-010。
+證券商後續應處理事項
+可以繼續依業務需要進行TMP訊息接收作業及TMP訊息傳送作業。
+			(D). 錯誤訊息
+發生情況
+證券商建立Socket完成後，證交所核對Source Port Number後發現Source Port Number與設定值不合，或其他任何錯誤，造成Socket Session無法順利繼續時，回覆錯誤訊息。
+訊息格式與內容
+請參考4.5 Socket訊息ID：SLM-040。
+證券商後續應處理事項
+判斷錯誤訊息中的錯誤代碼，排除錯誤後，重建Socket Session。
+			(E). 無任何訊息
+發生情況
+證券商於建立Socket Session完成後，在25秒內沒有收到任何證交所傳來的訊息。
+訊息格式與內容
+無。
+證券商後續應處理事項
+結束此Socket Session，再重新建立Socket Session。
+
+TMP訊息傳送作業
+一般流程
+
+
+說明
+單向的訊息傳送。證券商傳送TMP訊息給證交所，完成此作業。
+目的
+傳送證券商AP的TMP訊息。
+發生條件
+證券商AP有TMP訊息必須傳送時。
+後續作業
+證券商可以繼續傳送訊息。
+
+訊息流程與訊息格式
+
+
+			(A). 傳送TMP訊息
+發生情況
+證券商AP有TMP訊息需要傳送，由Socket層加上頭尾識別欄位後傳送。
+訊息格式與內容
+請參考4.5 Socket訊息SLM-020。
+證券商後續應處理事項
+傳送訊息完成後，證券商應設定timeout 60秒，並等待處理證券商AP的其他TMP訊息。若timeout時間內沒有任何來自AP的TMP訊息需要傳送，證券商必須執行確定Socket連線作業。
+			(B). 傳送失敗
+發生情況
+證券商傳送TMP訊息發生錯誤，訊息並未傳送出去。
+訊息格式與內容
+無。
+證券商後續應處理事項
+結束此Socket Session，再依return code判斷錯誤發生原因，排除錯誤後再重建Socket Session。
+
+確定Socket連線作業
+一般流程
+
+
+說明
+單向的訊息傳送。證券商傳送確定Socket連線訊息給證交所，完成此作業。
+目的
+傳送確定Socket連線訊息，使證交所可以確認連線正常。
+發生條件
+證券商傳送出上一筆Socket訊息後，在設定的timeout時間內，證券商AP都沒有任何TMP訊息需要傳送時，傳送本訊息。
+後續作業
+證券商可以繼續傳送訊息。
+
+訊息流程與訊息格式
+
+
+			(A). 傳送確定Socket連線訊息
+發生情況
+證券商在上一次送出Socket訊息後，設定timeout 60秒，等待證券商AP的TMP訊息。若timeout時間結束時，證券商AP仍沒有TMP訊息要傳送，則送出確定連線訊息。
+訊息格式與內容
+請參考4.5 Socket訊息SLM-030。
+證券商後續應處理事項
+傳送訊息完成後，證券商應設定timeout 60秒，並繼續等待處理證券商AP的其他TMP訊息。
+			(B). 傳送失敗
+發生情況
+證券商傳送確定Socket連線訊息發生錯誤，訊息並未傳送出去。
+訊息格式與內容
+無。
+證券商後續應處理事項
+結束此Socket Session，再依return code判斷錯誤發生原因，排除錯誤後再重建Socket Session。
+
+TMP訊息接收作業
+一般流程
+
+
+說明
+單向的訊息傳送。證券商接收證交所傳來的TMP訊息，完成此作業。
+目的
+接收證交所AP傳送的TMP訊息。
+發生條件
+證交所AP有TMP訊息必須傳送時。
+後續作業
+證券商可以繼續接收訊息。
+
+訊息流程與訊息格式
+
+
+			(A). 接收TMP訊息
+發生情況
+證交所AP的有TMP訊息必須傳送時。
+訊息格式與內容
+請參考4.5 Socket訊息SLM-020。
+證券商後續應處理事項
+接收訊息完成後，證券商應設定timeout 25秒，並繼續等待接收證交所的訊息。
+			(B). 確定連線訊息
+發生情況
+證交所AP在預設的時間內沒有任何TMP必須傳送時，證交所送出確定連線訊息。
+訊息格式與內容
+請參考4.5 Socket訊息SLM-030。
+證券商後續應處理事項
+接收訊息完成後，證券商應設定timeout 25秒，並繼續等待接收證交所的訊息。
+			(C). 錯誤訊息
+發生情況
+證交所發現證券商傳送來的訊息有任何問題或並未在預設的時間內收到證券商傳來的確定Socket連線訊息，或其他任何錯誤，造成Socket Session無法順利繼續時，回覆錯誤訊息。
+訊息格式與內容
+請參考4.5 Socket訊息ID：SLM-040。
+證券商後續應處理事項
+判斷錯誤訊息中的錯誤代碼，排除錯誤後，重建Socket Session。
+(D). 無任何訊息
+發生情況
+證券商上一次接收訊息後，在預設的timeout 25秒時間內，沒有收到任何證交所傳來的訊息。原因可能是網路元件或證交所的電腦軟硬體設備發生問題。
+訊息格式與內容
+無。
+證券商後續應處理事項
+結束此Socket Session，再重建Socket Session。
+
+結束Socket Session作業
+一般流程
+
+
+說明
+證券商發出結束Socket Session的要求（close），完成此作業。
+目的
+結束此Socket Session。
+發生條件
+(1). 證券商AP所執行之業務全部完成時
+(2). 任何傳送或接收訊息作業發生錯誤時。
+後續作業
+依業務需要重新建立Socket Session。
+
+
+訊息流程與訊息格式
+
+
+			(A).結束Socket Session（呼叫close()函數）
+發生情況
+證券商希望結束此Socket Session。
+訊息格式與內容
+無。請參考C語言有關socket的close()作法。
+證券商後續應處理事項
+close()完成後，證券商視需要決定是否重建Socket Session。
+
+各欄位說明
+
+欄　位　名　稱
+長　　度
+說  　明
+Header Code
+2
+16進位值0xFEFE
+Control Code
+2
+00　代表TMP訊息
+10　代表接受Socket訊息
+11　代表Heartbeat
+其他  代表錯誤訊息
+AP-Message-Length
+2
+Integer, high byte在左邊
+代表TMP訊息內容的長度
+Body
+
+原TMP訊息內容
+Trailer
+2
+16進位值0xEFEF
+
+
+Socket通訊處理層訊息格式
+
+Message ID：		SLM-010
+Message Name：	建立Socket完成通知訊息
+FIELD NAME
+FORMAT
+CONTENTS
+Socket
+HEADER
+Header Code
+X(2)
+0xFEFE
+Control Code
+X(2)
+“10”
+AP-Message Length
+2-byte integer
+0
+Trailer
+Trailer code
+X(2)
+0xEFEF
+
+
+Message ID：		SLM-020
+Message Name：	TMP Socket訊息
+FIELD NAME
+FORMAT
+CONTENTS
+Socket
+HEADER
+Header Code
+X(2)
+0xFEFE
+Control Code
+X(2)
+“00”
+AP-Message Length
+2-byte integer
+視TMP內容長度決定
+BODY
+TMP訊息內容
+
+
+Trailer
+Trailer code
+X(2)
+0xEFEF
+
+
+Message ID：		SLM-030
+Message Name：	確定Socket Session訊息
+FIELD NAME
+FORMAT
+CONTENTS
+Socket
+HEADER
+Header Code
+X(2)
+0xFEFE
+Control Code
+X(2)
+“11”
+AP-Message Length
+2-byte integer
+0
+Trailer
+Trailer code
+X(2)
+0xEFEF
+
+
+Message ID：		SLM-040
+Message Name：	錯誤訊息
+FIELD NAME
+FORMAT
+CONTENTS
+Socket
+HEADER
+Header Code
+X(2)
+0xFEFE
+Control Code
+X(2)
+參考4.6錯誤代碼
+AP-Message Length
+2-byte integer
+0
+Trailer
+Trailer code
+X(2)
+0xEFEF
+
+
+錯誤代碼
+Control
+Code
+訊　息　內　容
+證 券 商 應 處 理 事 項
+21
+Framing Error
+（Header或trailer錯誤，或是AP-Message Length與實際資料長度不合）
+證交所將會結束Socket，證券商可於排除狀況後，重新建立Socket Session。
+22
+非授權 Source Port
+證交所將會結束Socket，證券商檢查並更正Source Port Number後，重新建立Socket Session
+23
+Heartbeat Timeout
+證交所將會結束Socket，證券商可於排除狀況後，重新建立Socket Session。
+24
+Suspended by TSE
+
+證交所拒絕接受該Socket的連線要求。請電話連絡證交所操管中心查明原因。
+25
+Invalid Frame
+（未定義的Control-code或Control-code=00但AP-Message-length=0或Control-code=11但AP-Message-length>0）
+證交所將會結束Socket，證券商可於排除狀況後，重新建立Socket Session。
+26
+Heartbeat次數太多
+
+證交所將會結束Socket，並將該拒絕接受該Socket的連線要求。證券商必須於排除狀況後，電話通知證交所操管中心解除設定，才可再重新建立Socket Session。
+29
+System Not Ready
+（證交所電腦軟硬體設備尚未啟動或發生異常）
+證交所將會結束Socket，證券商應等待一段時間後再重新嘗試建立Socket Session。
+與原X.25網路主機連線作業之差異
+原「臺灣證券交易所主機連線作業手冊」第三章到第八章之內容全部適用於TCP/IP主機連線作業。但原手冊中有關X.25 PVC的訊息欄位，在TCP/IP主機連線作業中應視為Socket的欄位，例如PVC ID改為Socket ID、PVC密碼改為Socket密碼。TMP中與Socket相關的作業有：
+要求傳送連線PVC/Socket配置檔作業（B36）
+更改PVC/Socket密碼作業（B37）
+普通股委託輸入作業（或其他交易子系統如零股、標借、拍賣）
+跨PVC/Socket連線查詢作業
+
+各作業的訊息格式請參考原手冊中之相關規定。
+
+為利用TCP/IP網路在傳輸效能上的優勢，檔案傳輸每筆資料長度在TCP/IP網路上將可以放大到4096 bytes。另外，為了改善原TMP的檔案傳輸功能無法確定雙方連線是否正常的問題，在TCP/IP網路的主機連線作業上也增加檔案傳輸確定連線的作業。證券商可以在連線子系統進行連線時選擇使用原來的檔案傳輸的功能或擴充版檔案傳輸功能，一旦選擇新的檔案傳輸功能，則必須同時配合4096 byte傳輸長度與確定連線作業之相關規定，無法只選擇其中某一項新功能。
+
+證券商選擇使用原檔案傳輸或擴充版檔案傳輸的方法是在連線子系統的登錄訊息L040中，以AP-CODE通知證交所。若AP-CODE為1，表示證券商決定以原檔案傳輸子系統的規格連線，若AP-CODE為9，則表示證券商將使用擴充版的檔案傳輸子系統規格。
+
+證券商即使選擇使用擴充版的檔案傳輸子系統，但在要求傳送連線PVC/Socket配置檔作業（B36）時，證交所回覆的連線PVC/Socket配置檔B36中，檔案傳輸Socket的AP-CODE欄位仍是1。
+
+證券商在連線子系統的登錄作業中選擇使用擴充版檔案傳輸後，檔案傳輸的啟始作業仍使用原來的訊息格式（傳送功能使用F010，接收功能使用F090）。但檔案傳輸中繼作業的傳送資料訊息則必須使用擴充版格式，傳送功能方面使用擴充版格式F210（原格式為F030），傳送資料回覆訊息使用擴充版格式F220（原格式為F040）。而在接收功能方面，使用擴充版格式F230（原格式為F110），傳送資料回覆訊息使用擴充版格式F240（原格式為F120）。各訊息詳細格式內容請參考5.4訊息格式說明。
+
+確定連線作業- 傳送功能
+證券商在連線子系統的登錄作業中選擇使用擴充版檔案傳輸後，必須增加確定連線作業- 傳送功能。
+
+
+說明
+2-WAY的訊息交換。
+目的
+因證券商目前並無任何資料必須傳送，進行確定連線作業以確保雙方連線正常。
+發生條件
+當證券商完成上一個單筆訊息與檔案傳輸作業或確定連線作業後，在60秒內並其他傳輸作業必須傳送時，以確定連線訊息通知證交所連線正常。
+完成後影響
+證交所收到確定連線訊息後，必須回覆確定連線回覆訊息，通知證券商連線正常。
+
+訊息流程與訊息格式
+
+
+(A)確定連線訊息(Confirm Link Message)︰
+訊息發生情況︰
+當證券商執行確定連線作業作業時，傳送確定連線訊息給證交所。
+訊息格式與內容︰
+請參考5.4 Message-ID︰F170。
+證券商應處理事項︰
+設定timeout時間為90秒，等待證交所的確定連線回收覆訊息。
+(B)無傳送訊息(No Response)︰
+訊息發生情況︰
+若時限已到未收到任何訊息，可能是︰
+A.證交所端故障。
+B.網路故障。
+訊息格式與內容︰
+無。
+證券商應處理事項︰
+當證券商在設定之timeout時間內(90秒)，證交所沒有送出任何訊息時，則證券商結束檔案傳輸作業，回到連線子系統，重新建立連線關係。
+(C)確定連線回覆訊息(Confirm Link Reply Message)︰
+訊息發生情況︰
+證交所收到證券商傳來之確定連線訊息後，送回確定連線回覆訊息給證券商。
+訊息格式與內容︰
+請參考5.4 Message-ID︰F180。
+證券商應處理事項︰
+無。可繼續進行其他作業。
+
+確定連線作業- 接收功能
+證券商在連線子系統的登錄作業中選擇使用擴充版檔案傳輸後，必須增加確定連線作業-接收功能。
+
+
+說明
+2-WAY的訊息交換。
+目的
+因證交所目前並無任何資料必須傳送，進行確定連線作業以確保雙方連線正常。
+發生條件
+當證交所完成上一個單筆訊息與檔案傳輸作業或確定連線作業後，在60秒內並其他傳輸作業必須傳送時，以確定連線訊息通知證券商連線正常。
+完成後影響
+證券商收到確定連線訊息後，必須回覆確定連線回覆訊息，通知證交所連線正常。
+
+訊息流程與訊息格式
+
+
+(A)確定連線訊息(Confirm Link Message)︰
+訊息發生情況︰
+當證交所執行確定連線作業作業時，傳送確定連線訊息給證券商。
+訊息格式與內容︰
+請參考5.4 Message-ID︰F190。
+證券商應處理事項︰
+傳送確定連線回覆訊息給證交所。
+(B)無任何訊息(No Response)︰
+訊息發生情況︰
+若時限已到未收到任何訊息，可能是︰
+A.證交所端故障。
+B.網路故障。
+訊息格式與內容︰
+無。
+證券商應處理事項︰
+當證券商在設定之TIMEOUT時間內(TIMEOUT時間為90秒)，證交所沒有送出任何訊息時，則證券商結束檔案傳輸作業，回到連線子系統，重新建立連線關係。
+(C)確定連線回覆訊息(Confirm Link Reply Message)︰
+訊息發生情況︰
+證券商收到證交所傳來之確定連線訊息後，送回確定連線回覆訊息給證交所。
+訊息格式與內容︰
+請參考5.4 Message-ID︰F200。
+證券商應處理事項︰
+證券商送出訊息後，繼續設定TIMEOUT時間為90秒，等待下一筆訊息之到來。。
+
+擴充版檔案傳輸子系統代碼說明
+欄　位　名　稱
+長　　度
+說  　明
+SUBSYSTEM-NAME
+9(02)
+20　表示傳輸子系統
+FUNCTION-CODE
+9(02)
+00　檔案傳輸起始作業
+01　檔案傳輸中繼作業
+02　單筆訊息傳輸作業
+03　結束傳輸作業
+04  確定連線作業
+MESSAGE-TYPE
+9(02)
+00　起始訊息
+01　回覆起始訊息
+02　傳送資料訊息
+03　回覆資料訊息
+04　傳送單筆訊息
+05　回覆單筆訊息
+06　結束訊息
+07　回覆結束訊息
+08  確定連線訊息
+09  確定連線回覆訊息
+12  傳送4096資料訊息
+13  回覆4096資料訊息
+MESSAGE-TIME
+9(06)
+訊息傳出之時間(HHMMSS)
+STATUS-CODE
+9(02)
+＝　00無誤
+＞　00錯誤代碼
+SOURCE-ID
+X(4)
+傳送方之ID
+OBJECT-ID
+X(4)
+接收方之ID
+BODY-LENGTH
+9(4)
+訊息格式中BODY之長度
+FILE-CODE
+X(3)
+檔案代號
+FILE-SIZE
+9(8)
+資料檔案之大小(以byte為單位)
+EOF
+9(1)
+若為檔案最後一筆資料訊息填1，否則為0
+DATA
+<=X(3976)
+資料檔案之內容
+REQUEST-MESSAGE
+<=X(995)
+由傳送介面送出之單筆訊息內容
+RESPONSE-MESSAGE
+<=X(995)
+由接收介面送出單筆訊訊息內容
+
+
+訊息格式說明
+
+MESSAGE ID  ︰L040 - TMP
+MESSAGE NAME︰登錄訊息
+
+FILED NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+
+SUBSYSTEM-NAME
+9(2)
+10
+FUNCTION-CODE
+9(2)
+20
+MESSAGE-TYPE
+9(2)
+03
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+
+BODY
+APPEND-NO
+9(3)
+
+BROKER-ID
+X(4)
+
+AP-CODE
+X(1)
+
+KEY-VALUE
+9(2)
+
+
+1.SUBSYSTEM-NAME：10  -->  連線子系統。
+2.FUNCTION-CODE  ：20  -->  登錄作業。
+3.MESSAGE-TYPE   ：03  -->  登錄訊息。
+4.SYSTEM-TIME     ：送出訊息時的系統時間。
+5.STATUS-CODE    ：其值 00(SUCCESS)。
+6.APPEND-NO      ：登錄訊息之APPEND-NO即為通知登錄訊息之
+APPEND-NO
+7.BROKER-ID      ：證券商代號
+8.AP-CODE        ：即為該PVC欲進行之業務
+1    原單筆訊息與檔案傳輸子系統
+							9    擴充版單筆訊息與檔案傳輸子系統
+9.KEY-VALUE︰(APPEND-NO * PASSWORD) 取千與百二位數字，型態為9(2)
+10.PASSWORD︰	(1)指證券商針對各Socket所事先與交易所訂定之密碼, 確認此Socket為正確之證券商所使用。
+(2)密碼的設定請參考原「臺灣證券交易所主機連線作業手冊」第八章之B37作業
+
+MESSAGE ID︰F170 – TMP
+MESSAGE NAME︰確定連線訊息 – 傳送功能
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+08
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F180 - TMP
+MESSAGE NAME︰確定連線回覆訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+09
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F190 - TMP
+MESSAGE NAME︰確定連線訊息 – 接收功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+08
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F200 - TMP
+MESSAGE NAME︰確定連線回覆訊息 – 接收功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+09
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+MESSAGE ID︰F210 - TMP
+MESSAGE NAME︰檔案傳輸中繼作業傳送資料訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+12
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+MESSAGE LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+DATA
+X(3976)
+
+
+MESSAGE-LENGTH︰訊息格式中BODY之長度
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+DATA︰資料檔案之內容
+
+MESSAGE ID︰F220 - TMP
+MESSAGE NAME︰檔案傳輸中繼作業回覆傳送資料訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+13
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證交所之ID
+DESTINATION ID
+X(4)
+證券商之ID
+MESSAGE LENGTH
+9(4)
+4
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+MESSAGE ID︰F230 - TMP
+MESSAGE NAME︰檔案傳輸中繼作業傳送資料訊息 – 接收訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+12
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證交所之ID
+DESTINATION ID
+X(4)
+證券商之ID
+MESSAGE LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+DATA
+X(3976)
+
+
+MESSAGE-LENGTH︰訊息格式中BODY之長度
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+DATA︰資料檔案之內容
+
+MESSAGE ID︰F240 - TMP
+MESSAGE NAME︰檔案傳輸中繼作業回覆傳送資料訊息– 接收訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+13
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+MESSAGE LENGTH
+9(4)
+4
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+
+櫃檯買賣中心的擴充版檔案傳輸子系統的訊息格式與內容
+
+MESSAGE ID  ︰L040 – TMP (OTC)
+MESSAGE NAME︰登錄訊息
+
+FILED NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+
+SUBSYSTEM-NAME
+9(2)
+91
+FUNCTION-CODE
+9(2)
+20
+MESSAGE-TYPE
+9(2)
+03
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+
+BODY
+APPEND-NO
+9(3)
+
+BROKER-ID
+X(4)
+
+AP-CODE
+X(1)
+
+KEY-VALUE
+9(2)
+
+
+1.SUBSYSTEM-NAME：91  -->  連線子系統。
+2.FUNCTION-CODE  ：20  -->  登錄作業。
+3.MESSAGE-TYPE   ：03  -->  登錄訊息。
+4.SYSTEM-TIME     ：送出訊息時的系統時間。
+5.STATUS-CODE    ：其值 00(SUCCESS)。
+6.APPEND-NO      ：登錄訊息之APPEND-NO即為通知登錄訊息之
+APPEND-NO
+7.BROKER-ID      ：證券商代號
+8.AP-CODE        ：即為該PVC欲進行之業務
+1    原單筆訊息與檔案傳輸子系統
+							9    擴充版單筆訊息與檔案傳輸子系統
+9.KEY-VALUE︰(APPEND-NO * PASSWORD) 取千與百二位數字，型態為9(2)
+10.PASSWORD︰	(1)指證券商針對各Socket所事先與交易所訂定之密碼, 確認此Socket為正確之證券商所使用。
+(2)密碼的設定請參考原「臺灣證券交易所主機連線作業手冊」第八章之B37作業
+
+MESSAGE ID︰F170 – TMP (OTC)
+MESSAGE NAME︰確定連線訊息 – 傳送功能
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+08
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F180 – TMP (OTC)
+MESSAGE NAME︰確定連線回覆訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+09
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F190 – TMP (OTC)
+MESSAGE NAME︰確定連線訊息 – 接收功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+08
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+
+MESSAGE ID︰F200 – TMP (OTC)
+MESSAGE NAME︰確定連線回覆訊息 – 接收功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+04
+MESSAGE-TYPE
+9(2)
+09
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+
+
+MESSAGE ID︰F210 – TMP (OTC)
+MESSAGE NAME︰檔案傳輸中繼作業傳送資料訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+12
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+MESSAGE LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+DATA
+X(3976)
+
+
+MESSAGE-LENGTH︰訊息格式中BODY之長度
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+DATA︰資料檔案之內容
+
+MESSAGE ID︰F220 – TMP (OTC)
+MESSAGE NAME︰檔案傳輸中繼作業回覆傳送資料訊息 – 傳送功能
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+13
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證交所之ID
+DESTINATION ID
+X(4)
+證券商之ID
+MESSAGE LENGTH
+9(4)
+4
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+MESSAGE ID︰F230 – TMP (OTC)
+MESSAGE NAME︰檔案傳輸中繼作業傳送資料訊息 – 接收訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+12
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證交所之ID
+DESTINATION ID
+X(4)
+證券商之ID
+MESSAGE LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+DATA
+X(3976)
+
+
+MESSAGE-LENGTH︰訊息格式中BODY之長度
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+DATA︰資料檔案之內容
+
+MESSAGE ID︰F240 – TMP (OTC)
+MESSAGE NAME︰檔案傳輸中繼作業回覆傳送資料訊息– 接收訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+92
+FUNCTION-CODE
+9(2)
+01
+MESSAGE-TYPE
+9(2)
+13
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+MESSAGE LENGTH
+9(4)
+4
+BODY
+FILE-CODE
+X(3)
+
+EOF
+9(1)
+1或0
+
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+
+
+PAGE
+
+
+PAGE  8
+
+
+證券商端主機
+
+NAT
+
+測試機房
+
+
+證交所
+
+TSE_IP2
+
+TSE_IP1
+
+TSE_IP1
+
+BRKA_IPB
+
+BRKA_IPA
+
+NAT
+
+STANDBY
+
+ACTIVE
+
+ATU-R
+
+ATM虛擬專用網路
+
+ADSL網路
+
+證券商端主機
+
+F/W
+
+F/W
+
+備援機房
+
+
+主機房
+
+證交所
+
+證交所
+
+T
+
+H
+
+TMP
+
+TMP
+
+Socket通訊處理層
+
+
+業務應用程式
+
+Socket通訊處理層
+
+
+業務應用程式
+
+證券商端主機
+
+NAT
+
+結束Socket Session作業
+
+TMP訊息接收作業
+
+TMP訊息傳送作業
+
+TSE_IP1
+
+TSE_IP1
+
+TSE_IP1
+
+BRKA_IPA
+
+NAT
+
+X
+
+建立Socket Session作業
+
+ATU-R
+
+ATM虛擬專用網路
+
+ADSL網路
+
+證券商端主機
+
+F/W
+
+TSE_IP1
+
+備援機房
+
+
+主機房
+
+
+證交所
+
+證交所
+
+BRKA_IPB
+
+BRKA_IPA
+
+NAT
+
+
+ACTIVE
+
+圖 4.3.1.1 - 1
+
+ATM虛擬專用網路
+
+ADSL網路
+
+證券商端主機
+
+F/W
+
+F/W
+
+備援機房
+
+
+主機房
+
+
+證交所
+
+證交所
+
+
+證交所
+AP
+
+
+證券商
+AP
+
+
+確定連線訊息
+
+確定連線訊息
+
+確定連線回覆訊息
+
+圖 5.3.2.1 - 1
+
+證交所AP
+
+(A)
+
+(B)
+
+(C)
+
+
+證券商AP
+
+證券商AP
+
+確定連線訊息
+
+確定連線回覆訊息 (+)
+
+圖 5.2.3.2 - 1
+
+
+證交所AP
+
+無任何訊息
+
+確定連線回覆訊息
+
+圖 5.2.4.1 - 1
+
+證交所AP
+
+證券商AP
+
+確定連線訊息
+
+(A)
+
+無任何訊息
+
+(B)
+
+確定連線回覆訊息 (+)
+
+(C)
+
+圖 5.2.4.2 - 1
+
+T
+
+H
+
+TMP
+
+TMP
+
+T
+
+H
+
+TMP
+
+T
+
+H
+
+TMP
+
+建立Socket完成通知訊息
+
+connect要求
+
+證交所Socket層
+
+接受Socket Session
+
+
+傳送建立Socket完成通知訊息
+
+證券商Socket層
+
+建立Socket Session
+( connect )
+
+
+圖 4.3 –1 Socket通訊處理層作業流程
+
+建立Socket完成通知訊息
+
+connect要求
+
+證交所Socket層
+
+
+證券商Socket層
+
+(A)
+
+(B)
+
+(C)
+
+(D)
+
+(E)
+
+無任何訊息
+
+Connect失敗
+
+錯誤訊息
+
+圖 4.3.2.1 - 1
+
+圖 4.3.2.2 -1
+
+TMP訊息
+
+證交所Socket層
+
+接收TMP訊息
+
+
+證券商Socket層
+
+傳送TMP訊息
+
+
+證交所Socket層
+
+接收確定Socket 連線訊息
+
+
+圖 4.3.1.2 -1
+
+確定Socket連線作業
+
+傳送失敗
+
+證券商Socket層
+
+傳送確定Socket 連線訊息
+
+
+確定連線訊息
+
+傳送TMP訊息
+
+證交所Socket層
+
+
+證券商Socket層
+
+(A)
+
+(B)
+
+
+圖 4.3.3.1 - 1
+
+證券商Socket層
+
+(A)
+
+(B)
+
+
+證交所Socket層
+
+
+確定Socket連線訊息
+
+傳送失敗
+
+圖 4.3.2.2 -1
+
+證券商Socket層
+
+接收TMP訊息
+
+
+證交所Socket層
+
+傳送TMP訊息
+
+
+TMP訊息
+
+圖 4.3.4.1 - 1
+
+證券商Socket層
+
+(A)
+
+(B)
+
+(C)
+
+(D)
+
+證交所Socket層
+
+
+TMP訊息
+
+無任何訊息
+
+圖 4.3.4.2 -1
+
+確定連線訊息
+
+證券商Socket層
+
+結束Socket Session
+( close )
+
+
+證交所Socket層
+
+
+Close socket
+
+證券商Socket層
+
+(A)
+
+
+圖 4.3.5.1 - 1
+
+證交所Socket層
+
+
+close要求
+
+
+錯誤訊息
+
+圖 4.3.5.2 -1

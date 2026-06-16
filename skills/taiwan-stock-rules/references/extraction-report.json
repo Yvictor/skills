@@ -1,0 +1,434 @@
+[
+  {
+    "index": "1",
+    "title": "O-010-A10 普通違約及信用違約電腦作業手冊",
+    "updated": "115.06.01",
+    "source_file": "assets/source-files/O-010-A10_普通違約及信用違約電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/01_O-010-A10_普通違約及信用違約電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "29615"
+  },
+  {
+    "index": "2",
+    "title": "O-016-A10 各類資訊統計檔案電腦作業手冊",
+    "updated": "115.06.01",
+    "source_file": "assets/source-files/O-016-A10_各類資訊統計檔案電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/02_O-016-A10_各類資訊統計檔案電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "94547"
+  },
+  {
+    "index": "3",
+    "title": "O-126-A10 TWSE集中市場即時交易資訊傳輸規格書(B.12.13)(202612)",
+    "updated": "115.05.15",
+    "source_file": "assets/source-files/O-126-A10_TWSE集中市場即時交易資訊傳輸規格書_B.12.13_202612.pdf",
+    "text_file": "assets/extracted-text/03_O-126-A10_TWSE集中市場即時交易資訊傳輸規格書_B.12.13_202612.txt",
+    "method": "pypdf",
+    "chars": "107140"
+  },
+  {
+    "index": "4",
+    "title": "O-127-A10 Market Information Specification(B.12.13)(行情資訊傳輸作業手冊英文版)(202612)",
+    "updated": "115.05.15",
+    "source_file": "assets/source-files/O-127-A10_Market_Information_Specification_B.12.13_行情資訊傳輸作業手冊英文版_202612.pdf",
+    "text_file": "assets/extracted-text/04_O-127-A10_Market_Information_Specification_B.12.13_行情資訊傳輸作業手冊英文版_202612.txt",
+    "method": "pypdf",
+    "chars": "226252"
+  },
+  {
+    "index": "5",
+    "title": "O-101-A10 主機連線電腦作業手冊",
+    "updated": "115.03.16",
+    "source_file": "assets/source-files/O-101-A10_主機連線電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/05_O-101-A10_主機連線電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "58296"
+  },
+  {
+    "index": "6",
+    "title": "O-001-A10 一般交易電腦作業手冊",
+    "updated": "115.03.13",
+    "source_file": "assets/source-files/O-001-A10_一般交易電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/06_O-001-A10_一般交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "34211"
+  },
+  {
+    "index": "7",
+    "title": "O-104-A10 集中市場當日全量備援電腦作業手冊",
+    "updated": "115.03.13",
+    "source_file": "assets/source-files/O-104-A10_集中市場當日全量備援電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/07_O-104-A10_集中市場當日全量備援電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "15881"
+  },
+  {
+    "index": "8",
+    "title": "O-021-A10 有價證券借貸後檯電腦作業手冊",
+    "updated": "115.02.06",
+    "source_file": "assets/source-files/O-021-A10_有價證券借貸後檯電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/08_O-021-A10_有價證券借貸後檯電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "111169"
+  },
+  {
+    "index": "9",
+    "title": "O-027-A10 證券業務借貸款項電腦作業手冊",
+    "updated": "115.01.13",
+    "source_file": "assets/source-files/O-027-A10_證券業務借貸款項電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/09_O-027-A10_證券業務借貸款項電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "98653"
+  },
+  {
+    "index": "10",
+    "title": "O-007-A10 信用交易電腦作業手冊",
+    "updated": "115.01.13",
+    "source_file": "assets/source-files/O-007-A10_信用交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/10_O-007-A10_信用交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "91417"
+  },
+  {
+    "index": "11",
+    "title": "O-026-A10 權證暨ETF流動量提供者專用電腦作業手冊",
+    "updated": "114.12.15",
+    "source_file": "assets/source-files/O-026-A10_權證暨ETF流動量提供者專用電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/11_O-026-A10_權證暨ETF流動量提供者專用電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "4293"
+  },
+  {
+    "index": "12",
+    "title": "O-125-A10 TWSE FIX 4.4 Specification (FIX 4.4電文規範作業手冊英文版)",
+    "updated": "114.09.03",
+    "source_file": "assets/source-files/O-125-A10_TWSE_FIX_4.4_Specification_FIX_4.4電文規範作業手冊英文版.docx",
+    "text_file": "assets/extracted-text/12_O-125-A10_TWSE_FIX_4.4_Specification_FIX_4.4電文規範作業手冊英文版.txt",
+    "method": "textutil",
+    "chars": "103372"
+  },
+  {
+    "index": "13",
+    "title": "O-128-A10 證券商備用競價設備系統-證券商使用手冊",
+    "updated": "114.08.27",
+    "source_file": "assets/source-files/O-128-A10_證券商備用競價設備系統-證券商使用手冊.pdf",
+    "text_file": "assets/extracted-text/13_O-128-A10_證券商備用競價設備系統-證券商使用手冊.txt",
+    "method": "pypdf",
+    "chars": "90115"
+  },
+  {
+    "index": "14",
+    "title": "O-008-A10 投資人開戶電腦作業手冊",
+    "updated": "114.08.11",
+    "source_file": "assets/source-files/O-008-A10_投資人開戶電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/14_O-008-A10_投資人開戶電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "33968"
+  },
+  {
+    "index": "15",
+    "title": "O-124-A10 FIX4.4電文規範作業手冊",
+    "updated": "114.05.05",
+    "source_file": "assets/source-files/O-124-A10_FIX4.4電文規範作業手冊.doc",
+    "text_file": "assets/extracted-text/15_O-124-A10_FIX4.4電文規範作業手冊.txt",
+    "method": "textutil",
+    "chars": "76088"
+  },
+  {
+    "index": "16",
+    "title": "O-037-A10 TWSE盤中零股交易電腦作業手冊",
+    "updated": "114.05.05",
+    "source_file": "assets/source-files/O-037-A10_TWSE盤中零股交易電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/16_O-037-A10_TWSE盤中零股交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "8423"
+  },
+  {
+    "index": "17",
+    "title": "O-002-A10 零股交易電腦作業手冊",
+    "updated": "114.05.05",
+    "source_file": "assets/source-files/O-002-A10_零股交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/17_O-002-A10_零股交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "9572"
+  },
+  {
+    "index": "18",
+    "title": "O-019-A10 盤後定價交易電腦作業手冊",
+    "updated": "114.05.05",
+    "source_file": "assets/source-files/O-019-A10_盤後定價交易電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/18_O-019-A10_盤後定價交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "10049"
+  },
+  {
+    "index": "19",
+    "title": "O-031-A10 投信ETF電腦作業手冊",
+    "updated": "114.01.17",
+    "source_file": "assets/source-files/O-031-A10_投信ETF電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/19_O-031-A10_投信ETF電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "40551"
+  },
+  {
+    "index": "20",
+    "title": "O-030-A10 證券商ETF電腦作業手冊",
+    "updated": "114.01.17",
+    "source_file": "assets/source-files/O-030-A10_證券商ETF電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/20_O-030-A10_證券商ETF電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "31585"
+  },
+  {
+    "index": "21",
+    "title": "O-020-A10 有價證券借貸前檯電腦作業手冊",
+    "updated": "114.01.06",
+    "source_file": "assets/source-files/O-020-A10_有價證券借貸前檯電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/21_O-020-A10_有價證券借貸前檯電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "59674"
+  },
+  {
+    "index": "22",
+    "title": "O-022-A10 證券商有價證券借貸制度電腦作業手冊",
+    "updated": "113.11.28",
+    "source_file": "assets/source-files/O-022-A10_證券商有價證券借貸制度電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/22_O-022-A10_證券商有價證券借貸制度電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "88695"
+  },
+  {
+    "index": "23",
+    "title": "O-011-A10 補正借券電腦作業手冊",
+    "updated": "113.09.26",
+    "source_file": "assets/source-files/O-011-A10_補正借券電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/23_O-011-A10_補正借券電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "4557"
+  },
+  {
+    "index": "24",
+    "title": "O-006-A10 公開申購配售電腦作業手冊",
+    "updated": "113.08.07",
+    "source_file": "assets/source-files/O-006-A10_公開申購配售電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/24_O-006-A10_公開申購配售電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "21603"
+  },
+  {
+    "index": "25",
+    "title": "O-034-A10 ETN申購賣回平台--發行人端電腦作業手冊",
+    "updated": "112.12.20",
+    "source_file": "assets/source-files/O-034-A10_ETN申購賣回平台--發行人端電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/25_O-034-A10_ETN申購賣回平台--發行人端電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "35934"
+  },
+  {
+    "index": "26",
+    "title": "O-033-A10 ETN申購賣回平台--證券商端電腦作業手冊",
+    "updated": "112.12.20",
+    "source_file": "assets/source-files/O-033-A10_ETN申購賣回平台--證券商端電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/26_O-033-A10_ETN申購賣回平台--證券商端電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "26147"
+  },
+  {
+    "index": "27",
+    "title": "O-038-A10 股票造市者及交易獎勵參與者電腦作業手冊",
+    "updated": "111.08.12",
+    "source_file": "assets/source-files/O-038-A10_股票造市者及交易獎勵參與者電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/27_O-038-A10_股票造市者及交易獎勵參與者電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "6371"
+  },
+  {
+    "index": "28",
+    "title": "O-035-A10 流動量提供者報價規則電腦作業手冊",
+    "updated": "111.08.12",
+    "source_file": "assets/source-files/O-035-A10_流動量提供者報價規則電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/28_O-035-A10_流動量提供者報價規則電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "761"
+  },
+  {
+    "index": "29",
+    "title": "O-029-A10 現股當日沖銷交易電腦作業手冊",
+    "updated": "109.10.12",
+    "source_file": "assets/source-files/O-029-A10_現股當日沖銷交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/29_O-029-A10_現股當日沖銷交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "45481"
+  },
+  {
+    "index": "30",
+    "title": "O-036-A10 聯徵中心負面資料查詢電腦作業手冊",
+    "updated": "109.03.02",
+    "source_file": "assets/source-files/O-036-A10_聯徵中心負面資料查詢電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/30_O-036-A10_聯徵中心負面資料查詢電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "6265"
+  },
+  {
+    "index": "31",
+    "title": "O-121-A10資訊交換平台有價證券借貸相關資料查詢作業手冊",
+    "updated": "108.09.02",
+    "source_file": "assets/source-files/O-121-A10資訊交換平台有價證券借貸相關資料查詢作業手冊.doc",
+    "text_file": "assets/extracted-text/31_O-121-A10資訊交換平台有價證券借貸相關資料查詢作業手冊.txt",
+    "method": "textutil",
+    "chars": "21793"
+  },
+  {
+    "index": "32",
+    "title": "O-024-A10 證金標購電腦作業手冊",
+    "updated": "108.07.03",
+    "source_file": "assets/source-files/O-024-A10_證金標購電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/32_O-024-A10_證金標購電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "14262"
+  },
+  {
+    "index": "33",
+    "title": "O-004-A10 標借電腦作業手冊",
+    "updated": "108.07.03",
+    "source_file": "assets/source-files/O-004-A10_標借電腦作業手冊.docx",
+    "text_file": "assets/extracted-text/33_O-004-A10_標借電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "9623"
+  },
+  {
+    "index": "34",
+    "title": "O-018-A10 標購電腦作業手冊",
+    "updated": "108.07.03",
+    "source_file": "assets/source-files/O-018-A10_標購電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/34_O-018-A10_標購電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "15085"
+  },
+  {
+    "index": "35",
+    "title": "O-005-A10 上市證券拍賣電腦作業手冊",
+    "updated": "108.07.03",
+    "source_file": "assets/source-files/O-005-A10_上市證券拍賣電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/35_O-005-A10_上市證券拍賣電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "14044"
+  },
+  {
+    "index": "36",
+    "title": "O-012-A10 借戶賣出股票申報電腦作業手冊",
+    "updated": "108.06.21",
+    "source_file": "assets/source-files/O-012-A10_借戶賣出股票申報電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/36_O-012-A10_借戶賣出股票申報電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "4759"
+  },
+  {
+    "index": "37",
+    "title": "O-025-A10 綜合交易帳號電腦作業手冊",
+    "updated": "108.05.22",
+    "source_file": "assets/source-files/O-025-A10_綜合交易帳號電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/37_O-025-A10_綜合交易帳號電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "60601"
+  },
+  {
+    "index": "38",
+    "title": "O-032-A10 證券商受託辦理定期定額買賣有價證券業務",
+    "updated": "108.05.21",
+    "source_file": "assets/source-files/O-032-A10_證券商受託辦理定期定額買賣有價證券業務.doc",
+    "text_file": "assets/extracted-text/38_O-032-A10_證券商受託辦理定期定額買賣有價證券業務.txt",
+    "method": "textutil",
+    "chars": "15554"
+  },
+  {
+    "index": "39",
+    "title": "O-009-A10 錯帳及更正帳號電腦作業手冊",
+    "updated": "108.05.21",
+    "source_file": "assets/source-files/O-009-A10_錯帳及更正帳號電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/39_O-009-A10_錯帳及更正帳號電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "23382"
+  },
+  {
+    "index": "40",
+    "title": "O-003-A10 鉅額逐筆交易電腦作業手冊",
+    "updated": "107.10.23",
+    "source_file": "assets/source-files/O-003-A10_鉅額逐筆交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/40_O-003-A10_鉅額逐筆交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "14884"
+  },
+  {
+    "index": "41",
+    "title": "O-003-A10 鉅額配對交易電腦作業手冊",
+    "updated": "107.10.23",
+    "source_file": "assets/source-files/O-003-A10_鉅額配對交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/41_O-003-A10_鉅額配對交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "20113"
+  },
+  {
+    "index": "42",
+    "title": "O-013-A10 證券商聯合徵信電腦作業手冊",
+    "updated": "105.03.15",
+    "source_file": "assets/source-files/O-013-A10_證券商聯合徵信電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/42_O-013-A10_證券商聯合徵信電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "11348"
+  },
+  {
+    "index": "43",
+    "title": "O-108-A10 第二路檔案傳輸電腦作業手冊",
+    "updated": "104.12.09",
+    "source_file": "assets/source-files/O-108-A10_第二路檔案傳輸電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/43_O-108-A10_第二路檔案傳輸電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "1133"
+  },
+  {
+    "index": "44",
+    "title": "O-107-A10 證券商申請第二成交回報通道及TCPIP網路擴充版成交回報電腦作業手冊",
+    "updated": "104.12.09",
+    "source_file": "assets/source-files/O-107-A10_證券商申請第二成交回報通道及TCPIP網路擴充版成交回報電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/44_O-107-A10_證券商申請第二成交回報通道及TCPIP網路擴充版成交回報電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "2997"
+  },
+  {
+    "index": "45",
+    "title": "O-106-A10 資訊交換平台主機連線電腦作業手冊",
+    "updated": "104.12.09",
+    "source_file": "assets/source-files/O-106-A10_資訊交換平台主機連線電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/45_O-106-A10_資訊交換平台主機連線電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "28128"
+  },
+  {
+    "index": "46",
+    "title": "O-105-A10 TCPIP網路主機連線電腦作業手冊",
+    "updated": "104.12.09",
+    "source_file": "assets/source-files/O-105-A10_TCPIP網路主機連線電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/46_O-105-A10_TCPIP網路主機連線電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "22928"
+  },
+  {
+    "index": "47",
+    "title": "O-023-A10 證金議借交易電腦作業手冊",
+    "updated": "103.06.26",
+    "source_file": "assets/source-files/O-023-A10_證金議借交易電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/47_O-023-A10_證金議借交易電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "4822"
+  },
+  {
+    "index": "48",
+    "title": "O-028-A10-「證券商辦理客戶委託保管及運用其款項操作辦法」之電腦作業手冊",
+    "updated": "99.12.20",
+    "source_file": "assets/source-files/O-028-A10-_證券商辦理客戶委託保管及運用其款項操作辦法_之電腦作業手冊.doc",
+    "text_file": "assets/extracted-text/48_O-028-A10-_證券商辦理客戶委託保管及運用其款項操作辦法_之電腦作業手冊.txt",
+    "method": "textutil",
+    "chars": "8521"
+  }
+]

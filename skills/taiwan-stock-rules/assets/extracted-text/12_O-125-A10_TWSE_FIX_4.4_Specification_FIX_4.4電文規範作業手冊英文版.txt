@@ -1,0 +1,5473 @@
+# O-125-A10 TWSE FIX 4.4 Specification (FIX 4.4電文規範作業手冊英文版)
+
+- 更新日期: 114.09.03
+- 來源檔案: assets/source-files/O-125-A10_TWSE_FIX_4.4_Specification_FIX_4.4電文規範作業手冊英文版.docx
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/computerPlanningOperationsDepartment/TWSE_NEW_FIX4.4SPEC_20250901_20250903094342.docx
+- SHA256: 45b8af718dca0b7ad1fc3b2421641caa3e8e059af52a3d5f4d47aafa701399c5
+- 抽取方式: textutil
+
+---
+
+Taiwan Stock Exchange Corporation
+(TWSE)
+
+FIX 4.4 Specification
+
+
+Published by Taiwan Stock Exchange Corporation
+Version Revise Record
+
+No
+Description
+Ver.
+Writer
+Date
+1
+Version 1.0
+Amendments for TWSE New Trading System go-live (May 2014).
+1.0
+System Development Dept.
+2013/08/13
+
+2
+Error Code 50 – No LeavesQty
+1.1
+
+2014/12/17
+3
+FixedPrice and OddLot
+1.2
+
+2017/02/03
+4
+By continuous market method,
+	•	the length of the fields Price and Quantity are changed;
+	•	OrdType (40) added value '1 = Market';
+	•	TimeInForce (59) add value '3 = IOC(Immediate or Cancel)' and '4 = FOK(Fill or Kill)';
+	•	OrderCancelReplaceRequest (MsgType = G) is now available for price changes.
+1.3
+
+2018/09/05
+5
+Regular, FixedPrice and OddLot
+	•	TwseOrdType (10001) is required in OrderCancelReplaceRequest (MsgType = G);
+	•	To amend some status codes.
+Regular
+	•	If an Order Cancel/Replace Request contains values (>0) for both OrderQty (38) and Price (44), status code 0011 will be replied.
+	•	When changing Price successfully, Execution Report (MsgType = 8) with ExecType in Replace (150 = 5), OrderQty (38) is equal to LeavesQty (151).
+	•	New Order Single with OrdType in Market (40 = 1), Price (44) must be ‘0’.
+OddLot
+OrderQty (38) of OrderCancelReplaceRequest (MsgType = G) now is meant for decrease quantity as Regular and FixedPrice do.
+1.4
+
+2019/07/04
+6
+Intraday odd lot trading
+1.5
+
+2020/04/15
+7
+Explanation for the order volume monitoring mechanism.
+Scheduled to go live on September 6, 2021
+1.6
+
+2021/08/01
+8
+Add Lending Auction, Auction, reverse auction, and reverse auction by securities finance enterprises transactions.
+Scheduled to go live on October 24, 2022
+1.7
+
+2022/03/31
+9
+New Error message: Dealer 0000000  not allowed to trade securities firm stocks.
+Scheduled to go live on June 30, 2025
+1.8
+
+2025/04/30
+
+Contents
+1	Introduction	5
+1.1	Introduction	5
+1.2	Scope of this manual	5
+1.3	Written and modification	5
+1.4	Download the electronic version of FIX specification	5
+2	Structure of connection	6
+2.1	TCP/IP network architecture (IP network)	6
+2.2	Structure	6
+3	Introduction of FIX	7
+3.1	FIX Protocol	7
+3.2	FIX Session Protocol	9
+3.3	FIX Message Type supported	14
+3.4	General Message Flow	15
+4	Main differences from Standard FIX 4.4	17
+4.1	Order Report and Trade Report	17
+4.2	Difference between OrderID (37)	19
+4.3	Fields Used in the FIX Latest.	19
+4.4	User Defined Fields	20
+5	Standard Header and Trailer	22
+5.1	Standard Header	22
+5.2	Standard Trailer	25
+6	Session Level Messages	26
+6.1	Logon	26
+6.2	Heartbeat	28
+6.3	Test Request	28
+6.4	Resend Request	29
+6.5	Reject – Session Level	29
+6.6	Sequence Reset	31
+6.7	Logout	32
+7	Application Messages	34
+7.1	New Order Single	34
+7.2	Order Cancel / Replace Request	40
+7.3	Order Cancel Request	45
+7.4	Order Status Request	48
+7.5	Execution Report	50
+7.6	Order Cancel Reject	58
+7.7	Business Message Reject	60
+8	Error Message	61
+8.1	Reject - Session Level: Error Code	61
+8.2	TWSE TMP Session Sub System Error Code	62
+8.3	Regular Status Code	62
+8.4	Fixed Price Status Code	65
+8.5	Odd Lot Status Code	67
+8.6	Intraday odd lot trading Status Code	68
+8.7	Lending Auction Status Code	69
+8.8	Auction Status Code	70
+8.9	Reverse Auction Status Code	71
+8.10	Reverse Auction by Securities Finance Enterprises Status Code	71
+8.11	Common Status Code	72
+9	Failover and Backup Procedures	73
+9.1	Broker Backup	73
+9.2	FIX Gateway Failover Procedures	73
+9.3	Disaster Recovery (DR) Site Failover	74
+10	Other Important Notes	75
+10.1	Network Bandwidth Considerations	75
+10.2	Message Rate Throttling	75
+10.3	Order Volume Monitoring Mechanism	76
+11	Appendix	78
+11.1	Order State Change Matrices	78
+11.2	Differentiation with standard FIX4.4	89
+Introduction
+Introduction
+To improve the efficiency of trading process and enhancing the service quality for connecting to the international security market, Taiwan Stock Exchange Corporation (“TWSE”) has established the “FIX Protocol platform” to provide domestic and international Brokers high-speed access. TWSE published this document based on the Financial Information eXchange (FIX) Protocol Version 4.4. Brokers need to follow this document for further trading transactions. For more information on FIX Specification, please refer to The FIX Trading Community (https://www.fixtrading.org).
+Scope of this manual
+This document includes the configuration, the means of sending message and message formats. About the session linkage test, please refer to the “session linkage user manual”.
+Written and modification
+This document is prepared by TWSE System Development Department. After the execution, actual requirements can be amended and announced by TWSE.
+Download the electronic version of FIX specification
+The electronic version can be downloaded from the official website of TWSE (https://dsp.twse.com.tw/brokerManual/list).
+
+Structure of connection
+TCP/IP network architecture (IP network)
+TWSE adopted MPLS(Multi-Protocol Label Switching) constructed by CHT ATM backbone for brokers to establish efficient and high-secured connections under point to point fixed IP virtual circuit(Virtual Circuit). With superior performance and high security features.
+Structure
+
+
+Introduction of FIX
+FIX Protocol
+	•	FIX Format
+The format of FIX messages is not fixed-length. All the messages are required to follow the protocol to transfer data. Therefore, both sides can parse the format correctly. The general format of a FIX message is a standard header followed by the message body fields and terminated with a standard trailer. Each message is constructed of a stream of <tag>=<value> fields with a field delimiter (SOH) between fields in the stream. The first three fields in the standard header and the last field in the standard trailer are in order. Others are flexible. Please find more details as follows.
+
+Tag
+Field Name
+Data Type
+Req
+Standard Header
+8
+BeginString
+String
+Y
+
+9
+BodyLength
+String
+Y
+
+35
+MsgType
+String
+Y
+
+The orders of other fields of the Standard Header are flexible.
+Body
+Orders of body are flexible.
+Standard Trailer
+10
+CheckSum
+String
+Y
+Due to the format difference between FIX and TMP (TWSE Message Protocol), TWSE proprietary protocol, in this document below [ ] is indicated the format (field) of TMP for you referring to. For example, OrderID (37) is the same meaning as TMP [ORDER-NO].
+
+	•	Field Delimiter(ASCII “SOH”, 0x01)
+All fields in a FIX message are terminated by a delimiter character. The non-printing, ASCII "SOH" (hex: 0x01, referred to in this document as <SOH>), is used as the field termination. Messages are delimited by the “SOH” character following the CheckSum field. All messages begin with the “8=FIX.4.4<SOH>” string and terminate with “10=nnn<SOH>“. “nnn“ is the result calculated by checksum.
+
+Examples:
+8=FIX.4.4<SOH>9=80<SOH>35=A<SOH>49=T1020X2<SOH>56=XTAI<SOH>34=1<SOH>52=20150213-10:22:13.301<SOH>98=0<SOH>108=10<SOH>95=5<SOH>96=57194<SOH>10=086<SOH>
+	•	Data Types:
+Data types (with the exception of those of type "data") are mapped to ASCII strings as follows:
+	•	int: Sequence of digits without commas or decimals and optional sign character (ASCII characters "-" and "0" - "9”). The sign character utilizes one byte (i.e. positive int is "99999" while negative int is "-99999"). Note that int values may contain leading zeros (e.g. “00023” = “23”)
+Examples: 723 in field 16 would be mapped Int as |16=723|.
+-723 in field16 would be mapped Int as |16=-723|
+
+
+	•	float: Sequence of digits with optional decimal point and sign character (ASCII characters "-", "0" - "9" and "."); the absence of the decimal point within the string will be interpreted as the float representation of an integer value. All float fields must accommodate up to fifteen significant digits. The number of decimal places used should be a factor of business/market needs and mutual agreement between counterparties. Note that float values may contain leading zeros (e.g. “00023.23” = “23.23”) and may contain or omit trailing zeros after the decimal point (e.g. “23.0” = “23.0000” = “23”).
+
+	•	Qty: float field.
+
+	•	Price: float field.
+
+	•	char: Single character value, can include any alphanumeric character or punctuation except the delimiter. All char fields are case sensitive (i.e. m ≠ M).
+
+	•	Boolean: a char field (see definition of “char” above) containing one of  two values:
+'Y' = True/Yes
+      'N' = False/No
+
+	•	String: Alphanumeric free format strings, can include any character or punctuation except the delimiter. All char fields are case sensitive (i.e. morstatt ≠ Morstatt).
+
+	•	UTCTimestamp: Time/date combination represented in UTC (Universal Time Coordinated, also known as “GMT”) in either YYYYMMDD-HH:MM:SS (whole seconds) or YYYMMDD-HH:MM:SS.sss (milliseconds) format, colons, dash, and period required.
+
+	•	Sequence Numbers
+All FIX messages are identified by a unique sequence number. Message sequence number will start at ‘1’ in morning testing and market opening.
+In summary, the usage of sequence numbers is designed to ensure message delivery. If either side receives a message sequence higher than expected, it assumes that some messages have been missed and one side should request these missing messages from the other end.
+If a message with a lower sequence number is received, this is a fatal situation and is not allowed in this FIX protocol. The connection should be dropped and exclude the scenario first then reconnect.
+
+	•	Required Fields:
+         Each message within the protocol is comprised of required, optional and conditionally required (fields which are required based on the presence or value of other fields) fields.
+
+	•	User Defined Fields:
+          In order to provide maximum flexibility for its users, the FIX protocol accommodates User Defined Fields. The tag numbers 5000 to 9999 have been reserved for use with User Defined Fields, which are used as part of inter-firm communication. These tags can be registered/reserved via the FIX website. The tag numbers greater than or equal to 10000 have been reserved for internal use (within a single firm) and do not need to be registered/reserved via the FIX website.
+
+FIX Session Protocol
+A FIX Session is comprised of three parts: Logon, Message exchange and Logout. 
+	•	Logon
+Establishing a FIX connection involves three distinct operations: creation of a telecommunications level link, authentication/acceptance of the Session initiator (Brokers) by the Session acceptor (TWSE) and message synchronization (initialization).
+
+	•	Establish a telecommunication link
+	•	Authentication/acceptance of the Session
+Establishing the telecommunications link, the initiator will send a Logon message. If there is no Logon message by initiator over 60 seconds, the session acceptor should shut down the connection. Initiator should reconnect again.
+ Normally, the initiator will send a Logon message to session acceptor.
+Session acceptor needs to authenticate the message.
+If the initiator is successfully authenticated, the acceptor responds with a Logon message.
+If authentication fails, the session acceptor should shut down the connection and response a Logout message including the reasons cause failure. (Such as KEY-VALUE ERROR)
+The initiator should receive a Logon message from the session acceptor then send other messages.
+
+	•	Message synchronization
+The initiator and acceptor must synchronize their messages through interrogation of the MsgSeqNum field before sending any messages. A comparison of the MsgSeqNum in the Logon message to the internally monitored next expected sequence number will indicate any message gaps. Likewise, the initiator can detect gaps by comparing the acknowledgment Logon message MsgSeqNum to the next expected value.
+It is recommended for Brokers to wait a short period of time following the Logon or to send a TestRequest to the TWSE. After that, check the MsgSeqNum of Heartbeat from TWSE. If the sequence number is not synchronized, brokers need to send the ResendRequest message in order to fill the message gap.
+
+
+	•	Message exchange
+After the Logon procedure, message can exchange between both parties. More details please refer to the Chapter 6 Session Level Messages and Chapter 7 Application Messages.
+
+	•	Logout
+Normal termination of the message exchange session will be completed via the exchange of Logout messages. Termination by other means should be considered an abnormal condition and dealt with as an error. Session termination without receiving a Logout should treat the counterparty as logged out.
+It is recommended that before sending the Logout message, a TestRequest should be issued to force a Heartbeat from the other side. This helps to ensure that there are no sequence number gaps.
+A Logout procedure will be as follows.
+	•	Logout initiator sends a Test Request message.
+	•	Logout acceptor replies a Heartbeat.
+	•	Logout initiator verifies the message sequence number of Heartbeat to ensure there are no sequence number gaps.
+	•	If sequence number gaps are founded, send the Resend Request message directly.
+	•	Logout acceptor acknowledges the messages need to be resent.
+	•	Logout initiator verifies no sequence number gaps. Send Logout message. Will drop the connection if do not receive the confirming Logout message acknowledges over timeout 5 seconds.
+	•	Logout acceptor verifies the Logout message sequence number to ensure there are no sequence number gaps.
+	•	Will send the Resend Request directly if the sequence number gaps are found in Logout acceptor.
+	•	Logout initiator acknowledges the message need to be resent.
+	•	Logout acceptor verifies no sequence number gaps. Send a confirming Logout message.
+	•	Logout initiator drops the connection.
+
+
+FIX Message Type supported
+FIX Message Type issued by Brokers
+MsgType
+(tag 35)
+Message
+Comments
+Session Level Message
+A
+Logon
+
+0
+Heartbeat
+
+1
+Test Request
+
+2
+Resend Request
+
+3
+Reject – Session Level
+
+4
+Sequence Reset
+
+5
+Logout
+
+Application Message
+D
+New Order Single
+
+G
+Order Cancel/Replace Request
+
+F
+Order Cancel Request
+
+H
+Order Status Request
+
+FIX Message Type issued by TWSE
+MsgType
+(Tag 35)
+Message
+Comments
+Session Level Message
+A
+Logon
+
+0
+Heartbeat
+
+1
+Test Request
+
+2
+Resend Request
+
+3
+Reject – Session Level
+
+4
+Sequence Reset
+
+5
+Logout
+
+Application Message
+8
+Execution Report
+
+9
+Order Cancel Reject
+
+j
+Business Message Reject
+
+General Message Flow
+This section provides details on the expected message flow between brokers and TWSE. The ExecType (150) is used to identify the purpose of the execution report message. Refer to more details as follows.
+0
+4
+5
+8
+F
+I
+D
+New
+order-
+Success
+Canceled
+Success to Cancel order/ Reduce quantity
+Replace
+Success
+Rejected
+New order-Failure
+Trade
+Partial Fill or Fill
+Order Status
+Restated
+
+Securities Firms
+TWSE
+Comments
+Logon
+Logon
+Logon-Success
+
+Logout
+Logon-Failure
+New Order Single
+Reject – Session
+FIX tag validation error
+
+Exection Report:
+ExecType(150) = 8
+New order-Failure
+
+Exection Report:
+ExecType(150) = 0
+New Order-Success
+
+Exection Report:
+ExecType(150) = 0
+OrdRejReason(103) = 99
+Text (58) = 0031-QUANTITY WAS CUT
+Partial new Orders-Success
+
+Exection Report:
+ExecType (150) = 0
+OrdRejReason(103)=99
+Text (58) = 0051-QUANTITY WAS CUT
+Partial new Orders-Success
+Order Cancel/Replace Request
+Reject – Session
+FIX tag validation error
+
+Cancel Reject
+Fail to replace quantity or price
+
+Exection Report:
+ExecType (150) = 5
+Success to replace quantity or price
+Order Cancel Request
+
+Reject – Session
+FIX tag validation error
+
+Cancel Reject
+Fail to Cancel order
+
+Exection Report:
+ExecType (150) = 4
+Success to Cancel order
+Order Status Request
+
+Reject – Session
+FIX tag validation error
+
+Exection Report:
+ExecType (150)=I
+Response to order status query.
+Receive Exection Report
+Exection Report:
+ExecType (150) =F
+Partial Fill/ Fill
+TWSE will send automatically.
+Execution Report be sent unsolicited by TWSE
+Execution Report:
+ExecType (150) = D
+ExecRestatementReason (378) = 8
+Restated.
+Execution Report be sent unsolicited by TWSE, with ExecRestatementReason (378) set.
+For example,
+When the intra-day volatility interruption is triggered, TWSE will automatically delete existing market orders.
+Others
+Business Message Reject
+Validate error message
+Unsupported Message Type
+Logout
+Logout
+Logout
+
+Main differences from Standard FIX 4.4
+TWSE FIX protocol is based on the technology and industry standards Financial Information eXchange (FIX) Protocol Version 4.4, but TWSE FIX protocol still have some changes in order to meet the current Trading System. In this chapter addresses the main difference between TWSE FIX and FIX 4.4. For more details of message flow, the value of field and the messages, please refer to the Appendix Order State Change Matrices.
+
+Order Report and Trade Report
+	•	No Pending message in Order Report
+In FIX4.4, Exchange will response Pending message when receive New Order/Cancel/Replace. Yet based on TWSE FIX, TWSE will not reply such messages as Pending New, Pending Cancel and Pending Replace to Brokers. According to current system, the trading system will deal with orders made by Brokers and acknowledge the order report. Brokers will receive messages of order success or order failure. Please find the new order flow as follows.
+
+
+	•	OrdStatus (39) = ExecType (150), but some exceptions are shown as below.
+In normal circumstances, the value of OrdStatus (39) and ExecType (150) are the same. However, some exceptions are shown as below:
+	•	When Order Cancel/Replace is successful, ExecType (150) = Replace, OrderStatus (39) = New.
+	•	When Order Status Request is successful, ExecType (150) = OrderStatus, OrderStatus (39) = New.
+	•	In Trade Report, ExecType (150) = Trade, if partial fill, then OrdStatus (39) = Partially Filled, else fill, OrdStatus (39) = Filled.
+	•	When an unsolicited cancel by TWSE, ExecType (150) = Restated, OrderStatus (39) = Canceled.
+
+	•	Fields related to Order Report and Trade Report
+The format Execution Report (MsgType=8) will use in both Order Report and Trade Report.
+In Order Report, use the quantity of successful order OrderQty (38) and the amount of quantity open for further execution LeavesQty (151) to get         the valid value. In addition, LastQty (32) which the quantity bought/sold on last fill will response 0.
+In Trade Report, use the executed quantity CumQty (14) and the quantity of this transaction LastQty (32) to get the valid value. The quantity of successful order OrderQty (38) and the amount of quantity open for further execution LeavesQty (151) will response 0.
+
+CumQty(14)
+LastQty(32)
+OrderQty(38)
+LeavesQty(151)
+Order Acknowledgement
+Actual value
+0
+Actual value
+Actual value
+Execution
+Acknowledgement
+Actual value
+Actual value
+0
+0
+
+	•	For Execution Report , reply the FIX orders only
+The current TWSE TMP System’s Execution Report includes the complete TMP and FIX information. However, the Execution Reports of FIX only reply the new orders through the FIX platform.
+The trade reports for lending auction, auction, reverse auction, and reverse auction by securities finance enterprises will follow the existing mechanism. They will continue to be replied through the current TWSE FT(File Transfer) method and will not be transmitted via FIX.
+
+
+	•	AvgPx(6) = 0
+Do not support calculating the average price. This field is always ‘0’.
+
+	•	Only the value 99 - Other in both fields CxlRejReason (102) and OrdRejReason (103). The error message in details please refers to Text (58).
+
+	•	The Execution Report of IOC (Immediate Or Cancel) and FOK (Fill Or Kill) orders, please refer to APPENDIX ORDER STATE CHANGE MATRICES and Status Codes of Regular for more details.
+
+Difference between OrderID (37)
+       In FIX 4.4, Exchange will generate an OrderID (37) in execution report once Brokers make orders. However, TWSE will use the current way in order to meet the need of Trading System now. Brokers need to generate a non-repeated daily OrderID (37). The usage of order id is also the same with current TWSE TMP System’s [ORDER-NO] and duplicate order id is forbidden as well.
+
+Tag
+System Specification
+FIX 4.4 Specification
+OrderID(37)
+Similar to the current TMP [ORDER-NO].  Brokers need to generate the OrderID once new order occurs.
+This column is required.
+This figure will be generated by the Exchange.
+
+Fields Used in the FIX Latest.
+Tag
+System Specification
+FIX 4.4 Specification
+RefOrderID
+(1080)
+Buyer's Reference Number: This field is mandatory for Reverse Auction and Reverse Auction by Securities Finance Enterprises.
+This field is not provided in FIX 4.4. Since the latest version of FIX already includes this field, there is no need to create a custom field for it.
+
+User Defined Fields
+According to the current TMP Session manual, parts of the fields are not supported by FIX. Hence, in order to meet the need of current Trading System. There will be four User Defined Tags added in TWSE FIX (Tag number over 10,000), please find more information as below:
+
+Tag
+Field Name
+Data Type
+Req
+Comments
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’  Normal(FIX)
+‘2’  ATM(FIX)
+‘3’  DMA Order(FIX)
+‘4’  Internet(FIX)
+‘5’  Voice(FIX)
+‘6’  API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Header and Trailer
+Every message contains standard headers and trailer. If a message listed in FIX standard specification is received with a tag that is not in FIX standard specification, the message will be rejected. If a tag follows the FIX standard specification but not supported by TWSE FIX, TWSE will ignore the tag and process the rest of the message.
+
+Standard Header
+Tag
+Field Name
+Data Type
+Req
+Comments
+8
+BeginString
+String
+Y
+FIX.4.4
+9
+BodyLength
+String
+Y
+
+35
+MsgType
+String
+Y
+
+34
+MsgSeqNum
+Int
+Y
+Max 8 digits
+43
+PossDupFlag
+Boolean
+N
+
+97
+PossResend
+Boolean
+N
+
+49
+SenderCompID*
+String
+Y
+Market + Broker-ID + FIX Socket ID
+Broker who establishes the session connection
+Market (T:TWSE O:TPEx)
+1 char + 4char + 2char
+50
+SenderSubID*
+String
+N
+Broker-ID
+Broker-ID who owns this order
+Required for New/Replace/Cancel/Query/Execution
+4 char
+52
+SendingTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+56
+TargetCompID*
+String
+Y
+TWSE : XTAI
+TPEx : ROCO
+57
+TargetSubID*
+String
+N
+Trading session
+Required for New/Replace/Cancel/Query/Execution
+“0” Regular
+“2” Odd Lots
+“7” Fixed Price
+“C” Intrady odd lot trading
+“4” Lending Auction
+“5” Auction
+“6” Reverse Auction
+“B” Reverse Auction by Securities Finance Enterprises
+122
+OrigSendingTime
+UTCTimestamp
+N
+YYYYMMDD-HH:MM:SS.sss
+	•	BeginString:It must be the first field in the message, and its value should be FIX.4.4.
+	•	BodyLength:It must be the second field in the message, and its value should be the total byte length from the length field (after the message length field) to the CheckSum field.
+	•	MsgType:It must be the third field in the message, indicating the FIX message type of the body.
+	•	MsgSeqNum:Message Sequence Number (Daily serial number, starting from 1), with a maximum of 8 digits.
+	•	PossDupFlag:Data duplication transmission flag (Y = Potential duplicate).
+	•	PossResend:Data resend flag (Y = Potential resend). The exchange only checks for duplicate OrderID.
+	•	Sender Comp ID:The market code (1 digit) + broker ID (4 digits) + FIX Socket ID (2 digits), totaling 7 digits. This represents the broker establishing the FIX session and is also referred to as the FIX Session ID.
+   Market Code:Represents the market code for the FIX session's trading (T: TWSE, O: TPEx).
+    Broker ID: Represents the broker establishing the FIX session connection.
+    FIX Socket ID: This is the Socket ID submitted by the broker on the FIX application form, and it is equivalent to the [SOCKET-ID] used in the mainframe connection TMP format.
+For example: Entering "T116001" represents the TWSE (T), broker 1160, and a FIX Socket ID of 01 for the connection.
+	•	SenderSubID:Broker ID (4 digits): Represents the broker code associated with the order. This is a mandatory field for new orders, order modifications, order cancellations, and queries.
+	•	SendingTime:Message Transmission Time. YYYYMMDD-HH:MM:SS.sss
+	•	TargetCompID: Assigned value used to identify receiving firm
+  TWSE: XTAI, TPEx: ROCO   (According to the ISO 10383 Market Identifier Code standard)
+	•	TargetSubID:Trading Session Code (1 digit): Regular trading: 0, Odd lot trading: 2, Fixed price trading: 7, Intraday odd lot trading: C, Lending Auction: 4, Auction: 5, Reverse Auction: 6, Reverse Auction by Securities Finance Enterprises: B. This is equivalent to the [AP-CODE] in the current mainframe connection TMP format.
+	•	OrigSendingTime:Original Message Transmission Time Date and Time in the format YYYYMMDD-HH:MM:SS.sss. If it is a retransmitted message, this field must be present.
+*SenderCompID, SenerSubID, TargetCompID and the TargetSubID based on the Message Sender to decide the transmit data. If Brokers send to TWSE, SenderCompID represents the Brokers’(Market+Broker-ID + FIX Socket ID). TargetCompID represents the TWSE: XTAI (or TPEx: ROCO). On the contrary, TWSE send to Brokers, SenderCompID represents the TWSE: XTAI (or TPEx: ROCO). TargetCompID represents the Brokers’ (Market + Broker-ID + FIX Socket ID).
+
+Please find more details as below.
+Message Example 1:
+       Brokers branch 1161 use the FIX Session apply by headquarter 1160(FIX Socket ID is 01). While brokers make new orders, SenderCompID represents the brokers with FIX connection. SenderSubID represents brokers take actual orders from client site.
+         Tag
+Direction
+SenderCompID
+(tag 49)
+SenderSubID
+(tag 50)
+TargetCompID
+(tag 56)
+TargetSubID
+(tag 57)
+Broker  TWSE
+T116001
+1161
+XTAI
+0
+TWSE  Broker
+XTAI
+0
+T116001
+1161
+Example 2:
+The investor of broker firm 1160 uses the FIX connection applied by the firm (FIX Socket ID is 02) to perform odd lot order operations in TWSE. When the broker places an order, SenderCompID represents the broker of the FIX connection, and SenderSubID represents the actual broker accepting the client’s order.
+         Tag
+Direction
+SenderCompID
+(tag 49)
+SenderSubID
+(tag 50)
+TargetCompID
+(tag 56)
+TargetSubID
+(tag 57)
+Broker  TWSE
+T116002
+1160
+XTAI
+2
+TWSE  Broker
+XTAI
+2
+T116002
+1160
+
+
+Standard Trailer
+Tag
+Field Name
+Data Type
+Req
+Comments
+10
+CheckSum
+String
+Y
+
+	•	Checksum
+            The checksum is calculated by summing every byte of the message up to but not including the checksum field itself. This checksum is then transformed into a modulo 256 number and put the result in Tag 10 for further validation. This checksum is then transformed into three ASCII for transmission.
+
+For example, if the checksum has been calculated to be 274 then the modulo 256 value is 18 (256 + 18 =274) and put the result in Tag 10.
+
+char *GenerateCheckSum( char *buf, long bufLen )
+{
+		static char tmpBuf[ 4 ];
+		long idx;
+		unsigned int cks;
+
+		for( idx=0L, cks=0; idx < bufLen; cks += (unsigned int)buf[ idx++ ] );
+			sprintf( tmpBuf, “%03d”, (unsigned int)( cks % 256 ) );
+		return( tmpBuf );	}
+Session Level Messages
+The Session Layer in the FIX Protocol is similar to the TMP Session Sub System.
+It is used to create session, Logon validation and message synchronization. Including the Logon, Heartbeat, Test Request, Resend Request, Reject - Session,Sequence Reset and Logout. These messages are defined as Administrative Messages in FIX protocol. The following section describes each message and provides the message layout.
+If a message listed in FIX standard specification is received with a tag that is not in FIX standard specification, the message will be rejected. If a tag follows the FIX standard specification but not supported by TWSE FIX, TWSE will ignore the tag and process the rest of the message.
+
+Logon
+The logon message authenticates a Broker establishing a connection to TWSE FIX site. After validation, TWSE will acknowledge a Logon message to the Broker to initiate a FIX session.
+
+Logon
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = A
+98
+EncryptMethod
+Int
+Y
+‘0’ (no encryption)
+108
+HeartBtInt
+Int
+Y
+Heartbeat interval in seconds
+‘10’
+95
+RawDataLength
+Int
+Y
+Length of RawData
+‘5’
+96
+RawData
+data
+Y
+APPEND-NO+KEY-VALUE
+3 digits+2digits
+
+Standard Trailer
+
+Y
+
+
+	•	MsgType:ALogon.
+	•	Encrypt Method:0Encryption method setting, currently set to no encryption.
+	•	HeartBtInt:10 Heartbeat message interval setting. During periods without the transmission of other messages, a heartbeat message is sent at regular intervals, with a frequency of once every 10 seconds.
+	•	RawDataLength:5 Indicates the byte length of the data in the RawData.
+	•	RawData:RawData = APPEND-NO and KEY-VALUE.
+     APPEND-NO Generated randomly by the broker each time as a three-digit number. 001 <= APPEND-NO <= 999.
+             KEY-VALUE (APPEND-NO * PASSWORD) takes the thousands and hundreds digits.
+PASSWORD  Refers to the password entered by the broker when applying for a connection for each FIX session.
+
+
+
+Heartbeat
+The Heartbeat could be used in two ways:
+	•	When either end of a FIX connection has not sent any data for 10 seconds (HeartBtInt), it will transmit a Heartbeat message.
+	•	When either end of the connection has not received any data for (HeartBtInt)   +“some reasonable transmission time” (use 20% of HeartBtInt field) seconds, it will transmit a Test Request message. Acceptor needs to acknowledge a Heartbeat containing the TestReqID. If there is still no Heartbeat message received after (HeartBtInt) + “some reasonable transmission time” (use 20% of HeartBtInt field) seconds then the connection should be considered lost and corrective action be initiated.
+Heartbeat
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 0
+112
+TestReqID
+String
+N
+Required when the heartbeat is the result of a Test Request message.
+
+Standard Trailer
+
+Y
+
+1.TestReqID: Please enter the same TestReqID as in the Test Request message. This field is not required for heartbeat messages that sent to confirm the connection is working properly.
+Test Request
+The test request message could be sent by both sides. This message is used to check sequence numbers or verifies communication line status. Once receive this message, the opposite application responds to the Test Request with a Heartbeat containing the TestReqID.
+Test Request
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 1
+112
+TestReqID
+String
+Y
+This identifier should be returned in the Heartbeat response.
+
+Standard Trailer
+
+Y
+
+1. TestReqID:The message sequence number for the Test Request message.
+
+Resend Request
+The resend request is sent by the receiving application to initiate the retransmission of messages. This function is utilized if a sequence number gap is detected, if the receiving application lost a message, or as a function of the initialization process.
+
+      The resend request can be divided to three ways:
+	•	To request a single message:BeginSeqNo = EndSeqNo
+	•	To request a range of messages:BeginSeqNo = first message of range, EndSeqNo = last message of range.
+For example, BeginSeqNo = 7, EndSeqNo = 9, represents resend of message 7 to 9.
+	•	To request all messages subsequent to a particular message: BeginSeqNo = first message of range, EndSeqNo = 0 (represents infinity).
+For example, BeginSeqNo = 7, EndSeqNo = 0, represents from message 7 to the infinity.
+
+Resend Request
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 2
+7
+BeginSeqNo
+Int
+Y
+
+16
+EndSeqNo
+Int
+Y
+
+
+Standard Trailer
+
+Y
+
+	•	BeginSeqNo: Starting message sequence number.
+	•	EndSeqNo: Ending message sequence number. When its value is 0, it indicates the retransmission of all messages starting from the specified BeginSeqNo (inclusive).
+Reject – Session Level
+The reject message should be issued when a message is received but cannot be properly processed due to a session-level rule violation. Tag 58 will explain the reason for rejection. RefTagID (371) means the tag number failed to pass the validation. RefSeqNum (45) means the MsgSeqNum of rejected message.
+Reject– Session Level
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 3
+45
+RefSeqNum
+Int
+Y
+MsgSeqNum of rejected message
+371
+RefTagID
+Int
+N
+The tag failing validation
+372
+RefMsgType
+String
+N
+MsgType of the message in error
+373
+SessionRejectReason
+Int
+N
+Refer to FIX documentation
+58
+Text
+String
+N
+Message to explain the error
+
+Standard Trailer
+
+Y
+
+	•	RefSeqNum: The sequence number of the rejected message.
+	•	RefTagID: The tag field of the rejected message.
+	•	RefMsgType: The message type of the rejected message.
+	•	SessionRejectReason: The reason for the session-level rejection.
+0 = Invalid tag number
+1 = Required tag missing
+2 = Tag not defined for this message type
+3 = Undefined Tag
+4 = Tag specified without a value
+5 = Value is incorrect (out of range) for this tag
+6 = Incorrect data format for value
+9 = CompID problem
+10 = SendingTime accuracy problem
+11 = Invalid MsgType
+	•	Text: Explanation of the response message (no specific length). Format: Message Direction + "-" + Reject Status + "-" + Reject Modifier
+	•	Message Direction: 1 = Inbound messages
+	•	Reject Status: Please refer to Chapter 8, "Session Reject Message (Reject - Session Level)."
+	•	Reject Modifier: Detailed explanation of the rejection response.
+Example: 58=CODE: 1-1-21 VALUE OUT OF BOUNDS: Value out of bounds. Field: HandlInst (tag #21) Value: 4 Bounds: handlinst
+Sequence Reset
+Sequence Reset use the GapFillFlag (123) can be divided to two modes:
+	•	Gap Fill Mode Y
+      The acceptor receive the Resend Request, the sending application may choose not to send a message (e.g. an aged order, Heart Beats and Test Requests).
+For example, the acceptor issues a Resend Request for resend the message from 5 to 10. Message Sequence Number and the Message Type are as follows.
+Message Sequence Number
+Message Type
+Content of Message
+5
+Session Level Message
+HeartBeat 35=0
+6
+Session Level Message
+HeartBeat 35=0
+7
+Application Message
+New Order Single 35=D
+8
+Application Message
+Order Cancel/Replace Request 35=G
+9
+Session Level Message
+HeartBeat 35=0
+10
+Session Level Message
+HeartBeat 35=0
+      The acceptor acknowledge by:
+For Session Level Messages only send the Session Reject Message (Reject – Session) but for the Application Messages will be resend totally.
+  35=4 | 34=5 | 36=7 | 123=Y Original resend sequence number 5 but reset to number 7 instead.
+  35=D | 34=7 | 43=Y Resend sequence number 7. The PossDupFlag is Y.
+  35=G | 34=7 | 43=Y Resend sequence number 8. The PossDupFlag is Y.
+  35=4 | 34=9 | 36=11 | 123=Y Original resend sequence number 9 but reset to number 11 instead.
+	•	Reset  N or not present
+      The “Sequence Reset-Reset” mode should ONLY be used to recover from a disaster situation, which cannot be recovered via “Gap Fill” mode.
+
+Sequence Reset
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 4
+123
+GapFillFlag
+Boolean
+N
+Normally present and set to “Y”
+36
+NewSeqNo
+Int
+Y
+Must only increase expected SeqNo
+
+Standard Trailer
+
+Y
+
+1. GapFillFlag:
+	•	'Y' (Gap Fill mode)
+	•	'N' (Reset mode)
+2. NewSeqNo: The new message sequence number. In Reset mode, it must be greater than the existing sequence number.
+Logout
+      The Logout message used in three ways:
+	•	Brokers Logon failure. TWSE will acknowledge the Logout and the Logout reason will be described in tag 58.
+	•	After processing the daily procedure, Brokers can use Logout message to initiate the termination of a connection.
+	•	TWSE will send the Logout message directly. For instance, daily day-end job and abnormal scenario. Logout reason will be described in tag 58.
+
+     Disconnection without the exchange of logout messages should be interpreted as an abnormal condition. Before closing the session, the logout initiator should wait for the opposite side to respond with a confirming logout message. After sending the Logout message, the logout initiator should not send any messages unless requested to do so by the logout acceptor via a ResendRequest.
+      If the initiator did not receive any logout message from acceptor before timeout (5 seconds), the session will be disconnected.
+Logout
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 5
+58
+Text
+String
+N
+
+
+Standard Trailer
+
+Y
+
+Text: Logout message explanation (no specific length). Please refer to the login operation response status codes.
+For example:
+58=1202-KEY-VALUE ERROR
+58=<license-id> + Connection close on socket
+
+Application Messages
+The Application Layer is similar to the TMP “Trading Sub System”. Provide the New Order Single, Order Cancel/Replace Request, Order Cancel Request, Order Status Request, Execution Report, Order Cancel Reject.
+If a message listed in FIX standard specification is received with a tag that is not in FIX standard specification, the message will be rejected. If a tag follows the FIX standard specification but not supported by TWSE FIX, TWSE will ignore the tag and process the rest of the message.
+New Order Single
+New Order Single
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = D
+11
+ClOrdID
+String
+Y
+ClOrdID is a unique ID code provided by the broker when placing an order. In cancel and quantity change order, ClOrdID and OrigClOrdID are correlated.
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 chars
+1
+Account
+String
+Y
+Exchange Account No
+[IVACNO]
+7 digits
+55
+Symbol
+String
+Y
+[STOCK-NO]
+6 char
+54
+Side
+Char
+Y
+‘1’ Buy
+‘2’ Sell
+Auction
+‘1’ Buy only
+Lending Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Sell only
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+38
+OrderQty
+Qty
+Y
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+Y
+Regular
+‘1’ Market Price
+
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+  ‘2’ Limit Price
+59
+TimeInForce
+Char
+Y
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Day
+
+Regular
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+44
+Price
+Price
+Y
+Max 5 digits + 4 decimals
+Regular(Limit Price), OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+
+Order Price
+Regular(Market Price)
+Fill 0 only
+FixedPrice
+Ignored
+1080
+RefOrderID
+Char
+N
+Reverse Auction, Reverse Auction by Securities Finance Enterprises Only
+[STK-SEQ-NO]
+2 char
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+   ‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+   Ignored
+
+Standard Trailer
+
+Y
+
+	•	ClOrdID: Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day. For order cancellations or modifications, the original ClOrdID (11) must be included in OrigClOrdID (41).
+	•	OrderID: Order number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z. SenderSubID + OrderID must be unique within each trading day.
+	•	Account: Investor account number, 7 digits.
+	•	Symbol: Stock symbol, 6 characters.
+	•	Side: Order side - '1' for Buy, '2' for Sell.
+	•	TransactTime: Order timestamp in the format: YYYYMMDD-HH:MM:SS.sss.
+	•	OrderQty: Order quantity.
+	•	For regular trading, fixed-price trading (trading units), odd lot trading (number of shares), intraday odd lot trading (number of shares), and lending auction (trading units), the maximum is 6 digits.
+	•	For auction, reverse auction and Reverse Auction by Securities Finance Enterprises (trading units), the maximum is 12 digits.
+	•	OrdType: Order type, '1' for Market price, '2' for Limit price.
+	•	TimeInForce: Specifies how long the order remains in effect.
+	•	For regular, fixed-price, odd lot, intraday odd lot, lending auction, auction, reverse auction and reverse auction by securities finance:
+	•	'0' for Day Valid (valid for the day)
+	•	For regular.
+	•	'3' for IOC (Immediate Or Cancel)
+	•	'4' for FOK (Fill Or Kill)
+	•	Price: Order Price (5-digit integer + 4-digit decimal). For fixed-price trades, the exchange ignores this field. For regular trades, a market order must be entered with a value of 0.
+	•	TwseIvacnoFlag: Order channel
+'1' for General (FIX)
+'2' for ATM (FIX)
+'3' for DMA Order (FIX)
+'4' for Internet (FIX)
+'5' for Voice (FIX)
+'6' for API (FIX)
+	•	TwseOrdType: Order type
+	•	For regular and fixed-price:
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+	•	For Odd-Lots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises:
+'0' for Normal
+	•	TwseExCode:
+	•	‘0’ : Regular, Fixed-Price, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+	•	‘2’ : OddLots, Intraday odd lot trading
+	•	TwseRejStaleOrd: Timeout flag.
+When the exchange FIX Gateway sends the broker's order message to the matching engine, it checks if the TransactTime exceeds the exchange FIX Gateway system time by five seconds (execution time will be announced separately).
+	•	Regular:
+	•	Y: Checks if TransactTime has exceeded the time limit. If it has, the order will be rejected.
+	•	N: No check for TransactTime.
+	•	FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises:
+	•	Ignored.
+Order Cancel / Replace Request
+Modification Order Messages: These include four types—Modify (Reduce) Quantity Orders, Modify Price Orders, Modify Quantity Orders, and Modify Price and Quantity Orders.
+	•	Modify (Reduce) Quantity Orders: Applicable for regular trades, odd-lot trades, intraday odd-lot trades, and fixed-price trades. The price field must be set to 0.
+	•	Modify Price Orders: Applicable for regular trades, where the quantity field must be set to 0.
+	•	Modify Quantity Orders: Applicable only to lending auction trades. The price field must retain the original price.
+	•	Modify Price and Quantity Orders: Applicable for auction trades, reverse auction, and reverse auction by securities finance enterprises trades, where both price and quantity can be updated simultaneously.
+Order Cancel / Replace Request
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = G
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order (NOT the initial order of the day) when canceling or replacing an order.
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 chars
+Must match original order.
+1
+Account
+String
+Y
+Must match original order.
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+38
+OrderQty
+Qty
+Y
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+Y
+Regular
+‘1’ Market Price
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Limit Price
+44
+Price
+Price
+Y
+Max 5 digits + 4 decimals
+Regular
+If change OrderQty, Price must set to 0, and vise versa.
+Fixed Price
+Ignored
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+Y
+Regular, FixedPrice
+[ORDER-TYPE]
+‘0’ Normal
+‘1’ Purchase on Margin (Via Securities Finance)
+‘2’ Short Sell (Via Securities Finance)
+‘3’ Purchase on Margin (Via Securities Firms)
+‘4’ Short Sell (Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Trailer
+
+Y
+
+	•	OrigClOrdID:When canceling or modifying an order, input the unique identifier (ClOrdID) of the previous order.
+	•	ClOrdID:Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day.
+	•	OrderID:Order reference number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z.
+	•	Account:Investor account number.
+	•	Symbol:Stock symbol, 6 characters.
+	•	Side:Order side—‘1’ for Buy, ‘2’ for Sell.
+	•	TransactTime:Order timestamp in the format YYYYMMDD-HH:MM:SS.sss
+	•	OrderQty:Order quantity.
+	•	Regular trades, fixed-price trades, odd-lot trades, intraday odd-lot trades, and lending auction: Up to 6 digits.
+	•	Auction trades, reverse auction, and reverse auction by Securities Finance Enterprises: Up to 12 digits.
+	•	For Modify (Reduce) Quantity Orders, specify the quantity to reduce (in trading units).
+	•	OrdType:Order type—‘1’ for Market price, ‘2’ for Limit price.
+	•	Price:Order Price (5-digit integer + 4-digit decimal).
+	•	TwseIvacnoFlag:Order channel
+‘1’: General (FIX)
+‘2’: ATM (FIX)
+‘3’: DMA Order (FIX)
+‘4’: Internet (FIX)
+‘5’: Voice (FIX)
+‘6’: API (FIX)
+	•	TwseExCode:
+	•	‘0’: Regular trades, fixed-price trades, lending auction, auction trades, reverse auction, and reverse auction by securities finance enterprises.
+	•	‘2’: odd-lot trades and intraday odd-lot trading.
+	•	13. TwseRejStaleOrd(Reserved):Timeout flag.
+When the FIX Gateway sends the broker's order message to the matching engine, it checks if the TransactTime exceeds the exchange FIX Gateway system time by five seconds.
+	•	Regular:
+	•	Y: Checks if TransactTime has exceeded the time limit. If it has, the order will be rejected.
+	•	N: No check for TransactTime.
+	•	FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises: Ignored.
+
+Order Cancel Request
+Order Cancel Request
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = F
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order (NOT the initial order of the day) when canceling or replacing an order.
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 chars
+Must match original order
+1
+Account
+String
+Y
+Must match original order.
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+10004
+TwseRejStaleOrd
+(Reserved)
+Boolean
+Y
+Regular
+Checks the TransactTime to verify that it is within a given seconds of the system time.
+Y if not, reject it.
+N don’t check TransactTime.
+
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Ignored
+
+Standard Trailer
+
+Y
+
+	•	OrigClOrdID:For cancel orders, input the unique identifier (ClOrdID) of the previous order.
+	•	ClOrdID:Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day.
+	•	OrderID:Order reference number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z.
+	•	Account:Investor account number.
+	•	Symbol:Stock symbol, 6 characters.
+	•	Side:Order side—‘1’ for Buy, ‘2’ for Sell.
+	•	TransactTime:Order timestamp in the format YYYYMMDD-HH:MM:SS.sss
+	•	TwseIvacnoFlag:Order channel
+‘1’: General (FIX)
+‘2’: ATM (FIX)
+‘3’: DMA Order (FIX)
+‘4’: Internet (FIX)
+‘5’: Voice (FIX)
+‘6’: API (FIX)
+	•	TwseExCode:
+‘0’: Regular trades, fixed-price trades, lending auction, auction trades, reverse auction, and reverse auction by securities finance enterprises.
+‘2’: odd-lot trades and intraday odd-lot trading.
+	•	TwseRejStaleOrd:Timeout flag.
+When the FIX Gateway sends the broker's order message to the matching engine, it checks if the TransactTime exceeds the exchange FIX Gateway system time by five seconds.
+Regular:
+Y: Checks if TransactTime has exceeded the time limit. If it has, the order will be rejected.
+N: No check for TransactTime.
+FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises:
+Ignored.
+Order Status Request
+Brokers through the order status query to get the order status. TWSE will acknowledge Order Status Request via Execution Report message. From LeavesQty (151) get the amount of quantity which open for further Execution. CumQty (14) get the currently executed quantity. In this scenario, the quantity of OrderQty (38) will be equal to the quantity of LeavesQty (151).
+Order Status Request
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = H
+11
+ClOrdID
+String
+Y
+ClOrdID of the order to query
+37
+OrderID
+String
+Y
+[ORDER-NO]
+5 chars
+Must match original order
+55
+Symbol
+String
+Y
+Must match original order
+54
+Side
+Char
+Y
+Must match original order
+10000
+TwseIvacnoFlag
+Char
+Y
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10002
+TwseExCode
+Char
+Y
+‘0’ Regular, FixedPrice
+‘2’ OddLots, Intraday odd lot trading
+
+Standard Trailer
+
+Y
+
+	•	ClOrdID: Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day.
+	•	OrderID: Order reference number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z.
+	•	Symbol: Stock symbol, 6 characters.
+	•	Side: Order side-‘1’ for Buy, ‘2’ for Sell.
+	•	TwseIvacnoFlag: Order channel
+‘1’ for General (FIX).
+‘2’ for ATM (FIX).
+‘3’ for DMA Order (FIX).
+‘4’ for Internet (FIX).
+‘5’ for Voice (FIX).
+‘6’ for API (FIX).
+	•	TwseExCode:
+	•	‘0’ for regular, fixed-price, lending auction, auction, reverse auction, and reverse auction by securities finance enterprises.
+	•	‘2’ for odd-lot and intra-day odd-lot trades.
+Execution Report
+Execution Report
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 8
+37
+OrderID
+String
+Y
+[ORDER-NO]
+11
+ClOrdID
+String
+N
+Unique ID
+12 char
+41
+OrigClOrdID
+String
+N
+ClOrdID of the previous order
+(NOT the initial order of the day) when canceling or replacing an order.
+17
+ExecID
+String
+Y
+Order reports
+unique serial number
+ClOrdID
+(will be 0(zero) for ExecType=I))
+12 char
+
+Trade reports
+Unique number
+Side + Market trx no
+12 char
+150
+ExecType
+Char
+Y
+‘0’ New
+‘4’ Canceled
+‘5’ Replace
+‘8’ Rejected(Ref. Tag 58)
+‘F’ Trade
+‘I’ Order Status
+‘D’ Restated(Ref. Tag 378)
+39
+OrdStatus
+Char
+Y
+‘0’ New
+‘1’ Partial fill
+‘2’ Fill
+‘4’ Canceled
+‘8’ Rejected(Ref. Tag 58)
+103
+OrdRejReason
+Int
+N
+Only exists when status code != 00
+99 = Other
+378
+ExecRestatementReason
+Int
+N
+Only exists when unsolicited cancel by Exchange
+8 Exchange option
+1
+Account
+String
+N
+Exchange Account No
+[IVACNO]
+7 digits
+55
+Symbol
+String
+Y
+[STOCK-NO]
+6 char
+54
+Side
+Char
+Y
+‘1’ Buy
+‘2’ Sell
+
+Auction
+‘1’ Buy only
+Lending Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Sell only
+60
+TransactTime
+UTCTimestamp
+Y
+YYYYMMDD-HH:MM:SS.sss
+Order Report
+[ORDER-TIME]
+
+Trade Report
+[MTHTIME]
+38
+OrderQty
+Qty
+N
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+Order Qty base on trading unit
+OddLots, Intraday odd lot trading
+Order Qty base on shares
+40
+OrdType
+Char
+N
+Regular
+‘1’ Market Price
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ Limit Price
+59
+TimeInForce
+Char
+N
+Regular, FixedPrice, OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Day
+Regular
+‘3’ IOC(Immediate Or Cancel)
+‘4’ FOK(Fill Or Kill)
+44
+Price
+Price
+N
+Order Price
+Max 5 digits + 4 decimals
+32
+LastQty
+Qty
+N
+Match quantity
+Max 6 digits
+[MTHQTY]
+Regular, FixedPrice
+trading unit
+
+OddLots, Intraday odd lot trading
+Shares
+
+Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+  0
+31
+LastPx
+Price
+N
+Match price
+Max 5 digits + 4 decimals
+151
+LeavesQty
+Qty
+Y
+Amount of quantity open for further execution
+Max 6 digits (Regular, FixedPrice, OddLots, Intraday odd lot, Lending Auction)
+Max 12 digits (Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises)
+
+[AFTER-QUANTITY]
+Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+trading unit
+
+OddLots, Intraday odd lot trading
+Shares
+14
+CumQty
+Qty
+Y
+Currently executed quantity
+Max 6 digits
+Regular, FixedPrice
+trading unit
+
+OddLots, Intraday odd lot trading
+shares
+
+Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+  0
+6
+AvgPx
+Price
+Y
+‘0’
+58
+Text
+String
+N
+status code + status msg text Maximum 100 char
+1080
+RefOrderID
+Char
+N
+Reverse Auction, Reverse Auction by Securities Finance Enterprises Only
+[STK-SEQ-NO]
+2 char
+10000
+TwseIvacnoFlag
+Char
+N
+Order reports only
+Notes of Investors’ Order
+Channel [IVACNO-FLAG]
+‘1’ Normal(FIX)
+‘2’ ATM(FIX)
+‘3’ DMA Order(FIX)
+‘4’ Internet(FIX)
+‘5’ Voice(FIX)
+‘6’ API(FIX)
+10001
+TwseOrdType
+Char
+N
+[ORDER-TYPE]
+Regular, FixedPrice
+‘0’ Normal‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+OddLots, Intraday odd lot trading, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘0’ Normal
+10002
+TwseExCode
+Char
+Ｙ
+‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+‘2’ OddLots, Intraday odd lot trading
+
+Standard Trailer
+
+Y
+
+	•	OrderID: Order reference number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z.
+	•	ClOrdID: Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day.
+	•	OrigClOrdID: The unique identifier of the previous order (ClOrdID).
+	•	ExecID:
+	•	Order report (ClOrdID, 12 characters). For order status query report, this value is 0.
+	•	Trade report (12-character serial number), unique identifier.
+	•	ExecType: Order execution status:
+	•	"0" - Order successfully placed.
+	•	"4" - Order successfully cancelled.
+	•	"5" - Order successfully modified.
+	•	"8" - Error (refer to Text(58)).
+	•	"F" - Partial fill/Full fill.
+	•	"I" - Order status.
+	•	"D" - Status update.
+	•	OrdStatus: Order status.
+	•	OrdRejReason: Order rejection reason code. When the [STATUS-CODE] is not 00, this field is mandatory, and the value is fixed as 99 - Other. Please refer to Text(58) for detailed reasons.
+	•	Account: Investor account number.
+	•	Symbol: Stock symbol, 6 characters.
+	•	Side: Order side—‘1’ for Buy, ‘2’ for Sell.
+	•	TransactTime:
+	•	Transaction time (Order report [ORDER-TIME]/Trade report [MTHTIME]).
+	•	Format: YYYYMMDD-HH:MM:SS.sss.
+	•	OrderQty: Order quantity.
+	•	For regular, fixed-price, odd-lot, intraday odd-lot, and lending auction transactions, up to 6 digits.
+	•	For auction, reverse auction and reverse auction by securities finance enterprises, up to 12 digits.
+	•	For modified (reduced) quantity orders, the number of shares to be reduced (trading unit).
+	•	Equivalent to the absolute value of [BEFORE-QUANTITY] - [AFTER-QUANTITY] in current mainframe connection TMP format.
+	•	OrdType: Order type.
+	•	'1' - Market price.
+	•	'2' - Limit price.
+	•	TimeInForce: Order validity type indicator.
+	•	For regular, fixed-price, odd-lot, intraday odd-lot, lending auction, auction, reverse auction and reverse auction by securities finance enterprises.
+	•	'0' - Day order.
+	•	Regular
+	•	'3' - IOC (Immediate Or Cancel).
+	•	'4' - FOK (Fill Or Kill).
+	•	Price: Order Price (5-digit integer + 4-digit decimal).
+	•	LastQty: The transaction quantity in this case corresponds to the [MTHQTY] field in the current mainframe connection TMP format. It can contain up to 6 digits. This applies to regular, fixed-price, lending auction, auction, reverse auction and reverse auction by securities finance enterprises (in trading units), as well as odd-lot and intraday odd-lot trading (in shares).
+	•	LastPx: Price of the last transaction (5 digits for integer and 4 digits for decimal).
+	•	LeavesQty: The remaining effective order quantity corresponds to the [AFTER-QUANTITY] field in the current mainframe connection TMP format.
+	•	For regular, fixed-price, odd-lot, intraday odd-lot trading, and lending auction, it can contain up to 6 digits.
+	•	For auctions, reverse auction, and reverse auction by securities finance enterprises, it can contain up to 12 digits.
+	•	CumQty: The current executed quantity can contain up to 6 digits. This applies to regular trading, fixed-price trading, s lending auction, auctions, reverse auction and reverse auction by securities finance enterprises (in trading units), as well as after-hours odd-lot trading and intraday odd-lot trading (in shares).
+	•	AvgPx: Average price, value is 0.
+	•	Text: Message description (up to 100 characters).
+	•	Status code + message content. Please refer to Chapter 8 for subsystem report message codes.
+	•	TwseIvacnoFlag: Order channel
+‘1’ - General (FIX).
+‘2’ - ATM (FIX).
+‘3’ - DMA Order (FIX).
+‘4’ - Internet (FIX).
+‘5’ - Voice (FIX).
+‘6’ - API (FIX).
+	•	TwseOrdType: Order type
+	•	For regular, fixed-price:
+‘0’ Normal
+‘1’ Purchase on Margin(Via Securities Finance)
+‘2’ Short Sell(Via Securities Finance)
+‘3’ Purchase on Margin(Via Securities Firms)
+‘4’ Short Sell(Via Securities Firms)
+‘5’ SBL Short Sell type 5
+‘6’ SBL Short Sell type 6
+	•	For Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises:
+‘0’ Normal
+	•	TwseExCode:
+	•	‘0’ Regular, FixedPrice, Lending Auction, Auction, Reverse Auction, Reverse Auction by Securities Finance Enterprises
+	•	‘2’ OddLots, Intraday odd lot trading
+Please note:
+For Order Report
+	•	No Pending New in Order Report
+	•	Please refer the actual order quantity OrderQty (38) and amount of quantity for further execution LeavesQty (151)
+	•	The executed quantity for this transaction LastQty (32) will be 0
+	•	Error Messages please refer to Text (58) for error details.
+
+For Trade Report
+	•	The trade report of TMP Session will include all the data of TMP and FIX trade report. However, FIX trade report will only reply the trade report through the FIX platform.
+	•	Please refer to current executed quantity CumQty(14) and executed quantity for this transaction LastQty (32)
+	•	The actual order quantity OrderQty (38) and amount of quantity for further execution LeavesQty (151) will be 0
+	•	Do not calculate the AvgPx (6). This value is always 0
+
+Order Cancel Reject
+Order Cancel Reject
+
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = 9
+37
+OrderID
+String
+Y
+[ORDER-NO]
+11
+ClOrdID
+String
+Y
+Unique ID
+12 char
+41
+OrigClOrdID
+String
+Y
+ClOrdID of the previous order
+(NOT the initial order of the day) when canceling or replacing an order.
+39
+OrdStatus
+Char
+Y
+Current order status.
+“8” Rejected(Ref. Tag 58)
+1
+Account
+String
+N
+Exchange Account No
+[IVACNO]
+7 digits
+60
+TransactTime
+UTCTimestamp
+N
+YYYYMMDD-HH:MM:SS.sss
+
+Order Report
+[MESSAGE-TIME]
+434
+CxlRejResponseTo
+Char
+Y
+Identifies the type of request
+1 – Order Cancel Request
+2 – Order Cancel/Replace Request
+102
+CxlRejReason
+Int
+N
+99 = Other
+58
+Text
+String
+N
+status code + msg text Maximum 100 char
+
+Standard Trailer
+
+Y
+
+
+	•	OrderID:Order reference number, 5 alphanumeric characters, ranging from 0-9, A-Z, and a-z.
+	•	ClOrdID:Unique identifier, 12 characters (alphanumeric). It must be unique within each trading day.
+	•	OrigClOrdID:The unique identifier of the previous order (ClOrdID).
+	•	OrdStatus:order status
+	•	Account:Investor account number.
+	•	TransactTime:Transaction time [MESSAGE-TIME]               (YYYYMMDD-HH:MM:SS.sss).
+	•	CxlRejResponseTo:Response message request type:
+ '1' for Order Cancel Request
+ '2' for Order Cancel/Replace Request.
+CxlRejReason:Order error code: 99 = Other.
+Text: Message description (maximum 100 characters). Status Code + Message content refers to the message codes of each transaction subsystem in Chapter
+
+Business Message Reject
+Business Message Reject
+Tag
+Field Name
+Data Type
+Req
+Comments
+
+Standard Header
+
+Y
+MsgType = j
+45
+RefSeqNum
+Int
+N
+MsgSeqNum of rejected message
+372
+RefMsgType
+String
+Y
+The MsgType of the FIX message being referenced
+380
+BusinessRejectReason
+Int
+Y
+Code to identify reason for a Business Message Reject message.
+3 = Unsupported Message Type
+58
+Text
+String
+N
+status code + msg text
+Maximum 100 char
+
+Standard Trailer
+
+Y
+
+
+	•	RefSeqNum:The sequence number of the rejected message.
+	•	RefMsgType:The type of the rejected message.
+	•	BusinessRejectReason:The reason for the rejection.      3 = Unsupported message type.
+	•	Text:Message description (maximum 100 characters). The Status Code + Message content can be found in the error message codes of each transaction subsystem in Chapter 8.
+Error Message
+Based on diverse system vendors and different system designers the Broker’s user interface and message will not be the same. According to the information in this document could help to understand the structure of transforming data and the format between TWSE and Brokers. If there are any exceptions, please refer to the system user manual provided by the system vendor or your own IT department. If this scenario still cannot be excluded, please contact TWSE System Development Department for more information. TWSE will pass the messages to Brokers as follows. As mentioned, these messages will not be the same in Brokers’ Site (Depends on the System). Hereby, this section only describe the messages generate by TWSE and the actions related these.
+
+Reject - Session Level: Error Code
+Reject Status
+Message Content
+Actions of Brokers
+0
+Bad Format
+Check and revise the FIX format
+1
+Value out of Bounds
+Check and revise the content of the message
+2
+Missing Required Fields
+Check and revise the required fields
+4
+Unknown Field
+Check and revise the error field
+5
+Field Empty
+Check and revise the error field
+6
+Field Out of Order
+Check and revise the field order
+10
+Invalid Tag Number
+Check and revise the error field
+11
+Non-RawData Field Contains SOH-Delimiter
+Check and revise the error field
+100
+Message Malformed
+Check and revise the content of the message
+101
+Message Type Unknown
+Check and revise the message type
+110
+CompID
+(Illegal or Missing CompID)
+Check and revise the CompID
+114
+Incorrect Data Length
+Check and revise the Checksum field
+201
+Optional Session Rule Violated
+Check and revise (tag 8/9/35) and revise the fields
+204
+Session Logon Blocked
+Contact TWSE and revise Session
+Status
+205
+Session On Hold
+Contact TWSE and revise Session Status
+
+
+TWSE TMP Session Sub System Error Code
+Status Code
+Message Content
+FIX GW Msg Type
+Actions of Brokers
+1201
+RawData Not Found
+ 35=5
+Check and revise RawData
+1202
+KEY-VALUE ERROR
+ 35=5
+Check and revise KEY-VALUE
+1203
+APPEND-NO EQUAL 0
+35=5
+Check and revise APPEND NO
+1204
+RawDataLength Not Found
+35=5
+Check and revise RawDataLength
+1205
+TargetSubID Error
+35=8/9
+Check and revise TargetSubID
+1206
+MsgType Error
+35=j
+Check and revise MsgType
+1207
+HeartBtInt Value Error
+35=5
+Check and revise HeartBtInt
+1208
+RawDataLength Value Error
+35=5
+Check and revise RawDataLength
+1209
+HeartBtInt Not Found
+35=5
+Check and revise HeartBtInt
+1286
+TRADE SUSPENDED
+35=5
+Logout
+
+Regular Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+Actions of Brokers
+0001
+TIME IS OVER
+35=8/9
+Time is over.
+0002
+TIME IS EARLY
+35=8
+Time is early. Please key in the order
+later.
+0003
+QUERY LATER ON
+35=8
+Order matching. Please query later on.
+0004
+WAIT FOR MATCH
+35=8/9
+Order matching. Please key in the order later.
+0005
+ORDER NOT FOUND
+35=8/9
+Check the execution report to see if the order success and check all fields
+0011
+CHANGE ORDER ERROR
+35=9
+OrderQty and Price cannot be in zero at the same time in a message.
+0012
+BROKER-NO ERROR
+35=8/9
+Check and revise BROKER-NO
+FIX Field SenderSubID
+0013
+BRANCH-NO ERROR
+35=8/9
+Check and revise the BRANCH-NO FIX Field SenderSubID
+0014
+IVACNO ERROR
+35=8/9
+Check and revise investors’ accounts
+FIX Field Account
+0016
+TERM-ID ERROR
+35=8/9
+Check and revise TERM-ID
+FIX Field OrderID first code
+0018
+SEQ-NO ERROR
+35=8/9
+Check and revise SEQ-NO
+FIX Field OrderID last four code
+0019
+IVACNO-FLAG
+35=8/9
+Check and revise investors’ order channel
+FIX Field TwseIvacnoFlag
+0020
+STOCK-NO ERROR
+35=8/9
+Check and revise STOCK-NO
+FIX Field Symbol
+0021
+PRICE ERROR
+35=8/9
+Check and revise PRICE
+FIX Field Price
+0022
+QUANTITY ERROR
+35=8/9
+Check and revise QUANTITY;
+FIX Field OrderQty
+0024
+BUY-SELL-CODE ERROR
+35=8/9
+Check and revise BUY-SELL-CODE
+FIX Field Side
+0025
+ORDER TYPE ERROR
+35=8/9
+Check and revise ORDER TYPE
+FIX Field TwseOrdType
+0026
+EXCHANGE-CODE ERROR
+35=8/9
+Check and revise TwseExCode
+0027
+Dealer is not allowed to trade
+35=8
+Check and revise Symbol
+0028
+FOREIGNER NOT ALLOWED
+35=8
+Foreigner not allowed to trade this stock.
+0029
+TRUST TRADE VIOLATE
+35=8/9
+Check and revise order type
+FIX Field TwseOrdType
+0030
+QUANTITY OVER LIMIT
+35=8
+Foreigner buy-sell quantity over limit.
+0031
+QUANTITY WAS CUT
+35=8
+Foreigner buy-sell quantity was cut.
+An IOC order automatically cuts any part of the order that doesn’t fill immediately.
+0032
+DELETE OVER QUANTITY
+35=8
+Delete over quantity.
+0033
+CHANGE,DELETE OR QUERY ONLY
+35=8
+Total order amount over the limit, allowed cancel, replace and query only.
+0035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+Check and revise order quantity (abnormal stock 60,000,000).
+0036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+Check and revise order quantity (abnormal stock 60,000,000).
+0038
+Short sell forbidden
+35=8
+Check and revise order, stocks do not allowed short selling
+FIX Field TwseOrdType
+0040
+Duplicate OrderID
+35=8
+Check OrderID if duplicate.
+FIX Field ClOrdID
+0043
+Stock  suspended
+35=8
+Check and revise order, stock be suspended
+FIX Field Symbol
+0045
+Stock closed
+35=8/9
+Check and revise order, stock be closed
+FIX Field Symbol
+0046
+OrdType Error
+35=8/9
+Check and revise TwseOrdType
+0047
+TimeInForce Error
+35=8
+Check and revise TimeInForce
+0048
+IOC, FOK Not Fill
+35=8
+IOC, FOK don’t get matched immediately
+0049
+Market, IOC, FOK forbidden
+35=8
+During the period of call auction,  Market, IOC and FOK won't be accepted
+0050
+No Leaves Qty
+35=8/9
+Check execution report
+0051
+QUANTITY WAS CUT
+35=8
+Market or IOC order which execution price of parts of order lies outside the price range of intraday volatility interruption was cut, and the remaining quantity lies inside the price range was partial filled.
+0052
+Intra-day Volatility Interruption
+35=8
+Market, FOK or IOC order which execution price of order lies outside the price range of intraday volatility interruption was rejected.
+0053
+Change Price Forbidden
+35=9
+Orders won't be allowed to change price, only Limit can changed price.
+0089
+Error Over Limit
+35=8/9
+Error over limit, please inform TWSE
+0097
+Time Difference
+35=8/9
+Transaction Time of Order is over a given seconds of the system time, please re-key in Order
+FIX Field TransactTime
+0099
+CALL COMPUTER CENTER
+35=8/9
+Enquiry for order success or call TWSE computer center
+0200
+SYSTEM NOT READY
+35=8/9
+Please hold until Tandem ready
+0221
+SenderSubID Error
+35=8/9
+Check and revise SenderSubID
+0222
+ClOrdID Length Error
+35=8/9
+Check and revise ClOrdID
+0223
+TransactTime Error
+35=8/9
+Check and revise TransactTime
+0224
+OrderID Length Error
+35=8/9
+Check and revise OrderID
+0225
+Account Length Error
+35=8/9
+Check and revise Account
+0226
+Symbol Length Error
+35=8/9
+Check and revise Symbol
+0227
+OrderQty Length Error
+35=8/9
+Check and revise OrderQty
+0228
+Price Length Error
+35=8/9
+Check and revise Price
+0229
+TwseIvacnoFlag Length Error
+35=8/9
+Check and revise TwseIvacnoFlag
+0230
+TwseOrdType Length Error
+35=8/9
+Check and revise TwseOrdType
+0231
+TwseExCode Length Error
+35=8/9
+Check and revise TwseExCode
+0232
+OrigClOrdID Length Error
+35=8/9
+Check and revise OrigClOrdID
+0233
+TwseRejStaleOrd Length Error
+35=8/9
+Check and revise TwseRejStaleOrd
+0241
+SenderSubID Not Found
+35=8/9
+Check and revise SenderSubID
+0242
+ClOrdID Not Found
+35=8/9
+Check and revise ClOrdID
+0243
+TransactTime Not Found
+35=8/9
+Check and revise TransactTime
+0244
+OrderID Not Found
+35=8/9
+Check and revise OrderID
+0245
+Account Not Found
+35=8/9
+Check and revise Account
+0246
+Symbol Not Found
+35=8/9
+Check and revise Symbol
+0247
+Side Not Found
+35=8/9
+Check and revise Side
+0248
+OrderQty Not Found
+35=8/9
+Check and revise OrderQty
+0249
+OrdType Not Found
+35=8/9
+Check and revise OrdType
+0250
+TimeInForce Not Found
+35=8/9
+Check and revise TimeInForce
+0251
+Price Not Found
+35=8/9
+Check and revise Price
+0252
+TwseIvacnoFlag Not Found
+35=8/9
+Check and revise TwseIvacnoFlag
+0253
+TwseOrdType Not Found
+35=8/9
+Check and revise TwseOrdType
+0254
+TwseExCode Not Found
+35=8/9
+Check and revise TwseExCode
+0255
+OrigClOrdID Not Found
+35=8/9
+Check and revise OrigClOrdID
+0256
+TwseRejStaleOrd Not Found
+35=8/9
+Check and revise TwseRejStaleOrd
+
+Fixed Price Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+7001
+TIME IS OVER
+35=8/9
+7002
+TIME IS EARLY
+35=8
+7005
+ORDER NOT FOUND
+35=8/9
+7012
+BROKER-NO ERROR
+35=8/9
+7013
+BRANCH-NO ERROR
+35=8/9
+7014
+IVACNO ERROR
+35=8/9
+7016
+TERM-ID ERROR
+35=8/9
+7018
+SEQ-NO ERROR
+35=8/9
+7019
+IVACNO-FLAG
+35=8/9
+7020
+STOCK-NO ERROR
+35=8/9
+7021
+PRICE ERROR
+35=8/9
+7022
+QUANTITY ERROR
+35=8/9
+7024
+BUY-SELL-CODE ERROR
+35=8/9
+7025
+ORDER TYPE ERROR
+35=8/9
+7026
+EXCHANGE-CODE ERROR
+35=8/9
+7027
+Dealer is not allowed to trade
+35=8
+7029
+TRUST TRADE VIOLATE
+35=8/9
+7030
+QUANTITY OVER LIMIT
+35=8
+7031
+QUANTITY WAS CUT
+35=8
+7032
+DELETE OVER QUANTITY
+35=8
+7033
+CHANGE,DELETE OR QUERY ONLY
+35=8
+7035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+7036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+7038
+Short sell forbidden
+35=8
+7039
+Proprietary trade forbidden
+35=8
+7040
+Duplicate OrderID
+35=8
+7041
+SBL NOT ALLOWED
+35=8
+7043
+Stock suspended
+35=8
+7046
+OrdType Error
+35=8/9
+7047
+TimeInForce Error
+35=8
+7089
+Error Over Limit
+35=8/9
+7099
+CALL COMPUTER CENTER
+35=8/9
+7200
+SYSTEM NOT READY
+35=8/9
+7221
+SenderSubID Error
+35=8/9
+7222
+ClOrdID Length Error
+35=8/9
+7223
+TransactTime Error
+35=8/9
+7224
+OrderID Length Error
+35=8/9
+7225
+Account Length Error
+35=8/9
+7226
+Symbol Length Error
+35=8/9
+7227
+OrderQty Length Error
+35=8/9
+7228
+Price Length Error
+35=8/9
+7229
+TwseIvacnoFlag Length Error
+35=8/9
+7230
+TwseOrdType Length Error
+35=8/9
+7231
+TwseExCode Length Error
+35=8/9
+7232
+OrigClOrdID Length Error
+35=8/9
+7233
+TwseRejStaleOrd Length Error
+35=8/9
+7241
+SenderSubID Not Found
+35=8/9
+7242
+ClOrdID Not Found
+35=8/9
+7243
+TransactTime Not Found
+35=8/9
+7244
+OrderID Not Found
+35=8/9
+7245
+Account Not Found
+35=8/9
+7246
+Symbol Not Found
+35=8/9
+7247
+Side Not Found
+35=8/9
+7248
+OrderQty Not Found
+35=8/9
+7249
+OrdType Not Found
+35=8/9
+7250
+TimeInForce Not Found
+35=8/9
+7251
+Price Not Found
+35=8/9
+7252
+TwseIvacnoFlag Not Found
+35=8/9
+7253
+TwseOrdType Not Found
+35=8/9
+7254
+TwseExCode Not Found
+35=8/9
+7255
+OrigClOrdID Not Found
+35=8/9
+7256
+TwseRejStaleOrd Not Found
+35=8/9
+
+Odd Lot Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+2001
+TIME IS OVER
+35=8/9
+2002
+TIME IS EARLY
+35=8
+2012
+BROKER-NO ERROR
+35=8/9
+2013
+BRANCH-NO ERROR
+35=8/9
+2014
+OrderQty ERROR
+35=8/9
+2017
+OrderID ERROR
+35=8/9
+2018
+BUY-SELL-CODE ERROR
+35=8/9
+2019
+EXCHANGE-CODE ERROR
+35=8/9
+2020
+IVACNO ERROR
+35=8/9
+2021
+STOCK-NO ERROR
+35=8/9
+2022
+STOCK-NO NOT ALLOWED
+35=8/9
+2023
+QUANTITY ERROR
+35=8/9
+2024
+ORDER NOT FOUND
+35=8/9
+2025
+Account NOT ALLOWED
+35=8/9
+2026
+PRICE ERROR
+35=8/9
+2027
+Dealer is not allowed to trade
+35=8
+2030
+FOREIGNER NOT ALLOWED
+35=8
+2031
+QUANTITY OVER LIMIT
+35=8
+2032
+QUANTITY WAS CUT
+35=8
+2033
+WAIT A MOMENT
+35=8
+2035
+CHANGE,DELETE OR QUERY ONLY
+35=8
+2036
+DELETE OVER QUANTITY
+35=8
+2037
+IVACNO-FLAG
+35=8/9
+2043
+Stock suspended
+35=8
+2045
+ORDER TYPE ERROR
+35=8/9
+2046
+OrdType Error
+35=8/9
+2047
+TimeInForce Error
+35=8
+2089
+Error Over Limit
+35=8/9
+2099
+CALL COMPUTER CENTER
+35=8/9
+2200
+SYSTEM NOT READY
+35=8/9
+2221
+SenderSubID Error
+35=8/9
+2222
+ClOrdID Length Error
+35=8/9
+2223
+TransactTime Error
+35=8/9
+2224
+OrderID Length Error
+35=8/9
+2225
+Account Length Error
+35=8/9
+2226
+Symbol Length Error
+35=8/9
+2227
+OrderQty Length Error
+35=8/9
+2228
+Price Length Error
+35=8/9
+2229
+TwseIvacnoFlag Length Error
+35=8/9
+2230
+TwseOrdType Length Error
+35=8/9
+2231
+TwseExCode Length Error
+35=8/9
+2232
+OrigClOrdID Length Error
+35=8/9
+2233
+TwseRejStaleOrd Length Error
+35=8/9
+2241
+SenderSubID Not Found
+35=8/9
+2242
+ClOrdID Not Found
+35=8/9
+2243
+TransactTime Not Found
+35=8/9
+2244
+OrderID Not Found
+35=8/9
+2245
+Account Not Found
+35=8/9
+2246
+Symbol Not Found
+35=8/9
+2247
+Side Not Found
+35=8/9
+2248
+OrderQty Not Found
+35=8/9
+2249
+OrdType Not Found
+35=8/9
+2250
+TimeInForce Not Found
+35=8/9
+2251
+Price Not Found
+35=8/9
+2252
+TwseIvacnoFlag Not Found
+35=8/9
+2253
+TwseOrdType Not Found
+35=8/9
+2254
+TwseExCode Not Found
+35=8/9
+2255
+OrigClOrdID Not Found
+35=8/9
+2256
+TwseRejStaleOrd Not Found
+35=8/9
+
+
+Intraday odd lot trading Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+C001
+TIME IS OVER
+35=8/9
+C002
+TIME IS EARLY
+35=8
+C005
+ORDER NOT FOUND
+35=8/9
+C011
+CHANGE ORDER ERROR
+35=9
+C012
+BROKER-NO ERROR
+35=8/9
+C013
+BRANCH-NO ERROR
+35=8/9
+C014
+IVACNO ERROR
+35=8/9
+C018
+ORDER-NO ERROR
+35=8/9
+C019
+IVACNO-FLAG
+35=8/9
+C020
+STOCK-NO ERROR
+35=8/9
+C021
+PRICE ERROR
+35=8/9
+C022
+QUANTITY ERROR
+35=8/9
+C024
+BUY-SELL-CODE ERROR
+35=8/9
+C025
+ORDER TYPE ERROR
+35=8/9
+C026
+EXCHANGE-CODE ERROR
+35=8/9
+C027
+Dealer is not allowed to trade
+35=8
+C028
+FOREIGNER NOT ALLOWED
+35=8
+C030
+QUANTITY OVER LIMIT
+35=8
+C031
+QUANTITY WAS CUT
+35=8
+C032
+DELETE OVER QUANTITY
+35=8
+C033
+CHANGE,DELETE OR QUERY ONLY
+35=8
+C035
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+35=8
+C036
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+35=8
+C040
+Duplicate OrderID
+35=8
+C043
+Stock suspended
+35=8
+C046
+OrdType Error
+35=8/9
+C047
+TIME-IN-FORCE ERROR
+35=8
+C050
+No LeavesQty
+35=8/9
+C089
+Error Over Limit
+35=8/9
+C097
+Time Difference
+35=8/9
+C099
+CALL COMPUTER CENTER
+35=8/9
+C200
+SYSTEM NOT READY
+35=8/9
+C221
+SenderSubID Error
+35=8/9
+C222
+ClOrdID Length Error
+35=8/9
+C223
+TransactTime Error
+35=8/9
+C224
+OrderID Length Error
+35=8/9
+C225
+Account Length Error
+35=8/9
+C226
+Symbol Length Error
+35=8/9
+C227
+OrderQty Length Error
+35=8/9
+C228
+Price Length Error
+35=8/9
+C229
+TwseIvacnoFlag Length Error
+35=8/9
+C230
+TwseOrdType Length Error
+35=8/9
+C231
+TwseExCode Length Error
+35=8/9
+C232
+OrigClOrdID Length Error
+35=8/9
+C233
+TwseRejStaleOrd Length Error
+35=8/9
+C241
+SenderSubID Not Found
+35=8/9
+C242
+ClOrdID Not Found
+35=8/9
+C243
+TransactTime Not Found
+35=8/9
+C244
+OrderID Not Found
+35=8/9
+C245
+Account Not Found
+35=8/9
+C246
+Symbol Not Found
+35=8/9
+C247
+Side Not Found
+35=8/9
+C248
+OrderQty Not Found
+35=8/9
+C249
+OrdType Not Found
+35=8/9
+C250
+TimeInForce Not Found
+35=8/9
+C251
+Price Not Found
+35=8/9
+C252
+TwseIvacnoFlag Not Found
+35=8/9
+C253
+TwseOrdType Not Found
+35=8/9
+C254
+TwseExCode Not Found
+35=8/9
+C255
+OrigClOrdID Not Found
+35=8/9
+C256
+TwseRejStaleOrd Not Found
+35=8/9
+Lending Auction Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+4001
+TIME IS OVER
+35=8/9
+4002
+TIME IS EARLY
+35=8
+4012
+BROKER-NO ERROR
+35=8/9
+4013
+BRANCH-NO ERROR
+35=8/9
+4014
+IVACNO ERROR
+35=8/9
+4017
+ORDER-NO ERROR
+35=8/9
+4018
+STOCK-NO ERROR
+35=8/9
+4019
+PRICE ERROR
+35=8/9
+4020
+QUANTITY ERROR
+35=8/9
+4021
+STOCK-NO NOT ALLOWED
+35=8
+4022
+Duplicate OrderID
+35=8
+4046
+OrdType Error
+35=8/9
+4047
+TIME-IN-FORCE ERROR
+35=8
+4089
+Error Over Limit
+35=8/9
+
+Auction Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+5001
+TIME IS OVER
+35=8/9
+5002
+TIME IS EARLY
+35=8
+5012
+BROKER-NO ERROR
+35=8/9
+5013
+BRANCH-NO ERROR
+35=8/9
+5014
+IVACNO ERROR
+35=8/9
+5017
+ORDER-NO ERROR
+35=8/9
+5018
+STOCK-NO ERROR
+35=8/9
+5019
+PRICE ERROR
+35=8/9
+5020
+QUANTITY ERROR
+35=8/9
+5021
+QUANTITY NOT MULTIPLE
+35=8/9
+5022
+Duplicate OrderID
+35=8
+5023
+STOCK-NO NOT ALLOWED
+35=8
+5024
+ORDER NOT FOUND
+35=8/9
+5025
+QUANTITY WAS CUT
+35=8
+5026
+FOREIGNER NOT ALLOWED
+35=8
+5027
+QUANTITY OVER LIMIT
+35=8
+5043
+Stock suspended
+35=8
+5046
+OrdType Error
+35=8/9
+5047
+TIME-IN-FORCE ERROR
+35=8
+5089
+Error Over Limit
+35=8/9
+
+Reverse Auction Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+6001
+TIME IS OVER
+35=8/9
+6002
+TIME IS EARLY
+35=8
+6012
+BROKER-NO ERROR
+35=8/9
+6013
+BRANCH-NO ERROR
+35=8/9
+6014
+IVACNO ERROR
+35=8/9
+6017
+ORDER-NO ERROR
+35=8/9
+6018
+STOCK-NO ERROR
+35=8/9
+6019
+PRICE ERROR
+35=8/9
+6020
+QUANTITY ERROR
+35=8/9
+6021
+QUANTITY NOT MULTIPLE
+35=8/9
+6022
+Duplicate OrderID
+35=8
+6023
+STOCK-NO NOT ALLOWED
+35=8
+6024
+ORDER NOT FOUND
+35=8/9
+6027
+QUANTITY OVER LIMIT
+35=8/9
+6043
+Stock suspended
+35=8
+6046
+OrdType Error
+35=8/9
+6047
+TIME-IN-FORCE ERROR
+35=8
+6089
+Error Over Limit
+35=8/9
+
+Reverse Auction by Securities Finance Enterprises Status Code
+Status Code
+Message Content
+FIX GW Msg Type
+B001
+TIME IS OVER
+35=8/9
+B002
+TIME IS EARLY
+35=8
+B012
+BROKER-NO ERROR
+35=8/9
+B013
+BRANCH-NO ERROR
+35=8/9
+B014
+IVACNO ERROR
+35=8/9
+B017
+ORDER-NO ERROR
+35=8/9
+B018
+STOCK-NO ERROR
+35=9
+B019
+PRICE ERROR
+35=8/9
+B020
+QUANTITY ERROR
+35=8/9
+B021
+QUANTITY NOT MULTIPLE
+35=8/9
+B022
+Duplicate OrderID
+35=8
+B023
+STOCK-NO NOT ALLOWED
+35=8
+B024
+ORDER NOT FOUND
+35=8/9
+B046
+OrdType Error
+35=8/9
+B047
+TIME-IN-FORCE ERROR
+35=8
+B089
+Error Over Limit
+35=8/9
+Common Status Code
+The first digit '? ' represents the system type, where: C - intra-day odd lot transactions,4- lending auction 5 -auction.
+Status Code
+Message Content
+FIX GW Msg Type
+?099
+CALL COMPUTER CENTER
+35=8/9
+?200
+SYSTEM NOT READY
+35=8/9
+?221
+SenderSubID Error
+35=8/9
+?222
+ClOrdID Length Error
+35=8/9
+?223
+TransactTime Error
+35=8/9
+?224
+OrderID Length Error
+35=8/9
+?225
+Account Length Error
+35=8/9
+?226
+Symbol Length Error
+35=8/9
+?227
+OrderQty Length Error
+35=8/9
+?228
+Price Length Error
+35=8/9
+?229
+TwseIvacnoFlag Length Error
+35=8/9
+?230
+TwseOrdType Length Error
+35=8/9
+?231
+TwseExCode Length Error
+35=8/9
+?232
+OrigClOrdID Length Error
+35=8/9
+?233
+TwseRejStaleOrd Length Error
+35=8/9
+?234
+RefOrderID Length Error
+35=8
+?241
+SenderSubID Not Found
+35=8/9
+?242
+ClOrdID Not Found
+35=8/9
+?243
+TransactTime Not Found
+35=8/9
+?244
+OrderID Not Found
+35=8/9
+?245
+Account Error
+35=8/9
+?246
+Symbol Not Found
+35=8/9
+?247
+Side Not Found
+35=8/9
+?248
+OrderQty Not Found
+35=8/9
+?249
+OrdType Not Found
+35=8/9
+?250
+TimeInForce Not Found
+35=8/9
+?251
+Price Not Found
+35=8/9
+?252
+TwseIvacnoFlag Not Found
+35=8/9
+?253
+TwseOrdType Not Found
+35=8/9
+?254
+TwseExCode Not Found
+35=8/9
+?255
+OrigClOrdID Not Found
+35=8/9
+?256
+TwseRejStaleOrd Not Found
+35=8/9
+?257
+RefOrderID Error
+35=8
+Failover and Backup Procedures
+Broker Backup
+When applying for a FIX session, brokers can register up to two source IP addresses for redundancy. Either IP address may be used to establish the FIX connection in case of failure or switchover. However, within the same FIX session, only one IP can be connected at the same time. The second socket connection will be unable to connect as long as the first socket connection is not disconnected. When the first (or second) IP at the broker's end encounters a system or network issue, it can continue to reconnect through the configured second IP (or first IP).
+FIX Gateway Failover Procedures
+If one FIX Gateway encounters issues, the broker can continue to send order messages or perform queries through the other FIX Gateway or the existing TMP line. Additionally, the broker can receive all trade execution report via the TMP execution report line.
+Upon detection of a FIX Gateway outage, the Exchange will initiate restoration procedures. Brokers should adhere to the following steps for failover and service restoration:
+The FIX session sequence numbers on both sides will be reset to 1.
+When a local FIX Gateway switch occurs, the broker’s end will experience a disconnection. The exchange will immediately announce this via T79 through FT system. When the FIX Gateway service is restored, the sequence numbers on the FIX Engine will also be reset to 1. At this point, the broker’s end must execute EOD on the affected FIX session to reset the sequence number to 1. After the backup FIX Gateway is activated, normal connection can be restored.
+Order report.
+There may be cases where some orders have not been reported. In such situations, the broker should use the order status query message to retrieve the status of unreported orders. (If the query result is "Order Not Found," it may indicate that the order does not exist or that the order has been fully executed.)
+Execution report
+Trade execution report will begin to be transmitted once the FIX Gateway is restored and service is resumed. Complete trade execution report data can be obtained through the TMP execution report line.
+Disaster Recovery (DR) Site Failover
+In the event of a critical issue affecting the primary data center, the Exchange's system will initiate a switchover to the remote backup center. Brokers should adhere to the following steps for failover and service restoration:
+	•	The FIX session sequence numbers on both sides will be reset to 1.
+When a remote switch occurs, the exchange will immediately issue an emergency announcement via S10 via FT system. At this point, the broker’s end must execute EOD on all FIX sessions to reset the sequence numbers. Once the remote system switch is complete, normal connection can be restored
+	•	Order report
+The exchange will actively send the last five minutes of valid order data from the FIX endpoint via FT system.
+	•	Execution report
+The exchange will actively send the latest trade execution data (T39) via FT system.
+
+Other Important Notes
+Network Bandwidth Considerations
+Since the FIX protocol uses asynchronous transmission, orders can be sent continuously. However, bandwidth requirements must also be carefully considered. For example, with a 2Mb physical line, the approximate message traffic capacity is as follows. Actual conditions may vary based on factors such as order submission mode, bandwidth size, and equipment environment, so the related values are provided for reference only.
+	•	Each order report or trade execution report is approximately 400 bytes in size.
+	•	The network transmission volume per second is approximately 262,144 bytes.
+	•	The number of orders and reports that can be processed per second is approximately 655.
+	•	Based on the current situation, the number of orders is approximately 1.5 times the number of trades, so the number of orders that can be processed per second is approximately 400.
+	•	Due to the limitations of instantaneous network traffic bandwidth, order data should be distributed as evenly as possible to avoid network congestion, which could lead to delayed order replies or disconnections.
+	•	Brokers should test under specific network bandwidth conditions and adjust their optimal order submission mode based on the client's order frequency. Generally, with smaller bandwidth, introducing a moderate delay between each order submission can yield better results.
+Message Rate Throttling
+Each FIX session controls the total number of messages that can be transmitted per second based on the requested throttle unit. The calculation includes order submissions, cancellations, modifications, and query messages. For each throttle unit, the current limit is a maximum of 20 messages per second.
+When the number of orders exceeds the limit, the exchange will delay the transmission of the orders. At this point, no warning or order failure messages will be sent to the broker, nor will the broker’s FIX session be forcibly disconnected. However, the broker may notice order delays (latency). In more severe cases, the underlying socket buffer may be exhausted, causing the socket transmission to be blocked. If the broker's program does not handle this situation, it could lead to program errors. Therefore, brokers need to manage the traffic of each FIX session independently.
+Although throttle control is based on seconds, factors such as the operating system, network, and even time synchronization accuracy may cause discrepancies in the exact start time of each second’s control between the system and the broker. Therefore, brokers should ensure that within any continuous time period, the number of messages does not exceed the traffic limit. For example, for a FIX session with 8 traffic units, between 09:10:11.010 and 09:10:12.010, the number of messages should not exceed 160, and similarly, between 09:11:11.110 and 09:11:12.110, it should not exceed 160, and so on.
+Additionally, due to the technical complexity of precisely controlling the number of messages, the exchange provides a reasonable buffer for throttle control. However, brokers should still ensure that the number of messages remains within the specified traffic limits to avoid order delays.
+Order Volume Monitoring Mechanism
+	•	Single FIX Line Throttle Control Mechanism: If a single FIX session exceeds the throttle control limit 30 times in a day, the exchange will notify the broker’s emergency contact by phone. The broker must investigate the cause and take corrective actions. If the issue raises concerns about the security of the trading system and remains unresolved after a second notification, the exchange will disconnect the FIX socket and suspend order submissions.
+	•	Broker Order Volume Monitoring Mechanism: The exchange will monitor the broker's order volume throughout the trading day. If the order volume reaches 6,000 orders per second, the exchange will analyze the broker's order activity. If there is a continuous large volume of orders, the exchange will notify the broker’s emergency contact by phone. The broker must investigate the cause and take corrective actions. If the issue raises concerns about the security of the trading system and remains unresolved after a second notification, the exchange will first disconnect the FIX socket of the line that exceeded the throttle control limit 30 times, suspending order submissions. Subsequently, other connections may also be disconnected until the situation improves.
+	•	Market-wide Order Volume Monitoring Mechanism: The exchange will monitor the total order volume of the entire market in real-time throughout the trading day. If the order volume reaches 20,000 orders per second, the exchange will analyze the order activity of each broker. For the top 10 brokers by order volume, the exchange will notify the broker’s emergency contact by phone. The broker must investigate the cause and take corrective actions. If the issue raises concerns about the security of the trading system and remains unresolved after a second notification, the exchange will first disconnect the FIX socket of the line that exceeded the throttle control limit 30 times, suspending order submissions. Other connections may be disconnected subsequently until the situation improves.
+
+
+Appendix
+Order State Change Matrices
+	•	D1-Filled Order
+
+Time
+Message Received
+ (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+2
+Execution of 2 trading units
+4
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+3
+1
+Execution of 1 trading unit
+5
+
+Execution(X)
+Trade
+Filled
+0
+0
+9
+6
+If the order was decreased 1 trading unit by other channel, then execution of 6
+5
+
+Execution(X)
+Trade
+Filled
+0
+0
+10
+7
+Execution of 7 trading units
+
+	•	D2-Order Qty Quota
+
+Time
+Message Received   (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+8
+8
+0
+0
+8 trading units of Order Qty
+tag 103=99
+tag 58=0031
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit
+4
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+5
+Execution of 5 trading units
+	•
+	•	D3-Cancel request issued for a part-filled order – executions occur whilst cancel request is active
+
+Time
+Message Received   (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit
+4
+Cancel Request (Y,X)
+
+
+5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+5
+4
+Execution for 4 trading units. This execution passes the cancel request on the connection.
+6
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+1
+Execution for 1 trading unit.
+7
+
+Execution (Y,X)
+Canceled
+Canceled
+4
+0
+6
+0
+If deals are received before cancellation acknowledgement.
+
+
+	•	D4-Cancel request issued for a part-filled order – executions occur whilst cancel request is active and cancellation is back earlier than residual deals
+
+Time
+Message Received   (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit
+4
+Cancel Request (Y,X)
+
+
+5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+5
+4
+Execution for 4 trading units. This execution passes the cancel request on the connection.
+6
+
+Execution (Y,X)
+Canceled
+Canceled
+4
+0
+6
+0
+The cancellation is back before the residual deals.
+7
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+6
+1
+If the last cancel request is done and execution for 1 trading unit.
+	•	D5-Part-filled order followed by cancel/replace request to decrease order qty, execution occurs whilst order is pending replace
+
+Time
+Message Received (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+Execution of 1 trading unit.
+4
+Replace Request (Y,X)
+
+
+1
+
+
+1 trading unit decreased.
+5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+1
+Execution of 1trading unit.
+6
+
+Execution (Y,X)
+Replace
+New
+1
+7
+2
+0
+
+7
+
+Execution(X)
+Trade
+Filled
+0
+0
+9
+7
+Execution of 7 trading units.
+	•	D6-Cancel/replace request send whilst execution is being reported – the requested order qty equals the LeavesQty
+
+Time
+Message Received   (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+Replace Request (Y,X)
+
+
+2
+
+
+2 trading units decreased.
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+8
+8
+Execution of 8 trading units.
+4
+
+Execution (Y,X)
+Replace
+New
+2
+0
+8
+0
+
+
+	•	D7-Cancel/replace request sent whilst execution is being reported – the requested order qty is above the LeavesQty
+
+Time
+Message Received   (11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+If order is rejected
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+Replace Request (Y,X)
+
+
+5
+
+
+5 trading units decreased.
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+8
+8
+Execution of 8 trading units.
+4
+
+Execution (Y,X)
+Replace
+New
+2
+0
+8
+0
+tag 103=99
+tag 58=0032
+
+	•	 D8-Order status request – for new order and cancel/replace request
+
+Time
+Message Received
+(11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+Order Status Request(X)
+
+
+3
+
+Execution(X)
+New
+New
+8
+8
+0
+0
+If order is accepted 8 trading units by TWSE.
+tag 103=99
+tag 58=0031
+4
+＊＊
+Execution(X)
+Order Status
+New
+8
+8
+0
+0
+
+5
+Replace Request (Y,X)
+
+
+4
+
+
+4 trading units decreased.
+6
+Order Status Request(X)
+
+
+7
+
+Execution(Y,X)
+Replace
+New
+4
+4
+0
+0
+Reduce quantity.
+8
+＊＊
+Execution(X)
+Order Status
+New
+2
+2
+2
+0
+
+9
+　
+Execution(Y)
+Trade
+Partially Filled
+0
+0
+2
+2
+Execution of 2.
+＊＊In Order Status Query Request, please refer to the LeavesQty in order to get the results of OrderQty.
+	•	D9-Order status request – for new order
+
+Time
+Message Received
+(11, 41)
+Message Sent (11,41)
+ExecType (150)
+OrdStatus (39)
+OrderQty (38)
+LeavesQty (151)
+CumQty (14)
+LastQty (32)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+3
+Order Status Request(X)
+
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+2
+2 trading units are dealed.
+4
+
+Execution(X)
+Order Status
+New
+8
+8
+2
+0
+
+
+	•	Market Order
+Time
+Message Received
+(11, 41)
+Message Sent
+(11,41)
+ExecType
+(150)
+OrdStatus
+(39)
+OrderQty
+(38)
+LeavesQty
+(151)
+CumQty
+(14)
+LastQty
+(32)
+Text
+(58)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+Price(44) is ignored.
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+0049
+Call Auction.
+Market order is not allowed.
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+7
+7
+
+
+4
+
+Execution(X)
+Trade
+Filled
+0
+0
+10
+3
+
+
+
+	•	FOK Order
+Time
+Message Received
+(11, 41)
+Message Sent
+(11,41)
+ExecType
+(150)
+OrdStatus
+(39)
+OrderQty
+(38)
+LeavesQty
+(151)
+CumQty
+(14)
+LastQty
+(32)
+Text
+(58)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+0048
+FOK order cannot be filled
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+0049
+Call Auction
+FOK order is not allowed
+2
+
+Execution(X)
+New
+New
+10
+  10
+0
+0
+
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+7
+7
+
+
+4
+
+Execution(X)
+Trade
+Filled
+0
+0
+10
+3
+
+
+	•	IOC Order
+Time
+Message Received
+(11, 41)
+Message Sent
+(11,41)
+ExecType
+(150)
+OrdStatus
+(39)
+OrderQty
+(38)
+LeavesQty
+(151)
+CumQty
+(14)
+LastQty
+(32)
+Text
+(58)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+0048
+IOC order cannot be filled
+2
+
+Execution(X)
+Rejected
+Rejected
+10
+0
+0
+0
+0049
+Call Auction
+IOC order is not allowed
+2
+
+Execution(X)
+New
+New
+7
+7
+0
+0
+0031
+If order is accepted 7 trading units.
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+5
+5
+
+
+4
+
+Execution(X)
+Trade
+Filled
+0
+0
+7
+2
+
+
+	•	Part-filled order followed by cancel/replace request to change order price
+Time
+Message Received
+(11, 41)
+Message Sent
+(11,41)
+ExecType
+(150)
+OrdStatus
+(39)
+OrderQty
+(38)
+LeavesQty
+(151)
+CumQty
+(14)
+LastQty
+(32)
+Price
+(44)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+21
+
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+21
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+1
+1
+21
+Execution of 1 trading unit.
+4
+Replace Request (Y,X)
+
+
+0
+
+
+20
+
+5
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+2
+1
+21
+Execution of 1trading unit.
+6
+
+Execution(Y,X)
+Replace
+New
+8
+8
+2
+0
+20
+
+7
+
+Execution(X)
+Trade
+Filled
+0
+0
+10
+8
+20
+Execution of 8 trading units.
+
+	•	Unsolicited cancel of a part-filled order
+Time
+Message Received
+(11, 41)
+Message Sent
+(11,41)
+ExecType
+(150)
+OrdStatus
+(39)
+OrderQty
+(38)
+LeavesQty
+(151)
+CumQty
+(14)
+LastQty
+(32)
+Text
+(58)
+Comment
+1
+New Order(X)
+
+
+10
+
+
+2
+
+Execution(X)
+New
+New
+10
+10
+0
+0
+
+
+3
+
+Execution(X)
+Trade
+Partially Filled
+0
+0
+7
+7
+
+
+4
+
+Execution(X)
+Restated
+Canceled
+3
+0
+7
+0
+
+Cancel by TWSE.
+
+Differentiation with standard FIX4.4
+	•	Standard Header and Trailer
+	•	Standard Header
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+8
+BeginString
+String
+Y
+Y
+9
+BodyLength
+String
+Y
+Y
+35
+MsgType
+String
+Y
+Y
+49
+SenderCompID
+String
+Y
+Y
+56
+TargetCompID
+String
+Y
+Y
+115
+OnBehalfOfCompID
+String
+[IGNORE]
+N
+128
+DeliverToCompID
+String
+[IGNORE]
+N
+90
+SecureDataLen
+Length
+[IGNORE]
+N
+91
+SecureData
+Data
+[IGNORE]
+N
+34
+MsgSeqNum
+Int
+Y
+Y
+50
+SenderSubID
+String
+N
+N
+142
+SenderLocationID
+String
+[IGNORE]
+N
+57
+TargetSubID
+String
+N
+N
+143
+TargetLocationID
+String
+[IGNORE]
+N
+116
+OnBehalfOfSubID
+String
+[IGNORE]
+N
+144
+OnBehalfOfLocationID
+String
+[IGNORE]
+N
+129
+DeliverToSubID
+String
+[IGNORE]
+N
+145
+DeliverToLocationID
+String
+[IGNORE]
+N
+43
+PossDupFlag
+Boolean
+N
+N
+97
+PossResend
+Boolean
+N
+N
+52
+SendingTime
+UTCTimestamp
+Y
+Y
+122
+OrigSendingTime
+UTCTimestamp
+N
+N
+212
+XmlDataLen
+Length
+[IGNORE]
+N
+213
+XmlData
+data
+[IGNORE]
+N
+347
+MessageEncoding
+String
+[IGNORE]
+N
+369
+LastMsgSeqNumProcessed
+Int
+[IGNORE]
+N
+370
+OnBehalfOfSendingTime
+UTCTimestamp
+[IGNORE]
+N
+
+	•	Standard Trailer
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+93
+SignatureLength
+Length
+[IGNORE]
+N
+89
+Signature
+data
+[IGNORE]
+N
+10
+CheckSum
+String
+Y
+Y
+
+	•	 Administrative Messages
+	•	Logon
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+98
+EncryptMethod
+Int
+Y
+Y
+108
+HeartBtInt
+Int
+Y
+Y
+95
+RawDataLength
+Int
+Y
+N
+96
+RawData
+data
+Y
+N
+141
+ResetSeqNumFlag
+Boolean
+[IGNORE]
+N
+383
+MaxMessageSize
+Int
+[IGNORE]
+N
+384
+NoMsgTypes
+Int
+[IGNORE]
+N
+
+372
+RefMsgType
+String
+[IGNORE]
+N
+
+385
+MsgDirection
+char
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+
+	•	Heartbeat
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+112
+TestReqID
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y
+
+	•	Test Request
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+112
+TestReqID
+String
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+
+	•	Resend Request
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+7
+BeginSeqNo
+Int
+Y
+Y
+16
+EndSeqNo
+Int
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+
+	•	Reject – Session Level
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+45
+RefSeqNum
+Int
+Y
+Y
+371
+RefTagID
+Int
+N
+N
+372
+RefMsgType
+String
+N
+N
+373
+SessionRejectReason
+Int
+N
+N
+58
+Text
+String
+N
+N
+354
+EncodedTextLen
+Length
+[IGNORE]
+N
+355
+EncodedText
+data
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+
+	•	Sequence Reset
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+123
+GapFillFlag
+Boolean
+N
+N
+36
+NewSeqNo
+Int
+Y
+Y
+
+Standard Trailer
+
+Y
+Y
+
+	•	Logout
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+58
+Text
+String
+N
+N
+354
+EncodedTextLen
+Length
+[IGNORE]
+N
+355
+EncodedText
+data
+[IGNORE]
+N
+
+Standard Trailer
+
+Y
+Y
+
+
+	•	 Application Messages
+	•	New Order Single
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+38
+OrderQty
+Qty
+Y
+N
+40
+OrdType
+Char
+Y
+Y
+59
+TimeInForce
+Char
+Y
+N
+44
+Price
+Price
+Y
+N
+1080
+RefOrderID
+Char
+N
+N
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10001
+TwseOrdType
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+	•	Order Cancel/Replace Request
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+38
+OrderQty
+Qty
+Y
+N
+40
+OrdType
+Char
+Y
+Y
+44
+Price
+Price
+Y
+N
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10001
+TwseOrdType
+Char
+Y
+N
+10002.
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+	•	Order Cancel Request
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+1
+Account
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+Y
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+10004
+TwseRejStaleOrd
+Boolean
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+	•	Order Status Request
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+37
+OrderID
+String
+Y
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+10000
+TwseIvacnoFlag
+Char
+Y
+N
+10002
+TwseExCode
+Char
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+	•	Execution Report
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+37
+OrderID
+String
+Y
+Y
+11
+ClOrdID
+String
+N
+N
+41
+OrigClOrdID
+String
+N
+N
+17
+ExecID
+String
+Y
+Y
+150
+ExecType
+Char
+Y
+Y
+39
+OrdStatus
+Char
+Y
+Y
+103
+OrdRejReason
+Int
+N
+N
+378
+ExecRestatementReason
+Int
+N
+N
+1
+Account
+String
+N
+N
+55
+Symbol
+String
+Y
+Y
+54
+Side
+Char
+Y
+Y
+60
+TransactTime
+UTCTimestamp
+Y
+N
+38
+OrderQty
+Qty
+N
+N
+40
+OrdType
+Char
+N
+N
+59
+TimeInForce
+Char
+N
+N
+44
+Price
+Price
+N
+N
+1080
+RefOrderID
+Char
+N
+N
+32
+LastQty
+Qty
+N
+N
+31
+LastPx
+Price
+N
+N
+151
+LeavesQty
+Qty
+Y
+Y
+14
+CumQty
+Qty
+Y
+Y
+6
+AvgPx
+Price
+Y
+Y
+58
+Text
+String
+N
+N
+10000
+TwseIvacnoFlag
+Char
+N
+N
+10001
+TwseOrdType
+Char
+N
+N
+10002
+TwseExCode
+Char
+Y
+N
+…
+…
+…
+[IGNORE]
+…
+
+Standard Trailer
+
+Y
+Y
+
+	•	Order Cancel Reject
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+37
+OrderID
+String
+Y
+Y
+11
+ClOrdID
+String
+Y
+Y
+41
+OrigClOrdID
+String
+Y
+Y
+39
+OrdStatus
+Char
+Y
+Y
+1
+Account
+String
+N
+N
+60
+TransactTime
+UTCTimestamp
+N
+N
+434
+CxlRejResponseTo
+Char
+Y
+Y
+102
+CxlRejReason
+Int
+N
+N
+58
+Text
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y
+
+	•	Business Message Reject
+Tag
+Field Name
+Data Type
+TWSE Req
+FIX Req
+
+Standard Header
+
+Y
+Y
+45
+RefSeqNum
+Int
+N
+N
+372
+RefMsgType
+String
+Y
+Y
+380
+BusinessRejectReason
+Int
+Y
+Y
+58
+Text
+String
+N
+N
+
+Standard Trailer
+
+Y
+Y

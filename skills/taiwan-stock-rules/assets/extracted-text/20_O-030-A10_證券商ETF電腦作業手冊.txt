@@ -1,0 +1,2971 @@
+# O-030-A10 證券商ETF電腦作業手冊
+
+- 更新日期: 114.01.17
+- 來源檔案: assets/source-files/O-030-A10_證券商ETF電腦作業手冊.doc
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/computerPlanningOperationsDepartment/O-030-A10 證券商ETF電腦作業手冊_20250117160247.doc
+- SHA256: 065d1ea85c155c115b75d0a97abb263f6b00ffd5da9770bf9f2a54f611bcab6b
+- 抽取方式: textutil
+
+---
+
+證券商ETF電腦作業說明
+
+壹、系統功能	2
+
+貳、訊息格式說明	4
+
+參、錯誤訊息處理說明	51
+
+肆、電腦作業注意事項	56
+
+伍、電腦作業流程	57
+
+
+                台灣證券交易所
+            證券商ETF電腦作業手冊發行紀錄
+發行日期
+內  容  異  動  說  明
+版本
+20161116
+新發行
+V1.0
+20170515
+新增證券商查詢T日更新PCF檔功能M54。
+V1.1
+20170515
+修改M54檔FILLER長度。
+V1.2
+20170930
+配合ETF欄位擴大案，修改相關欄位:
+申請基數修改為9(03)。
+股價或淨值等欄位修改為9(6)V9(3)。
+總申贖金額、總淨值、約當市值修改為9(18)。
+申贖單一基數金額修改為9(14)。
+另新增電腦作業流程。
+V1.3
+20191219
+配合價格欄位案，股價或淨值等欄位修改為9(5)V9(4)，調整相關格式：M05、M54。
+修改欄位說明文字：M01。
+(實施日期：民國109年3月2日)
+V1.4
+20200424
+實物申贖ETF，新增PCF成分股T日更新查詢M57功能。
+(實施日期：民國109年6月19日)
+V1.5
+20200512
+取消M57功能，PCF成分股T日更新查詢，可由M54功能查詢。
+(實施日期：民國109年6月19日)
+V1.6
+20200703
+流水序號原為數字型態9(3)，修改為文數字型態X(3)，可接受範圍為半形a-Z、0-9。
+調整相關格式：M01、M02、M03、M04、M06、M07、M08、M18、M20、M21、M29、M30、M51
+(實施日期：民國109年8月31日)
+V1.7
+20250102
+調整M02欄位說明文字。
+V1.8
+壹、系統功能
+一、架構說明︰
+
+
+說明︰
+(一)利用單筆訊息與檔案傳輸通訊協定進行資料接收。
+(二)傳送筆數限制：略。
+(三)傳送次數限制：50次。
+(四)傳送申報作業檔案，為證券商傳送一筆申報檔，即回覆一筆錯誤訊息檔，必需等到交易所回覆錯誤訊息檔回來，方可再進行另一筆傳送。
+(五)交易所回覆的錯誤訊息檔，將有錯的資料回覆ERROR CODE，正確的資料回覆”00”，證券商必需將有錯的資料根據回覆ERROR CODE，更改資料重覆傳送，已正確的資料不必再傳送，如此來回作業，直到錯誤訊息檔都為”00”為止，才可說是作業完成。
+
+
+二、業務範圍
+證券商ETF作業(上市櫃合併)之業務共有以下幾項︰
+(一)證券商之申購/買回彙總申報作業(M01)。
+(二)證券商之申購/買回明細申報作業(M02)。
+(三)證券商之今日買進補券申報作業(M03)。
+(四)證券商之發行人回覆資料查詢作業(M04)。
+(五)證券商之實物申購/買回清單查詢作業(M05)。
+(六)證券商之申購/買回彙總資料查詢作業(M06)。
+(七)證券商之申購/買回明細資料查詢作業(M07)。
+(八)證券商之補券資料查詢作業(M08)。
+(九)證券商之前日申購/買回彙總資料圈存結果查詢作業(M18)。
+(十)證券商之前日補券資料圈存結果查詢作業(M20)。
+(十一)證券商之前日申購/買回明細資料圈存結果查詢作業(M21)。
+(十二)證券商之證券商違反法規查詢作業(M28)。
+(十三)參與證券商之二次圈存申請明細作業(M29)。
+(十四)參與證券商之二次圈存明細資料查詢作業(M30)。
+(十五)證券商之ETF流動量提供者績效統計檔查詢作業(M44)。
+(十六)證券商之月統計經手費折讓查詢作業(M45)。
+(十七)證券商之本日ETF申購/買回價金通知檔查詢作業(M51)。
+(十八)證券商之查詢T日更新PCF檔作業(M54)。
+
+
+貳、訊息格式說明
+
+由前一章之說明可知交易所與證券商之間的資料傳遞必定是以事先約好的格式相互傳送，證券商在送出檔案前都必須檢查每一個欄位。證交所電腦會累計欄位錯誤的次數，若超過50次，剩餘資料將回錯誤次數太多而不繼續處理。
+本章將對各約定之格式逐一說明。
+
+
+一、證券商之申購/買回彙總申報作業
+
+(一) 申購/買回彙總申報檔
+檔案結構：U　    檔案長度：300　        檔案代號：M01
+欄位名稱
+長度
+說　　　　　　　明
+M01-TRAN-CODE
+X(01)
+異動碼
+M01-ETF-ID
+X(06)
+ETF代號
+M01-BROKER-ID
+X(04)
+券商代表號
+M01-TX-DATE
+9(08)
+申請日(西曆)
+M01-SEQNO
+X(03)
+流水號
+M01-TX-KIND
+X(01)
+交易種類
+M01-APPLICATION-UNITS
+9(03)
+申請基數
+M01-STATE
+X(01)
+註記(空白)
+M01-BANK-ID
+9(03)
+買回時匯款銀行代號
+M01-RM-ACNT
+X(16)
+買回時匯款帳號
+M01-APPLIER-NUMBER
+9(01)
+申請人數目
+M01-ACNT-BROKER-1
+X(04)
+開戶券商代號1
+M01-ACNT-NO-1
+9(07)
+申請人帳號1
+M01-KEEP-ACNT-1
+X(11)
+申請人保管銀行帳號1
+M01-ID-CODE-1
+X(03)
+身份碼1
+M01-CASH-ASSIGN-1
+X(01)
+現金差額收取人1
+M01-MERGE-ASSIGN-1
+X(01)
+零股整合帳戶1
+M01-ACNT-BROKER-2
+X(04)
+開戶券商代號2
+M01-ACNT-NO-2
+9(07)
+申請人帳號2
+M01-KEEP-ACNT-2
+X(11)
+申請人保管銀行帳號2
+M01-ID-CODE-2
+X(03)
+身份碼2
+M01-CASH-ASSIGN-2
+X(01)
+現金差額收取人2
+M01-MERGE-ASSIGN-2
+X(01)
+零股整合帳戶2
+M01-ACNT-BROKER-3
+X(04)
+開戶券商代號3
+M01-ACNT-NO-3
+9(07)
+申請人帳號3
+M01-KEEP-ACN-3
+X(11)
+申請人保管銀行帳號3
+M01-ID-CODE-3
+X(03)
+身份碼3
+M01-CASH-ASSIGN-3
+X(01)
+現金差額收取人3
+M01-MERGE-ASSIGN-3
+X(01)
+零股整合帳戶3
+M01-APPLY-FEE
+9(08)
+申購買回手續費
+M01-MANAGEMENT-CHARGE
+9(08)
+行政處理費
+M01-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+M01-TX-CASH
+X(01)
+現金申贖Y/ ” ”
+M01-AMOUNT
+9(18)
+現金申贖金額
+M01-RM-ACNT-NAME
+X(60)
+匯款帳戶名
+M01-RM-ACNT-ID
+X(10)
+匯款帳戶ID
+FILLER
+X(65)
+空白
+欄位說明：
+    1.M01-TRAN-CODE: I(新增)或D(刪除)。
+    2.M01-BROKER-ID: 一般券商第四碼需為0；
+                     大型券商第三四碼需為00。
+    3.M01-TX-KIND: 1 (申購)
+                   2 (申購─集合申購)
+                   3 (申購─套利交易)
+                   4 (最小創造組合─有短缺股票)
+                   5 (買回)
+                   6 (買回─套利交易)
+    4.M01-APPLIER-NUMBER:除集合申購可為2或3人，其餘皆為1人。
+    5.M01-CASH-ASSIGN:若申購人數不止1人，則可指定任1人之現金差額
+收取人欄位值設定為Y，只須指定1人。
+    6.M01-MERGE-ASSIGN: 若申購人數不止1人，則可指定任1人之零股整
+      合帳戶欄位值設定為Y，只須指定1人。
+    7.M01-TX-CASH:若是現金申贖設定為Y，實物申贖設定為空白。
+    8.M01-AMOUNT:現金申贖金額須填入PCF檔每預收申購款，實物申贖金額
+      為0。
+    9.M01-RM-ACNT-ID: 現金申贖請填入匯款帳戶之ID。
+   10.因應現金申贖作業修改每筆資料長度為300。
+　　11.每筆申贖資料的Key值為ETF代號、券商代表號、申請日與流水號，
+      不同流水號視為不同筆申贖資料。
+　　12. M01-SEQNO：流水序號原為數字型態9(3)，修改為文數字型態X(3)，
+　　　可接受範圍為半形a-Z、0-9，大小寫符號視為不同。
+
+(二) 證券商申購/買回彙總申報正確或錯誤回覆檔
+檔案結構：U　     檔案長度：300 　      檔案代號：M01
+欄位名稱
+長度
+說　　　　　　　明
+M01-TRAN-CODE
+X(01)
+異動碼
+M01-ETF-ID
+X(06)
+ETF代號
+M01-BROKER-ID
+X(04)
+券商代表號
+M01-TX-DATE
+9(08)
+申請日(西曆)
+M01-SEQNO
+X(03)
+流水號
+M01-TX-KIND
+X(01)
+交易種類
+M01-APPLICATION-UNITS
+9(03)
+申請基數
+M01-STATE
+X(01)
+註記(空白)
+M01-BANK-ID
+9(03)
+買回時匯款銀行代號
+M01-RM-ACNT
+X(16)
+買回時匯款帳號
+M01-APPLIER-NUMBER
+9(01)
+申請人數目
+M01-ACNT-BROKER-1
+X(04)
+開戶券商代號1
+M01-ACNT-NO-1
+9(07)
+申請人帳號1
+M01-KEEP-ACNT-1
+X(11)
+申請人保管銀行帳號1
+M01-ID-CODE-1
+X(03)
+身份碼1
+M01-CASH-ASSIGN-1
+X(01)
+現金差額收取人1
+M01-MERGE-ASSIGN-1
+X(01)
+零股整合帳戶1
+M01-ACNT-BROKER-2
+X(04)
+開戶券商代號2
+M01-ACNT-NO-2
+9(07)
+申請人帳號2
+M01-KEEP-ACNT-2
+X(11)
+申請人保管銀行帳號2
+M01-ID-CODE-2
+X(03)
+身份碼2
+M01-CASH-ASSIGN-2
+X(01)
+現金差額收取人2
+M01-MERGE-ASSIGN-2
+X(01)
+零股整合帳戶2
+M01-ACNT-BROKER-3
+X(04)
+開戶券商代號3
+M01-ACNT-NO-3
+9(07)
+申請人帳號3
+M01-KEEP-ACN-3
+X(11)
+申請人保管銀行帳號3
+M01-ID-CODE-3
+X(03)
+身份碼3
+M01-CASH-ASSIGN-3
+X(01)
+現金差額收取人3
+M01-MERGE-ASSIGN-3
+X(01)
+零股整合帳戶3
+M01-APPLY-FEE
+9(08)
+申購買回手續費
+M01-MANAGEMENT-CHARGE
+9(08)
+行政處理費
+M01-ERROR-CODE
+X(02)
+錯誤代碼
+M01-TX-CASH
+X(01)
+現金申贖Y/ ” ”
+M01-AMOUNT
+9(18)
+現金申贖金額
+M01-RM-ACNT-NAME
+X(60)
+匯款帳戶名
+M01-RM-ACNT-ID
+X(10)
+匯款帳戶ID
+FILLER
+X(65)
+空白
+
+欄位說明：
+每一筆資料皆會回覆正確或錯誤訊息於M01-ERROR-CODE欄位，回覆 ”00”為資料正確，其他代碼表示有錯， 請參照錯誤訊息處理說明。
+二、證券商之申購/買回明細申報作業
+
+(一) 申購/買回明細申報檔
+          檔案結構：U　   檔案長度：150　   檔案代號：M02
+欄位名稱
+長　度
+說明
+M02-TRAN-CODE
+X(01)
+異動碼
+M02-ETF-ID
+X(06)
+ETF代號
+M02-BROKER-ID
+X(04)
+券商代表號
+M02-TX-DATE
+9(08)
+申請日(西曆)
+M02-SEQNO
+X(03)
+流水號
+M02-ACNT-BROKER
+X(04)
+開戶券商代號
+M02-ACNT-NO
+9(07)
+申請人帳號
+M02-STKNO
+X(06)
+股票代號
+M02-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M02-BORROW-STOCK-NOS
+9(10)
+借券部位
+M02-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M02-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M02-LACK-STOCK-NOS
+9(10)
+短缺部位
+M02-CASH-IN-LIEU
+X(01)
+現金替代記號
+M02-LIEU-REASON
+X(01)
+替代原因
+M02-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M02-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M02-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+M02-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+FILLER
+X(27)
+空白
+
+欄位說明：
+    1.M02-TRAN-CODE: I(新增)或D(刪除)。
+    2.M02-BROKER-ID: 一般券商第四碼需為0；大型券商第三四碼需為00。
+    3.現金替代記號(M02-CASH-IN-LIEU): Y/N
+      'Y':代表本成份股以現金替代方式處理，原因放於欄位           M02-LIEU-REASON。
+      'N':代表本成份股不做現金替代方式處理，原因欄位
+           M02-LIEU-REASON 值為空白。
+    4.替代原因(M02-LIEU-REASON):
+      ' ':本成份股不做現金替代方式處理。
+      'B':實物申購買回清單(M05)公告以現金替代方式處理。
+      'L':法規限制(如:金控法...)。
+      'Q':外資投資上限-->此欄位由交易所負責處理。
+    5.現金申購時，ETF申購股數請填入T日淨入庫部位欄位。
+    6.每筆資料經交易所檢查無誤後，即時傳送給集保公司，就庫存與T-1      日淨入庫欄位做部位確認並回覆處理結果給證券商。
+
+(二)申購/買回明細申報正確或錯誤回覆檔
+         檔案結構：U　   檔案長度：150　   檔案代號：M02
+欄位名稱
+長　度
+說明
+M02-TRAN-CODE
+X(01)
+異動碼
+M02-ETF-ID
+X(06)
+ETF代號
+M02-BROKER-ID
+X(04)
+券商代表號
+M02-TX-DATE
+9(08)
+申請日(西曆)
+M02-SEQNO
+X(03)
+流水號
+M02-ACNT-BROKER
+X(04)
+開戶券商代號
+M02-ACNT-NO
+9(07)
+申請人帳號
+M02-STKNO
+X(06)
+股票代號
+M02-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M02-BORROW-STOCK-NOS
+9(10)
+借券部位
+M02-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M02-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M02-LACK-STOCK-NOS
+9(10)
+短缺部位
+M02-CASH-IN-LIEU
+X(01)
+現金替代記號
+M02-LIEU-REASON
+X(01)
+替代原因
+M02-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M02-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M02-ERROR-CODE
+X(02)
+錯誤代碼
+M02-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+FILLER
+X(27)
+空白
+
+欄位說明：
+    1.每一筆資料皆會回覆正確或錯誤訊息於M02-ERROR-CODE欄位，回覆
+”00”為資料正確，其他代碼表示有錯，請參照錯誤訊息處理說明。
+M02-TRAN-CODE: 若為C(M01 與 M02 檢查結果)，表示M01 與 M02 之
+   資料檢查結果。錯誤代碼，若不為”00”則表示有錯誤。格式說明如下:
+         檔案結構：U　   檔案長度：150　   檔案代號：M02
+欄位名稱
+長　度
+說明
+M02-TRAN-CODE
+X(01)
+異動碼”C”
+M02-ETF-ID
+X(06)
+ETF代號
+M02-BROKER-ID
+X(04)
+券商代表號
+M02-TX-DATE
+9(08)
+申請日(西曆)
+M02-SEQNO
+X(03)
+流水號
+FILLER
+X(89)
+內容皆為0
+M02-ERROR-CODE
+X(02)
+錯誤代碼
+FILLER
+X(37)
+空白
+
+如有異動M01，請重新上傳M02。
+M01與M02上傳完成後，請務必下載M06與M07查詢檔，確認內容是否正確。
+
+三、證券商之今日買進補券申報作業
+
+(一) 今日買進補券申報檔
+           檔案結構：U　    檔案長度：100　      檔案代號：M03
+欄位名稱
+長　度
+說明
+M03-TRAN-CODE
+X(01)
+異動碼
+M03-PROC-DATE
+9(08)
+處理日期(西曆)
+M03-ETF-ID
+X(06)
+ETF代號
+M03-BROKER-ID
+X(04)
+券商代表號
+M03-TX-DATE
+9(08)
+申請日(西曆)
+M03-SEQNO
+X(03)
+流水號
+M03-ACNT-BROKER
+X(04)
+開戶券商代號
+M03-ACNT-NO
+9(07)
+申請人帳號
+M03-STKNO
+X(06)
+股票代號
+M03-TODAY-NET-NOS
+9(10)
+本日淨買進部位(補券部位)
+M03-BORROW-STOCK-NOS
+9(10)
+借券部位(補券部位)
+M03-TODAY-NET-NOS-A
+9(10)
+本日淨買進部位
+(實際圈存部位)
+M03-BORROW-STOCK-NOS-A
+9(10)
+借券部位(實際圈存部位)
+M03-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+FILLER
+X(11)
+空白
+
+欄位說明：
+     1.M03-TRAN-CODE: I(新增)或D(刪除)。
+     2.每筆資料長度為100 Bytes。
+     3.“處理日期”需為當天。
+
+
+(二) 今日買進補券申報正確或錯誤回覆檔
+           檔案結構：U　    檔案長度：100　    檔案代號：M03
+欄位名稱
+長　度
+說明
+M03-TRAN-CODE
+X(01)
+異動碼
+M03-PROC-DATE
+9(08)
+處理日期(西曆)
+M03-ETF-ID
+X(06)
+ETF代號
+M03-BROKER-ID
+X(04)
+券商代表號
+M03-TX-DATE
+9(08)
+申請日(西曆)
+M03-SEQNO
+X(03)
+流水號
+M03-ACNT-BROKER
+X(04)
+開戶券商代號
+M03-ACNT-NO
+9(07)
+申請人帳號
+M03-STKNO
+X(06)
+股票代號
+M03-TODAY-NET-NOS
+9(10)
+本日淨買進部位(補券部位)
+M03-BORROW-STOCK-NOS
+9(10)
+借券部位(補券部位)
+M03-TODAY-NET-NOS-A
+9(10)
+本日淨買進部位(實際圈存部位)
+M03-BORROW-STOCK-NOS-A
+9(10)
+借券部位(實際圈存部位)
+M03-ERROR-CODE
+X(02)
+錯誤代碼
+FILLER
+X(11)
+空白
+
+欄位說明：
+    1.每一筆資料皆會回覆正確或錯誤訊息於M03-ERROR-CODE欄位，回      覆 ”00”為資料正確，其他代碼表示有錯，請參照錯誤訊息處理說明。
+四、證券商之發行人回覆資料查詢作業
+
+(一) 要求傳送發行人回覆資料
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送發行人回覆資料之單筆訊息格式
+                          (M04)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+11
+BODY
+FILE-CODE
+X(3)
+M04
+PROC-DATE
+9(8)
+
+
+欄位說明：
+     1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+     2.DESTINATION-ID︰“0000”表證交所
+     3.BODY-LENGH    ︰“11”說明BODY的長度
+     4.FILE-CODE     ︰“M04”表要求發行人回覆資料查詢檔
+     5.PROC-DATE     ︰ 填入所要求傳送資料之日期，正常情況為今日
+(二) 發行人回覆資料檔
+檔案結構：U　檔案長度：200　檔案代號：M04
+欄位名稱
+長度
+說　　　　　　　明
+M04-PROC-DATE
+9(08)
+資料日(西曆)
+M04-ETF-ID
+X(06)
+ETF代號
+M04-BROKER-ID
+X(04)
+券商代表號
+M04-TX-DATE
+9(08)
+申請日(西曆)
+M04-SEQNO
+X(03)
+流水號
+M04-RESULT
+X(01)
+處理結果
+M04-FAIL-REASON
+X(02)
+失敗原因
+M04-CASH-DIF-AMOUNT
+S9(09)
+現金差額
+M04-MARGIN-AMOUNT
+9(09)
+應收保證金
+M04-CASH-LIEU-AMOUNT
+S9(09)
+現金替代金額
+M04-ACNT-BROKER-1
+X(04)
+開戶券商代號1
+M04-ACNT-NO-1
+9(07)
+申請人帳號1
+M04-ETF-SHR-1
+9(18)
+單位數1
+M04-ACNT-BROKER-2
+X(04)
+開戶券商代號2
+M04-ACNT-NO-2
+9(07)
+申請人帳號2
+M04-ETF-SHR-2
+9(18)
+單位數2
+M04-ACNT-BROKER-3
+X(04)
+開戶券商代號3
+M04-ACNT-NO-3
+9(07)
+申請人帳號3
+M04-ETF-SHR-3
+9(18)
+單位數3
+M04-APPLY-FEE
+9(08)
+申購買回手續費
+M04-MANAGEMENT-CHARGE
+9(08)
+行政處理費
+FILLER
+X(36)
+空白
+
+
+欄位說明:
+1.若M04-PROC-DATE = M04-TX-DATE為初審回覆資料，若不等於為複審
+回覆資料。
+2.M04-RESULT:Y(成功)或N(失敗)。
+3.M04-FAIL-REASON:空白(成功)或01(申請當日失敗(T日))或11(複審  日處理失敗(T+1日))。
+4.M04-CASH-DIF-AMOUNT(現金差額):大於零代表發行人應收款項，小於
+  零代表發行人應付款項。
+5.M04-CASH-LIEU-AMOUNT(現金替代金額):大於零代表投信應收款項，
+小於零代表投信應付款項。本欄位會受到21:00交易所額度審核後
+的結果而有變動。
+6.M04-APPLY-FEE、M04-MANAGEMENT-CHARGE:發行人審核後回覆相關費
+  用。
+
+
+五、證券商之實物申購/買回清單查詢作業
+
+(一) 要求傳送實物申購/買回清單資料檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送實物申購買回清單資料檔之單筆訊息
+                          格式(M05)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M05
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“03”說明BODY的長度
+    4.FILE-CODE     ︰“M05”表要求實物申購/買回清單資料查詢檔
+
+(二)實物申購/買回清單資料檔
+檔案結構：U　檔案長度：154　檔案代號：M05
+欄位名稱
+長　度
+說明
+M05-PD-ID
+X(04)
+證商代號
+M05-PUBLISH-DATE
+9(08)
+處理日
+M05-ETF-ID
+X(06)
+基金代號
+M05-PUBLISH-TIME
+9(06)
+時間
+M05-FIELD-NAME
+X(04)
+欄位名稱
+“OBJ “
+“ANCE”
+“COMT”
+“CMEN”
+“CTRL”
+M05-FIELD-DATA
+X(126)
+格式一.二.三.四.五資料區
+
+格式一: M05-COMT-DATA
+M05-COMT-VALUE
+X(126)
+中文說明資料
+
+格式二: M05-CMEN-DATA
+M05-CMEN-VALUE
+X(126)
+英文說明資料
+
+格式三: M05-ANCE-DATA
+M05-ANNOUNCE-YMD
+9(08)
+公告日
+FILLER
+X(01)
+空白
+M05-TOTAL-AV
+9(18)
+總淨值
+FILLER
+X(01)
+空白
+M05-NAV
+9(5)V9(4)
+單位淨值
+FILLER
+X(01)
+空白
+M05-BASE-VALUE
+9(08)
+基本單位數
+FILLER
+X(01)
+空白
+M05-TOTAL-ISSUES
+9(13)
+發行單位數
+FILLER
+X(01)
+空白
+M05-ISSUES-DIFF
+S9(09)
+交易差異數
+FILLER
+X(01)
+空白
+M05-ESTC-VALUE
+9(18)
+約當市值
+FILLER
+X(01)
+空白
+M05-ESTD-VALUE
+9(18)
+估計現金差額
+FILLER
+X(01)
+空白
+M05-TOTAL-ISSUES-T-1
+9(13)
+T-1日發行單位數
+FILLER
+X(03)
+空白
+
+格式四: M05-OBJ-DATA
+M05-OBJ-ID
+X(06)
+股票代號(成分股)
+M05-OBJ-STOCK-NOS
+9(08)
+股數
+M05-OBJ-NOS-DIFF
+S9(07)
+與前日股數差異數
+M05-OBJ-PRICE
+9(5)V9(4)
+收盤價
+M05-OBJ-LIEU-MARK
+X(01)
+現金替代
+M05-OBJ-SUSPEND
+X(01)
+暫停交易
+FILLER
+X(93)
+空白
+
+格式五: M05-CTRL-DATA
+M05-CREATION-S
+X(01)
+實物申購Y/N
+FILLER
+X(01)
+空白
+M05-REDEMPTION-S
+X(01)
+實物贖回Y/N
+FILLER
+X(01)
+空白
+M05-CREATION-C
+X(01)
+現金申購Y/N
+FILLER
+X(01)
+空白
+M05-REDEMPTION-C
+X(01)
+現金贖回Y/N
+FILLER
+X(01)
+空白
+M05-BASKET-VALUE
+9(14)
+每預收申購款
+FILLER
+X(01)
+空白
+M05-MAX-ISSUES
+9(13)
+核准發行單位數
+FILLER
+X(01)
+空白
+M05-BASKET-VALUE-P
+9(14)
+前一日每實際申購總價金
+FILLER
+X(01)
+空白
+M05-DIFF-BASKET-VALUE
+S9(14)
+前一日申購總價金差異額
+FILLER
+X(59)
+空白
+
+欄位說明 :
+    1.每天上午(約8:30至9:00間)交易所主動傳送此檔案給證券商。
+    2.證券商亦可以傳送單筆訊息方式查詢此檔案資料。
+    3.增加格式五(CTRL-DATA)為現金申贖之相關欄位。
+4.M05-BASKET-VALUE為現金申購每一BASKET ETF之申購款。
+5.M05-MAX-ISSUES，為主管機關核准之上限單位數，若為0則無上限。
+6.M05-TOTAL-ISSUES，為目前已發行ETF單位數。
+7.M05-TOTAL-ISSUES-T-1欄位為跨時區ETF 之T-1日發行單位數， 其餘ETF 為0。
+8.M05為前一日由投信上傳之PCF資料，若當天PCF有異動，請透過M54查詢T日更新PCF檔。
+六、證券商之申購/買回彙總資料查詢作業
+
+(一)查詢申購/買回彙總申報資料
+MESSAGE ID︰F050
+MESSAGE NAME︰要求傳送申購/買回彙總資料之單筆
+                  訊息格式(M06)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M06
+
+(二)申購/買回彙總申報資料檔
+檔案結構：U　檔案長度：300　檔案代號：M06
+欄位名稱
+長　度
+說明
+M06-ETF-ID
+X(06)
+ETF代號
+M06-BROKER-ID
+X(04)
+券商代表號
+M06-TX-DATE
+9(08)
+申請日
+M06-SEQNO
+X(03)
+流水號
+M06-TX-KIND
+X(01)
+交易種類
+M06-APPLICATION-UNITS
+9(03)
+申請基數
+M06-STATE
+X(01)
+註記
+M06-BANK-ID
+9(03)
+買回時匯款銀行代號
+M06-RM-ACNT
+X(16)
+買回時匯款帳號
+M06-APPLIER-NUMBER
+9(01)
+申請人數目
+M06-ACNT-BROKER-1
+X(04)
+開戶券商代號
+M06-ACNT-NO-1
+9(07)
+申請人帳號
+M06-KEEP-ACNT-1
+X(11)
+申請人保管銀行帳號
+M06-ID-CODE-1
+X(03)
+身份碼
+M06-CASH-ASSIGN-1
+X(01)
+現金差額收取人
+M06-MERGE-ASSIGN-1
+X(01)
+零股整合帳戶
+M06-ACNT-BROKER-2
+X(04)
+開戶券商代號
+M06-ACNT-NO-2
+9(07)
+申請人帳號
+M06-KEEP-ACNT-2
+X(11)
+申請人保管銀行帳號
+M06-ID-CODE-2
+X(03)
+身份碼
+M06-CASH-ASSIGN-2
+X(01)
+現金差額收取人
+M06-MERGE-ASSIGN-2
+X(01)
+零股整合帳戶
+M06-ACNT-BROKER-3
+X(04)
+開戶券商代號
+M06-ACNT-NO-3
+9(07)
+申請人帳號
+M06-KEEP-ACNT-3
+X(11)
+申請人保管銀行帳號
+M06-ID-CODE-3
+X(03)
+身份碼
+M06-CASH-ASSIGN-3
+X(01)
+現金差額收取人
+M06-MERGE-ASSIGN-3
+X(01)
+零股整合帳戶
+M06-APPLY-FEE
+9(08)
+申購買回手續費
+M06-MANAGEMENT-CHARGE
+9(08)
+行政處理費
+M06-CHECK-DETAIL
+X(01)
+M01與M02申報資料檢核
+M06-TX-CASH
+X(01)
+現金申贖Y/” ”
+M06-AMOUNT
+9(18)
+現金申贖金額
+M06-RM-ACNT-NAME
+X(60)
+匯款帳戶名
+M06-RM-ACNT-ID
+X(10)
+匯款帳戶ID
+FILLER
+X(67)
+空白
+欄位說明 :
+　　1.M06-CHECK-DETAIL：Y表示M02與M01申報資料吻合。
+　　　　　　　　　　　　N表示M02與M01申報資料不符。
+	　 (可能為M02尚未申報或申報資料錯誤，請以M07查詢明細資料)
+    2.請務必完成M01與M02之申報作業，直至M06-CHECK-DETAIL = “Y”。
+    3.因應現金申贖作業修改每筆資料長度為300
+七、證券商之申購/買回明細查詢作業
+
+(一) 要求傳送申購買回明細申報資料
+MESSAGE ID︰F050
+MESSAGE NAME︰要求傳送申購/買回明細資料之單筆
+                  訊息格式 (M07)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M07
+
+欄位說明:
+    1.SYBSYSTEM-NAME：“20”表補送資料是透過檔案傳輸子系統
+    2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“03”說明BODY的長度
+    4.FILE-CODE     ︰“M07”表要求申購/買回明細申報查詢資料
+
+(二) 申購/買回明細申報檔
+   檔案結構：U　檔案長度：150　檔案代號：M07
+欄位名稱
+長度
+說　　　　　　　明
+M07-ETF-ID
+X(06)
+ETF代號
+M07-BROKER-ID
+X(04)
+券商代表號
+M07-TX-DATE
+9(08)
+申請日
+M07-SEQNO
+X(03)
+流水號
+M07-ACNT-BROKER
+X(04)
+開戶券商代號
+M07-ACNT-NO
+9(07)
+申請人帳號
+M07-STKNO
+X(06)
+股票代號
+M07-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M07-BORROW-STOCK-NOS
+9(10)
+借券部位
+M07-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M07-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M07-LACK-STOCK-NOS
+9(10)
+短缺部位
+M07-CASH-IN-LIEU
+X(01)
+現金替代記號
+M07-LIEU-REASON
+X(01)
+替代原因
+M07-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M07-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M07-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+FILLER
+X(30)
+空白
+
+欄位說明 :
+     1.M02申報之查詢功能。
+     2. 現金申購時，ETF申購股數請填入T日淨入庫部位欄位。
+
+
+八、證券商之補券資料查詢作業
+
+(一) 要求傳送補券資料
+MESSAGE ID︰F050
+MESSAGE NAME︰要求傳送補券資料檔之單筆訊息格式
+                  (M08)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M08
+
+欄位說明:
+    1.SYBSYSTEM-NAME ︰“20”表補送資料是透過檔案傳輸子系統
+    2.DESTINATION-ID ︰“0000”表證交所
+    3.BODY-LENGH     ︰”03”說明BODY的長度
+    4.FILE-CODE      ︰”M08”表要求補券資料檔查詢
+
+
+(二) 補券資料檔
+檔案結構：U　檔案長度：100　檔案代號：M08
+欄位名稱
+長度
+說　　　　　　　明
+M08-PROC-DATE
+9(08)
+處理日期
+M08-ETF-ID
+X(06)
+ETF代號
+M08-BROKER-ID
+X(04)
+券商代表號
+M08-TX-DATE
+9(08)
+原申請日
+M08-SEQNO
+X(03)
+流水號
+M08-ACNT-BROKER
+X(04)
+開戶券商代號
+M08-ACNT-NO
+9(07)
+申請人帳號
+M08-STKNO
+X(06)
+股票代號
+M08-TODAY-NET-NOS
+9(10)
+本日淨買進部位
+M08-BORROW-STOCK-NOS
+9(10)
+借券部位
+M08-TODAY-NET-NOS-A
+9(10)
+本日淨買進部位
+M08-BORROW-STOCK-NOS-A
+9(10)
+借券部位
+FILLER
+X(14)
+空白
+
+欄位說明 :
+    1.M03申報之查詢功能。
+
+
+九、證券商之前日申購/買回彙總資料圈存結果查詢作業
+
+(一)要求傳送前日申購/買回彙總資料圈存結果
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送前日申購/買回彙總資料圈存結果之單
+                          筆訊息格式(M18)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M18
+
+欄位說明:
+   1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+   2.DESTINATION-ID　：“0000”表證交所
+   3.BODY-LENGH     ︰“03”說明BODY的長度
+   4.FILE-CODE        ︰“M18”表要求前日申購/買回彙總資料圈存結
+果查詢
+
+
+(二)前日申購/買回彙總資料圈存結果檔
+檔案結構：U　   檔案長度：300　       檔案代號：M18
+欄位名稱
+長度
+說　　　　　　　明
+M18-BROKER-ID
+X(04)
+券商代表號
+M18-ETF-ID
+X(06)
+ETF代號
+M18-TX-DATE
+9(08)
+申請日
+M18-SEQNO
+X(03)
+流水號
+M18-TX-KIND
+X(01)
+交易種類
+M18-APPLICATION-UNITS
+9(03)
+申請基數
+M18-STATE
+X(01)
+註記
+M18-BANK-ID
+9(03)
+買回時匯款銀行代號
+M18-RM-ACNT
+X(16)
+買回時匯款帳號
+M18-APPLIER-NUMBER
+9(01)
+申請人數目
+M18-ACNT-BROKER-1
+X(04)
+開戶券商代號
+M18-ACNT-NO-1
+9(07)
+申請人帳號
+M18-KEEP-ACNT-1
+X(11)
+申請人保管銀行帳號
+M18-ID-CODE-1
+X(03)
+身份碼
+M18-CASH-ASSIGN-1
+X(01)
+現金差額收取人
+M18-MERGE-ASSIGN-1
+X(01)
+零股整合帳戶
+M18-ACNT-BROKER-2
+X(04)
+開戶券商代號
+M18-ACNT-NO-2
+9(07)
+申請人帳號
+M18-KEEP-ACNT-2
+X(11)
+申請人保管銀行帳號
+M18-ID-CODE-2
+X(03)
+身份碼
+M18-CASH-ASSIGN-2
+X(01)
+現金差額收取人
+M18-MERGE-ASSIGN-2
+X(01)
+零股整合帳戶
+M18-ACNT-BROKER-3
+X(04)
+開戶券商代號
+M18-ACNT-NO-3
+9(07)
+申請人帳號
+M18-KEEP-ACNT-3
+X(11)
+申請人保管銀行帳號
+M18-ID-CODE-3
+X(03)
+身份碼
+M18-CASH-ASSIGN-3
+X(01)
+現金差額收取人
+M18-MERGE-ASSIGN-3
+X(01)
+零股整合帳戶
+M18-APPLY-FEE
+9(08)
+申購買回手續
+M18-MANAGEMENT-CHARGE
+9(08)
+行政處理費
+M18-TX-CASH
+X(01)
+現金申贖Y/ ” ”
+M18-AMOUNT
+9(18)
+現金申贖金額
+M18-RM-ACNT-NAME
+X(60)
+匯款帳戶名
+M18-RM-ACNT-ID
+X(10)
+匯款帳戶ID
+FILLER
+X(68)
+空白
+
+欄位說明 :
+    1.每天上午(約8:30至9:00間)交易所主動傳送此檔案給證券商。
+    2.證券商亦可以傳送單筆訊息方式查詢此檔案資料。
+    3.M18-STATE: Y表示圈存成功。 N表示圈存失敗。
+    4.請比對M21(申購/買回明細檔圈存結果)之圈存資料。
+    5.因應現金申贖作業修改每筆資料長度為300。
+
+
+十、證券商之前日補券資料檔圈存結果查詢作業
+
+(一) 要求傳送前日補券資料檔圈存結果
+             MESSAGE ID︰F050
+             MESSAGE NAME︰要求傳送前日補券資料檔圈存結果之單筆
+                               訊息格式(M20)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M20
+
+欄位說明:
+    1.SYBSYSTEM-NAME ︰“20”表補送資料是透過檔案傳輸子系統
+    2.DESTINATION-ID :“0000”表證交所
+    3.BODY-LENGH     ︰“03”說明BODY的長度
+    4.FILE-CODE      ︰“M20”表要求前日補券資料檔圈存結果查詢
+
+
+(二)前日補券資料檔圈存結果
+檔案結構：U　   檔案長度：100       檔案代號：M20
+欄位名稱
+長度
+說　　　　　　　明
+M20-BROKER-ID
+X(04)
+券商代表號
+M20-PROC-DATE
+9(08)
+處理日期
+M20-ETF-ID
+X(06)
+ETF代號
+M20-TX-DATE
+9(08)
+原申請日
+M20-SEQNO
+X(03)
+流水號
+M20-ACNT-BROKER
+X(04)
+開戶券商代號
+M20-ACNT-NO
+9(07)
+申請人帳號
+M20-STKNO
+X(06)
+股票代號
+M20-TODAY-NET-NOS
+9(10)
+本日淨買進部位(補券部位)
+M20-BORROW-STOCK-NOS
+9(10)
+借券部位(補券部位)
+M20-TODAY-NET-NOS-A
+9(10)
+本日淨買進部位(實際圈存)
+M20-BORROW-STOCK-NOS-A
+9(10)
+借券部位(實際圈存)
+FILLER
+X(14)
+空白
+ 
+欄位說明：
+1.每天上午(約8:30至9:00間)交易所主動傳送此檔案給證券商。
+2.證券商亦可以傳送單筆訊息方式查詢此檔案資料。
+
+
+十一、證券商之前日申購/買回明細圈存結果查詢作業
+
+(一) 要求傳送前日申購/買回明細圈存結果
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送前日申購/買回明細圈存結果之單筆訊息
+                      格式(M21)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGHT
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M21
+
+欄位說明:
+    1.SYBSYSTEM-NAME ︰“20”表補送資料是透過檔案傳輸子系統
+    2.DESTINATION-ID ︰“0000”表證交所
+    3.BODY-LENGH     ︰“03”說明BODY的長度
+    4.FILE-CODE      ︰“M21”表要求前日申購/買回明細圈存結果查詢
+
+
+(二) 前日申購/買回明細圈存結果
+檔案結構：U　   檔案長度：200　   檔案代號：M21
+欄位名稱
+長度
+說　　　　　　　明
+M21-BROKER-ID
+X(04)
+券商代表號
+M21-ETF-ID
+X(06)
+ETF代號
+M21-TX-DATE
+9(08)
+申請日
+M21-SEQNO
+X(03)
+流水號
+M21-ACNT-BROKER
+X(04)
+開戶券商代號
+M21-ACNT-NO
+9(07)
+申請人帳號
+M21-STKNO
+X(06)
+股票代號
+M21-NORMAL-STOCK-NOS
+9(10)
+庫存部位(申請部位)
+M21-BORROW-STOCK-NOS
+9(10)
+借券部位(申請部位)
+M21-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位(申請部位)
+M21-T-STOCK-NOS
+9(10)
+T日淨入庫部位(申請部位)
+M21-LACK-STOCK-NOS
+9(10)
+短缺部位(申請部位)
+M21-NORMAL-STOCK-LOCK
+9(10)
+庫存部位(實際圈存)
+M21-BORROW-STOCK-LOCK
+9(10)
+借券部位(實際圈存)
+M21-T1-STOCK-LOCK
+9(10)
+T-1日淨入庫部位(實際圈存)
+M21-T-STOCK-LOCK
+9(10)
+T日淨入庫部位(實際圈存)
+M21-LACK-STOCK-LOCK
+9(10)
+短缺部位(實際圈存)
+M21-CASH-IN-LIEU
+X(01)
+現金替代記號
+M21-LIEU-REASON
+X(01)
+替代原因
+M21-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M21-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M21-STOCK-NOS-5
+9(10)
+庫存前日申購/買回部位
+M21-STOCK-LOCK-5
+9(10)
+圈存前日申購/買回部位
+FILLER
+X(20)
+空白
+
+欄位說明：
+    1.每天上午(約8:30至9:00間)交易所主動傳送此檔案給證券商。
+    2.證券商亦可以傳送單筆訊息方式查詢此檔案資料。
+    3.若M18檔(前日申購/買回彙總檔圈存結果)之M18-STATE = “Y”：表示
+所有明細資料圈存成功；“實際圈存資料”之各欄位值表示集保公司
+實際圈存證券之數量。
+    4.若M18檔(前日申購/買回彙總檔圈存結果)之M18-STATE =“N”：表示
+      所有明細資料圈存失敗；“實際圈存資料”之各欄位值表示集保公司
+      可圈存此證券之數量。
+    5.M21-QFII-AVB-STOCK-NOS(外資可贖股數)：表示外資之贖回明細申
+      請，在外資額度控管比例下，實際可以贖回之股數。
+
+
+十二、證券商之證券商違反法規查詢作業
+(一) 要求傳送證券商違反法規檔查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送券商違反法規之單筆訊息格式 (M28)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M28
+欄位說明:
+    1.SYBSYSTEM-NAME ︰“20”表補送資料是透過檔案傳輸子系統
+    2.DESTINATION-ID ︰“0000”表證交所
+    3.BODY-LENGH     ︰“03”說明BODY的長度
+    4.FILE-CODE      ︰“M28”表要求證券商違反法規檔結果查詢
+
+(二)PD端之違反法規檔
+  檔案結構：U　   檔案長度：100　     檔案代號：M28
+欄位名稱
+長度
+說　　　　　　　明
+M28-BRKID
+X(04)
+券商代號
+M28-ACNT-NO
+9(07)
+帳號
+M28-STKNO
+X(06)
+股票代號
+M28-LAW
+X(60)
+涉及法規
+FILLER
+X(23)
+空白
+欄位說明:
+    1.每天上午交易所主動傳送此檔案給證券商。
+    2.證券商亦可以傳送單筆訊息方式查詢此檔案資料。
+十三、參與證券商之二次圈存申請明細作業
+
+參與證券商之二次圈存申請明細檔
+檔案結構：U 　  檔案長度：150　        檔案代號：M29
+欄位名稱
+長度
+說　　　　　　　明
+M29-TRAN-CODE
+X(01)
+異動碼
+M29-ETF-ID
+X(06)
+ETF代號
+M29-BROKER-ID
+X(04)
+券商代表號
+M29-TX-DATE
+9(08)
+申請日
+M29-SEQNO
+X(03)
+流水號
+M29-ACNT-BROKER
+X(04)
+開戶券商代號
+M29-ACNT-NO
+9(07)
+申請人帳號
+M29-STKNO
+X(06)
+股票代號
+M29-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M29-BORROW-STOCK-NOS
+9(10)
+借券部位
+M29-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M29-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M29-LACK-STOCK-NOS
+9(10)
+短缺部位
+M29-CASH-IN-LIEU
+X(01)
+現金替代記號
+M29-LIEU-REASON
+X(01)
+替代原因
+M29-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M29-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M29-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+M29-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+FILLER
+X(27)
+空白
+
+欄位說明:
+    1.前日圈存失敗後，可於10:00前作二次即時圈存申請。
+    2.異動碼 ”I” 表調整部位並即時圈存，”D” 表解圈，解圈之各部位需與圈存之部位完全吻合。
+    3.每筆資料經交易所檢查無誤後，即時傳送給集保公司，就申報欄位之部位做即時圈存並回覆處理結果給證券商。
+    4.每筆資料圈存狀態可由M30 作業查詢。
+    5.所有明細資料均需圈存成功整筆匯總資料圈存狀態才會成功，若彙總資料無法於作業時間內圈存成功，則已圈存之各明細資料請務必解圈。
+
+參與證券商之二次圈存申請明細正確或錯誤回覆檔
+
+檔案結構：U　   檔案長度：150　    檔案代號：M29
+欄位名稱
+長度
+說　　　　　　　明
+M29-TRAN-CODE
+X(01)
+異動碼
+M29-ETF-ID
+X(06)
+ETF代號
+M29-BROKER-ID
+X(04)
+券商代表號
+M29-TX-DATE
+9(08)
+申請日
+M29-SEQNO
+X(03)
+流水號
+M29-ACNT-BROKER
+X(04)
+開戶券商代號
+M29-ACNT-NO
+9(07)
+申請人帳號
+M29-STKNO
+X(06)
+股票代號
+M29-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M29-BORROW-STOCK-NOS
+9(10)
+借券部位
+M29-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M29-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M29-LACK-STOCK-NOS
+9(10)
+短缺部位
+M29-CASH-IN-LIEU
+X(01)
+現金替代記號
+M29-LIEU-REASON
+X(01)
+替代原因
+M29-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M29-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M29-ERROR-CODE
+X(02)
+錯誤代碼
+M29-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+FILLER
+X(27)
+空白
+
+欄位說明：
+    1.每一筆申請明細處理結果正確或錯誤均會回覆。
+    2.資料處理後正確則ERROR-CODE為”00”，錯誤則ERROR-CODE不為”00”，
+      錯誤原因則由ERROR-MSG表示。
+
+十四、參與證券商之二次圈存明細資料查詢作業
+
+(一) 參與證券商之二次圈存明細資料查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求參與券商之二次圈存明細資料查詢 (M30)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M30
+欄位說明:
+SUBSYSTEM-NAME  ： ”20”表補送資料是透過檔案傳輸子系統。
+DESTINATION ID  ： “0000” 表證交所。
+BODY-LENGH      ： ”03” 說明BODY的長度。
+FILE-CODE       ： ”M30”表要求參與券商之二次圈存明細查詢。
+
+
+
+(二)參與券商之二次圈存明細資料檔
+
+          檔案結構：U　   檔案長度：150      　檔案代號：M30
+欄位名稱
+長度
+說　　　　　　　明
+M30-ETF-ID
+X(06)
+ETF代號
+M30-BROKER-ID
+X(04)
+券商代表號
+M30-TX-DATE
+9(08)
+申請日
+M30-SEQNO
+X(03)
+流水號
+M30-ACNT-BROKER
+X(04)
+開戶券商代號
+M30-ACNT-NO
+9(07)
+申請人帳號
+M30-STKNO
+X(06)
+股票代號
+M30-NORMAL-STOCK-NOS
+9(10)
+庫存部位
+M30-BORROW-STOCK-NOS
+9(10)
+借券部位
+M30-T1-STOCK-NOS
+9(10)
+T-1日淨入庫部位
+M30-T-STOCK-NOS
+9(10)
+T日淨入庫部位
+M30-LACK-STOCK-NOS
+9(10)
+短缺部位
+M30-CASH-IN-LIEU
+X(01)
+現金替代記號
+M30-LIEU-REASON
+X(01)
+替代原因
+M30-QFII-AVB-STOCK-NOS
+9(10)
+外資可贖股數
+M30-ARBITRAGE-NOS
+9(10)
+套利賣空部位
+M30-STOCK-NOS-5
+9(10)
+前日申購/買回部位
+M30-LOCK-OK
+X(01)
+圈存成功註記Y/N
+FILLER
+X(29)
+空白
+欄位說明:
+首筆為彙總資料，圈存狀態需為“Y”才算該筆申請即時圈存成功。
+明細資料即時圈存成功註記 “Y” 為已圈存，”N”為未圈存。
+ETF與所有成份股之圈存狀態均需為“Y”才算該筆申請即時圈存成功。
+無法完全圈存時，請務必將已圈存之資料解圈。
+
+十五、證券商之ETF流動量提供者績效統計檔查詢作業
+
+(一) ETF流動量提供者績效統計資料查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求ETF流動量提供者績效統計資料查詢(M44)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M44
+欄位說明:
+SUBSYSTEM-NAME  ： ”20”表補送資料是透過檔案傳輸子系統。
+DESTINATION ID  ： “0000” 表證交所。
+BODY-LENGH      ： ”03” 說明BODY的長度。
+FILE-CODE       ： ”M44”表要求ETF流動量提供者績效統計資
+                   料查詢。
+
+
+(二) ETF流動量提供者績效統計資料檔
+
+          檔案結構：U　   檔案長度：120      　檔案代號：M44
+欄位名稱
+長度
+說　　　　　　　明
+M44-DATE
+9(08)
+成交日期
+M44-BRKID
+X(04)
+流動量提供者證商代號
+M44-STKNO
+X(06)
+股票代號
+M44-P-MARK
+X(01)
+超過次數註記
+M44-P-TIMES
+9(08)
+最佳一檔買賣價差>1%且>30分鐘次數
+M44-Q-MARK
+X(01)
+超過次數註記
+M44-Q-TIMES
+9(08)
+單邊揭示逾3分鐘次數
+M44-R-MARK
+X(01)
+超過 0 次註記
+M44-R-TIMES
+9(08)
+瞬間延緩撮合申報買賣<8張次數
+M44-S-MARK
+X(01)
+超賣無法應付交割者註記
+M44-S-BASE-VALUE
+9(12)
+ETF之(實物)申購單位
+M44-S-OVER-SHARE
+9(12)
+超賣無法應付交割股數
+M44-ETF-SHARE
+9(12)
+該流動量提供者每日各檔ETF成交量
+M44-TOTAL-ISSUES
+9(12)
+各 ETF 每日上市單位數
+M44-MARKET-SHR
+9(12)
+每日市場股票成交量 (不含ETF)
+FILLER
+X(14)
+空白
+
+十六、證券商之月統計經手費折讓查詢作業
+
+(一) 月統計經手費折讓資料查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求月統計經手費折讓資料查詢(M45)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M45
+欄位說明:
+SUBSYSTEM-NAME  ： ”20”表補送資料是透過檔案傳輸子系統。
+DESTINATION ID  ： “0000” 表證交所。
+BODY-LENGH      ： ”03” 說明BODY的長度。
+FILE-CODE       ： ”M45”表要求月統計經手費折讓資料查詢。
+
+
+(二) 月統計經手費折讓資料檔
+
+          檔案結構：U　   檔案長度：120      　檔案代號：M45
+欄位名稱
+長度
+說　　　　　　　明
+M45-YYYY-MM
+9(06)
+統計年月
+M45-BRKID
+X(04)
+流動量提供者證商代號
+M45-STKNO
+X(06)
+股票代號
+M45-ORG-CHARGE-A
+9(12)
+原經手費 A
+M45-DATE-AVG
+9(08)
+日平均成交量
+M45-DISCOUNT-B
+9(12)
+折讓金額 B
+M45-MONTH-P
+9(03)
+月成交量比重
+M45-DISCOUNT-C
+9(12)
+折讓金額 C
+M45-DISCOUNT-D
+9(12)
+折讓金額合計 D
+M45-REAL-CHARGE-E
+9(12)
+實收經手費 E
+M45-SELL-OVER-MARK
+X(01)
+超賣無法應付交割者註記
+M45-TURN-MARK
+X(01)
+日週轉率<市場股票日週轉率註記
+M45-TURN-RATE
+9(04)V99
+日週轉率
+M45-MARK-RATE
+9(04)V99
+市場股票日週轉率
+FILLER
+X(19)
+空白
+
+十七、證券商之本日ETF申購/買回價金通知檔查詢作業
+
+(一) 本日ETF申購/買回價金通知檔查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求本日ETF申購/買回價金通知檔查詢(M51)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+11
+BODY
+FILE-CODE
+X(3)
+M51
+PROC-DATE
+9(8)
+
+欄位說明:
+SUBSYSTEM-NAME  ： ”20”表補送資料是透過檔案傳輸子系統。
+DESTINATION ID  ： “0000” 表證交所。
+BODY-LENGH      ： ”03” 說明BODY的長度。
+FILE-CODE       ： ”M51”表要求申購/買回價金通知檔查詢。
+PROC-DATE       ︰ 填入所要求傳送資料之日期，正常情況為今日。
+
+(二) 本日ETF申購/買回價金通知檔
+
+          檔案結構：U　   檔案長度： 200     　檔案代號：M51
+欄位名稱
+長度
+說　　　　　　　明
+M51-PROC-DATE
+9(08)
+資料日期
+M51-TX-DATE
+9(08)
+申請日期
+M51-ACNT-BROKER
+X(04)
+申請人證商代號
+M51-ACNT-IVACNO
+9(07)
+申請人帳號
+M51-SEQNO
+X(03)
+流水號
+M51-ETF-ID
+X(06)
+ETF代號
+M51-TX-TYPE
+X(01)
+申請種類(1:申購  2:買回)
+M51-PRE-CRE-AMOUNT
+9(18)
+預收申購款
+M51-REAL-CRE-AMOUNT
+S9(18)
+實際申購款
+M51-DIFF-CRE-AMOUNT
+S9(18)
+申購款差異額
+M51-RDM-AMOUNT
+S9(18)
+買回總價金
+M51-MANAGEMENT-CHARGE
+9(11)
+行政處理費
+FILLER
+X(77)
+空白
+
+欄位說明:
+    1.投信上傳價金通知資料後，可提供參與券商資料查詢。
+  十八、證券商之PCF檔T日更新查詢作業
+(一) 證券商之PCF更新檔查詢
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求本日PCF更新檔查詢(M54)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+M54
+欄位說明:
+SUBSYSTEM-NAME  ： ”20”表補送資料是透過檔案傳輸子系統。
+DESTINATION ID  ： “0000” 表證交所。
+BODY-LENGH      ： ”03” 說明BODY的長度。
+FILE-CODE       ： ”M54”表要求本日PCF更新檔查詢。
+(二) PCF 之T日更新檔
+    檔案結構：U　    檔案長度：200　      檔案代號：M54
+欄位名稱
+長　度
+說明
+M54-PD-ID
+X(04)
+證商代號
+M54-PUBLISH-DATE
+9(08)
+處理日
+M54-ETF-ID
+X(06)
+基金代號
+M54-PUBLISH-TIME
+9(06)
+時間
+M54-FIELD-NAME
+X(04)
+欄位名稱
+“CTRL “
+“ANCE”
+“OBJ”
+M54-FIELD-DATA
+X(172)
+格式CTRL、ANCE、OBJ資料區
+
+格式CTRL: M54-CTRL-DATA
+M54-CREATION-S
+X(01)
+實物申購Y/N
+FILLER
+X(01)
+空白
+M54-REDEMPTION-S
+X(01)
+實物贖回Y/N
+FILLER
+X(01)
+空白
+M54-CREATION-C
+X(01)
+現金申購Y/N
+FILLER
+X(01)
+空白
+M54-REDEMPTION-C
+X(01)
+現金贖回Y/N
+FILLER
+X(01)
+空白
+M54-BASKET-VALUE
+9(14)
+每預收申購款
+FILLER
+X(01)
+空白
+M54-MAX-ISSUES
+9(13)
+核准發行單位數
+FILLER
+X(01)
+空白
+M54-BASKET-VALUE-P
+9(14)
+前一日每實際申購總價金
+FILLER
+X(01)
+空白
+M54-DIFF-BASKET-VALUE
+S9(14)
+前一日申購總價金差異額
+FILLER
+X(105)
+空白
+
+格式ANCE: M54-ANCE-DATA
+M54-ANNOUNCE-YMD
+9(08)
+公告日
+FILLER
+X(01)
+空白
+M54-TOTAL-AV
+9(18)
+總淨值
+FILLER
+X(01)
+空白
+M54-NAV
+9(5)V9(4)
+單位淨值
+FILLER
+X(01)
+空白
+M54-BASE-VALUE
+9(08)
+基本單位數
+FILLER
+X(01)
+空白
+M54-TOTAL-ISSUES
+9(13)
+發行單位數
+FILLER
+X(01)
+空白
+M54-ISSUES-DIFF
+S9(09)
+交易差異數
+FILLER
+X(01)
+空白
+M54-ESTC-VALUE
+9(18)
+約當市值
+FILLER
+X(01)
+空白
+M54-ESTD-VALUE
+9(18)
+估計現金差額
+FILLER
+X(01)
+空白
+M54-TOTAL-ISSUES-T-1
+9(13)
+T-1日發行單位數
+FILLER
+X(49)
+空白
+
+格式OBJ: M54-OBJ-DATA
+M54-OBJ-ID
+X(06)
+股票代號(成分股)
+M54-OBJ-STOCK-NOS
+9(08)
+股數
+M54-OBJ-NOS-DIFF
+S9(07)
+與前日股數差異數
+M54-OBJ-PRICE
+9(5)V9(4)
+收盤價
+M54-OBJ-LIEU-MARK
+X(01)
+現金替代
+M54-OBJ-SUSPEND
+X(01)
+暫停交易
+FILLER
+X(139)
+空白
+欄位說明:
+1.投信T日更新PCF資料查詢功能。
+2.查詢時間自 8:00 至16:30 。
+3.M54為投信本日PCF 有異動的ETF資料，請以M54之資料更新M05 相
+對應之 ETF。
+
+參、錯誤訊息處理說明
+
+主機連線因證券商端之畫面及報表皆是由提供系統之資訊公司或證券商之電腦部門所設計，所以畫面及訊息各家不同，由前幾章之介紹可了解交易所與證券商之間資料傳遞之基本架構及格式，如果有異常情況發生時，請先依提供系統之資訊公司或證券商電腦部門所編之使用手冊處理，如果狀況仍無法排除，請記住當時的狀況及訊息，並與交易所電腦作業部連絡。以下訊息是由交易所電腦主機傳給證券商，證券商終端機所看到的訊息不一定與下表完全相同(因所採用之電腦系統而有所差別)，在此僅將交易所電腦主機所產生之訊息及處理方式說明如下，以供參考。
+
+
+
+錯誤代碼
+錯誤訊息
+00
+該筆資料正確
+01
+數字欄位錯誤
+02
+異動碼錯誤
+03
+欄位名稱錯誤
+04
+申請日期錯誤
+05
+申購買回主檔查無此筆資料
+06
+公告日期錯誤
+07
+申請種類錯誤
+08
+撥付類別錯誤
+09
+申購買回主檔之圈存註記不符
+10
+ETF單位數錯誤
+11
+股票股數錯誤
+12
+申請人數目錯誤
+13
+ETF代號錯誤
+14
+證券商代號錯誤
+15
+未使用欄位含有雜值
+16
+現金差額收取人欄位錯誤
+17
+零股整合帳戶欄位錯誤
+18
+申請人帳號錯誤
+19
+申報資料股數欄位錯誤
+20
+(ETF整合檢查) 申報股票數或ETF不足
+21
+(ETF整合檢查) 短缺股票超過限額
+22
+股票代號錯誤
+23
+現金替代記號錯誤
+24
+處理日期錯誤
+25
+申購買回撥轉明細檔查無此筆資料
+26
+今日買進補券資料檔查無此筆資料
+27
+處理結果錯誤
+28
+發行人回覆資料檔查無此筆資料
+29
+發行人回覆資料檔處理結果不符
+30
+申購買回主檔之解圈註記不符
+31
+申購買回主檔之主檔與明細檔相符註記不符
+32
+申購買回主檔發行人複審註記不符
+33
+替代原因錯誤
+34
+暫停交易記號錯誤
+35
+申購買回主檔發行人初審註記不符
+36
+收盤價錯誤
+37
+與前日發行差異數錯誤
+38
+發行單位數錯誤
+39
+NAV變動率過大 ( NAV 變動率與前日報酬指數變動率之差異值超過標準 (0.03%) )
+註：此為警告訊息(上傳資料已正常處理)，請確定資料無誤後回傳證交所交易部確認書。
+40
+NAV與計算成份股股票組合之淨值差異過大 (超過標準0.03元)
+註：此為警告訊息(上傳資料已正常處理)，請確定資料無誤後回傳證交所交易部確認書。
+41
+NAV變動率檢查錯誤 ，請稍後再傳送一次 (因證交所尚未接收今日之報酬指數)
+42
+NAV與計算成份股股票組合之淨值差異檢查錯誤 (因ANCE資料尚未正確接收)
+43
+不符合二次圈存資格 (初審：Y、圈存：N)
+*44
+申購買回明細檔查無此筆資料
+*45
+不含外國成分股之ETF不得作業
+*46
+含外國成分股之ETF不得作業
+47
+申贖平台錯誤
+48
+申購開放部位區錯誤
+49
+贖回開放部位區錯誤
+50
+本日不開放實物申購
+51
+本日不開放實物贖回
+52
+申購時間超過
+53
+贖回時間超過
+54
+超過核准發行單位數
+55
+現金申購金額不符
+56
+PCF 申報平台錯誤
+57
+可否申購 可否贖回欄位僅能為 Y 或 N
+58
+申購資料之複審日期錯誤
+59
+買回資料之複審日期錯誤
+60
+必須為初審通過之資料
+61
+集保回覆:該證券代號不得作此交易
+62
+集保回覆:客戶狀況代號錯誤
+63
+集保回覆:無該帳號資料
+64
+集保回覆:該帳號無權作此交易
+65
+集保回覆:鍵入股數超過限額
+66
+集保回覆:部位確認失敗
+67
+申請種類為申購時，預收及實際申購款不得為0
+68
+申請種類為申購時，買回總價金必須為0
+69
+申請種類為買回時，預收及實際申購款必須為0
+70
+申請種類為買回時，買回總價金不得為0
+71
+本日不開放現金申購
+72
+本日不開放現金贖回
+73
+現金申贖格式錯誤
+74
+二次圈存時間超過
+75
+集保回覆: 二次圈存失敗
+76
+撥付資料之申購申請日期錯誤
+77
+撥付資料之買回申請日期錯誤
+78
+撥付資料之補券申請日錯誤
+79
+套利申報時，套利股數需 > 0
+80
+解圈時，股數需與原來圈存時相同
+81
+該筆成分股尚未圈存過，不可解圈
+82
+該ETF已全部圈存完成，不可解圈
+83
+該ETF成分股已圈存完成，不可重複圈存
+84
+輸入資料不得為空白
+97
+集保系統錯誤，請稍後再傳送
+98
+交易所系統錯誤，請稍後再傳送
+99
+錯誤總筆數已超過50筆
+
+
+
+肆、電腦作業注意事項
+
+一、證券商ETF作業傳送檔案完畢後，請務必檢查證交所傳回來的錯誤回覆檔訊息，資料是否正確。證交所錯誤回覆檔未傳回來時，請勿再傳送檔案。
+
+
+伍、電腦作業流程
+    一、申贖作業申請與初審結果查詢 (T日)
+          單位
+時間參與券商證交所發行人
+(投信)集保T日
+
+08:00-
+
+08:00-ETF申贖截止時間
+
+
+09:00-基本資料檔設定時間
+
+申贖截止-17:00
+
+18:00-
+
+
+   二、二次圈存申請、複審結果與價金通知查詢(T+1日)
+
+
+PAGE  1
+
+
+ PAGE   \* MERGEFORMAT 11
+
+
+X.255
+
+連線通訊協定
+
+單筆訊息與檔案
+傳輸通訊協定
+
+
+E
+T
+F作業
+
+結算作業
+
+成交回報通訊協定
+委託輸入通訊協定
+
+M54
+
+查詢當日異動之PCF資料(含實物ETF成分股)
+
+初審結果查詢
+
+M04
+
+M01
+M02
+
+M06
+M07
+
+申贖申請
+
+M05
+
+接收PCF
+
+M56
+
+M55
+
+PCF異動檔
+
+PCF
+成分股檔
+
+圈存通知
+
+圈存結果
+
+初審
+回覆檔
+
+M09M10
+
+申購贖回主檔申購贖回明細(by ETF)
+
+M52
+
+傳送PCF
+
+更新
+PCF成分股
+
+上傳
+PCF異動檔
+
+GBO
+
+GBP
+
+申贖資料
+初審回覆
+
+GGD
+
+批次接收
+申贖申請
+
+M53
+
+M23
+
+M13
+
+夜間
+批次圈存
+
+即時確認券源(庫存&T-1淨入庫)

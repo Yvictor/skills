@@ -1,0 +1,851 @@
+# O-037-A10 TWSE盤中零股交易電腦作業手冊
+
+- 更新日期: 114.05.05
+- 來源檔案: assets/source-files/O-037-A10_TWSE盤中零股交易電腦作業手冊.docx
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/computerPlanningOperationsDepartment/O-037-A10 TWSE盤中零股交易電腦作業手冊_20250429_20250505094951_20250807164359.docx
+- SHA256: 4d389d115ffc6117fd11251a8e0509f944eb66319ce35b63ff7c14d0225e7cf0
+- 抽取方式: textutil
+
+---
+
+台灣證券交易所
+
+
+盤中零股交易
+電腦作業手冊
+
+
+
+
+台灣證券交易所
+            盤中零股交易電腦作業手冊發行紀錄
+發行日期
+內  容  異  動  說  明
+版本
+20200420
+新發行
+V1.0
+20250425
+配合「證券自營商自有資金專戶(自營商帳號000000-0)不得買進及賣出上市證券類股」，新增STATUS-CODE:27以及訊息內容「自營商不可買賣證券類股」。
+(實施日期：民國114年6月30日)
+V1.1
+
+盤中零股交易電腦作業說明
+
+
+壹、系統功能	3
+貳、訊息格式說明	5
+參、回報訊息處理說明	16
+肆、電腦作業注意事項	18
+壹、系統功能
+一、架構說明︰
+
+
+結
+算
+作
+業
+
+結
+算
+作
+業
+
+管 證
+理 券
+作 商
+業
+
+管 證
+理 券
+作 商
+業
+
+作 交
+業 易
+　 報
+　 表
+作 交
+業 易
+　 報
+　 表
+補 成
+送 交
+作 回
+業 報
+
+補 成
+送 交
+作 回
+業 報
+
+
+成交回報通訊協定
+委託輸入通訊協定
+成交回報通訊協定
+委託輸入通訊協定
+單筆訊息與檔案
+傳輸通訊協定
+單筆訊息與檔案
+傳輸通訊協定
+連線通訊協定
+連線通訊協定
+
+
+盤中零股交易作業包括下列三項︰
+(一)利用委託輸入通訊協定進行盤中零股交易作業。
+(二)利用單筆訊息與檔案傳輸通訊協定進行報表資料接收。
+(三)利用成交回報通訊協定進行成交回報作業。
+證券商透過連線通訊協定，與證交所建立連線後，進行盤中零股交易。交易時間結束後，也必須透過連線通訊協定達到離線的狀態。交易報表作業則利用單筆訊息與檔案傳輸通訊協定，和證交所進行報表資料的接收作業。
+二、業務範圍
+盤中零股交易之業務共有以下幾項︰
+(一)盤中零股委託輸入及回報
+ 1.盤中零股委託買進。
+ 2.盤中零股委託賣出。
+ 3.盤中零股委託減量。
+ 4.盤中零股委託取消。
+ 5.盤中零股委託查詢。
+ 6.盤中零股委託回報。
+(二)確定連線。
+(三)重新連線後查詢。
+(四)盤中零股可交易證券價格表接收。
+(五)盤中零股成交量值表接收。
+(六)盤中零股成交回報(併於當日一般交易成交回報)。
+
+貳、訊息格式說明
+
+證券商依證交所訂定之傳輸格式及傳輸協定收送資料，證券商在送出訊息前需檢核每個欄位資料是否正確，以避免傳輸過多之錯誤資料而耗費彼此系統資源。另證交所系統將累計每一PVC傳送之欄位資料錯誤次數，若超過規定次數，該PVC將被設定為離線模式(請聯絡電腦操作管理人員解除設定)。
+本章就各傳輸格式及協定說明如下：
+
+一、代碼系統
+欄　位　名　稱
+長　度
+說明
+SUBSYS-NAME
+9(02)
+33 表示盤中零股交易作業
+10 表示連線通訊協定
+XX 其它皆為不明訊息
+FUNCTION-CODE
+9(02)
+01 買進
+02 賣出
+03 減量
+04 取消
+05 查詢
+MSG-TYPE
+9(02)
+00 委託輸入訊息
+01 委託回報訊息
+02 確認連線訊息
+03 錯誤發生回覆訊息
+04 重新連線查詢訊息
+05 確認連線回覆訊息
+MSG-TIME
+9(06)
+請輸入訊息傳出之時間(HHMMSS)
+STATUS-CODE
+9(02)
+=00委託正確
+=31,32委託正確，但需注意委內容已被變更
+>00參考委託狀態代碼表
+BORKER-ID
+X(04)
+證券商代號
+第一碼:0-9
+第二碼:0-9，A-Z
+第三碼:0-9
+第四碼: 總分公司代號
+T ︰自營商
+ 0 ︰總公司
+>0 ︰分公司
+PVC-ID
+X(02)
+PVC代號
+ORDER-NO
+X(05)
+委託書編號
+IVACNO
+9(07)
+投資人帳號
+IVACNO-FLAG
+X(01)
+投資人下單類別註記：
+“ “ 	一般委託下單
+“A”	自動化服務設備委託下單
+“D”	電子式專屬線路(DMA)委託下單
+“I”	網際網路委託下單
+“V”	語音委託下單
+“P”	API委託下單
+STOCK-NO
+X(06)
+股票代號
+PRICE
+9(5)V9(4)
+價格
+QUANTITY
+9(06)
+股數
+BUY-SELL-CODE
+X(01)
+買賣別代碼
+B－買進委託、S－賣出委託
+EXCHANGE-CODE
+9(01)
+交易類別碼
+2－零股委託
+ORDER-TYPE
+9(01)
+委託類別
+0 一般(現股)
+PRICE-TYPE
+X(01)
+委託方式
+“2”限價
+TIME-IN-FORCE
+X(01)
+委託時效類別
+“0”當日有效
+ORDER-DATE
+9(08)
+委託輸入完成日期：西元年月日。
+ORDER-TIME
+9(09)
+委託輸入完成的時間(HHMMSSmmm)
+BEFORE-QUANTITY
+9(06)
+異動前委託股數
+AFTER-QUANTITY
+9(06)
+委託剩餘股數
+FILE-CODE
+X(03)
+ O60 表示為盤中零股可交易證券價格資料檔
+ O70 表示為盤中零股當日成交量值資料檔
+
+
+二、訊息格式與欄位說明
+1.委託輸入訊息(O110) 委託輸入時，證券商電腦系統以此格式將資料傳至證交所電腦系統，在送出訊息前需檢查每一個欄位值正確後再傳送。證交所將累計欄位值之錯誤次數，若超過限制次數，該PVC將被設定為離線模式(請聯絡電腦操作管理人員解除設定)。各欄位之檢查說明如下︰ MESSAGE ID︰O110 MESSAGE NAME︰委託輸入訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+
+
+MESSAGE-TYPE
+9(2)
+ 00
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 00
+BODY
+BROKER-ID
+X(4)
+
+
+PVC-ID
+X(2)
+
+
+ORDER-NO
+X(5)
+
+
+IVACNO
+9(7)
+
+
+IVACNO-FLAG
+X(1)
+
+
+STOCK-NO
+X(6)
+
+
+PRICE
+9(5)V9(4)
+
+
+QUANTITY
+9(6)
+
+
+BUY-SELL-CODE
+X(1)
+
+
+EXCHANGE-CODE
+9(1)
+
+
+ORDER-TYPE
+9(1)
+
+
+PRICE-TYPE
+X(1)
+
+
+TIME-IN-FORCE
+X(1)
+
+
+
+	•	FUNCTION-DODE　　　︰註明交易別，可參考代碼系統
+	•	BROKER-ID 　　　　 ︰總分公司代號
+	•	PVC-ID　　　　　　 ︰PVC代號(LOGICAL NAME)
+	•	ORDER-NO           ：委託書編號(不得重複)。
+                      輸入範圍為0~9、A~Z、a~z。
+	•	IVACNO　　　　　　 ︰投資人帳號。
+	•	IVACNO-FLAG        ：註明投資人下單類別。
+                             ““ - 一般委託下單
+                             “A”- 自動化服務設備委託下單
+                             “D”- 電子式專屬線路(DMA)委託下單
+                             “I”- 網際網路委託下單
+                             “V”- 語音委託下單
+                             “P”- API委託下單
+	•	STOCK-NO　　　　　 ︰可盤中零股交易之股票
+	•	PRICE　　　　　　　︰委託價格(規格同一般交易股票)。
+	•	QUANTITY　　　　　 ︰委託數量。
+每筆委託數量需小於一交易單位，且最多為999受益權單位(證券自營商亦適用)。【例如：若一交易單位為200受益權單位，委託數量須小於或等於199受益權單位；若一交易單位為2000受益權單位，每筆委託數量最多為999受益權單位】。
+減量委託時，此欄位為欲減少之數量。
+	•	BUY-SELL-CODE　　　︰B－買進委託、S－賣出委託。
+新增、減量、取消、查詢均需註明。
+	•	EXCHANGE-CODE　　　︰請註明為2 - 零股委託。
+	•	ORDER-TYPE 　　    ︰請註明為0 - 一般(現股)。
+	•	PRICE-TYPE         ：請註明委託方式為2 –限價。
+	•	TIME-IN-FORCE      ：請註明為0 –ROD當日有效。
+
+2.委託回報訊息格式及代碼(O120)
+證交所電腦系統處理證券商電腦系統傳送之委託資料後，回傳委託回報資料，委託回報之資料格式如下︰
+  MESSAGE ID︰O120 MESSAGE NAME︰委託回報訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+
+
+MESSAGE-TYPE
+9(2)
+ 01
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 00
+BODY
+BROKER-ID
+X(4)
+
+
+PVC-ID
+X(2)
+
+
+ORDER-NO
+X(5)
+
+
+IVACNO
+9(7)
+
+
+IVACNO-FLAG
+X(1)
+
+
+STOCK-NO
+X(6)
+
+
+PRICE
+9(5)V9(4)
+
+
+QUANTITY
+9(6)
+
+
+BUY-SELL-CODE
+X(1)
+
+
+EXCHANGE-CODE
+9(1)
+
+
+ORDER-TYPE
+9(1)
+
+
+PRICE-TYPE
+X(1)
+
+
+TIME-IN-FORCE
+X(1)
+
+
+ORDER-DATE
+9(8)
+
+
+ORDER-TIME
+9(9)
+
+
+BEFORE-QUANTITY
+9(6)
+
+
+AFTER-QUANTITY
+9(6)
+
+
+ORDER-DATE      ：委託日期，西元年月日。
+ORDER-TIME      ：委託時間，欄位長度為9(09)，表時，分，秒，毫秒(HHMMSSmmm)。
+BEFORE-QUANTITY ：異動前委託數量。資料單位：股。
+AFTER-QUANTITY  ：委託剩餘數量。資料單位：股。
+
+3.錯誤發生回覆訊息(O130) MESSAGE ID︰O130 MESSAGE NAME︰錯誤發生回覆訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+
+
+MESSAGE-TYPE
+9(2)
+ 03
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 參考委託狀態代碼表
+
+4.確定連線訊息格式及代碼(O140) MESSAGE ID︰O140 MESSAGE NAME︰確認連線訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+ 00
+
+MESSAGE-TYPE
+9(2)
+ 02
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 00
+
+5.確定連線回覆訊息格式及代碼(O150) MESSAGE ID︰O150 MESSAGE NAME︰確認連線回覆訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+ 00
+
+MESSAGE-TYPE
+9(2)
+ 05
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 00
+
+
+6.重新連線後查詢訊息格式及代碼(O160) MESSAGE ID︰O160 MESSAGE NAME︰重新連線後查詢訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 33
+
+FUNCTION-CODE
+9(2)
+ 00
+
+MESSAGE-TYPE
+9(2)
+ 04
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+ 00
+
+7.要求傳送資料訊息格式及代碼(F050) MESSAGE ID︰F050 MESSAGE NAME︰要求傳送資料訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+ 20
+
+FUNCTION-CODE
+9(2)
+ 02
+
+MESSAGE-TYPE
+9(2)
+ 04
+
+MESSAGE-TIME
+9(6)
+
+
+STATUS-CODE
+9(2)
+
+F.T.
+HEADER
+SOURCE-ID
+X(4)
+ ----
+
+OBJECT-ID
+X(4)
+ 0000
+
+BODY-LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(3)
+ O60或O70
+
+
+CONTROL-HEADER與F.T.HEADER部分請參考單筆訊息與檔案傳輸通訊協定
+
+
+
+8.檔案名稱︰盤中零股價格資料檔
+檔案長度︰50			　　檔案代號︰O60
+階層碼/項目名稱
+屬性
+位置-長度
+項目說明
+備註
+01 STKNO
+X(06)
+ 1 – 6
+股票代號
+
+01 RSLPR
+9(05)V9(04)
+ 7 – 9
+漲停價
+
+01 FLLPR
+9(05)V9(04)
+16 – 9
+跌停價
+
+01 REFPR
+9(05)V9(04)
+25 – 9
+參考價
+
+01 MARK-DAY-TRADE
+X(01)
+ 34 – 1
+可現股當沖註記
+註
+01 FILLER
+X(16)
+35 – 16
+空白
+
+說明︰
+	•	本作業於每日早上08：00 起主動傳送至證券商主機。
+	•	本作業開放至下午13：30，證券商亦可自行要求該檔案。
+	•	本資料為所有可盤中零股交易之股票。
+註：代表該證券得否於零股交易現股當日沖銷。 MARK-DAY-TRADE值為Y時，表示該證券可先買後賣現股當沖。 MARK-DAY-TRADE值為X時，表示該證券可先買後賣與先賣後買現股當沖。 MARK-DAY-TRADE值為空白時，表示該證券不可現股當沖。
+
+
+
+9.檔案名稱︰盤中零股當日成交量值
+檔案長度︰110			　　檔案代號︰O70
+階層碼/項目名稱
+屬性
+位置-長度
+項目說明
+備註
+01 STOCK
+X(06)
+ 1 - 6
+股票代號
+
+01 MTHSHR
+9(12)
+ 7 –12
+成交股數
+
+01 MTHCNT
+9(08)
+19 – 8
+成交筆數
+
+01 MTHAMT
+9(12)
+27 –12
+成交金額
+
+01 HIGH-MTHPR
+9(05)V9(04)
+39 – 9
+最高價
+
+01 LOW-MTHPR
+9(05)V9(04)
+48 – 9
+最低價
+
+01 MTHPR
+9(05)V9(04)
+57 – 9
+最後成交價格
+
+01 BEST-BUYPR
+9(05)V9(04)
+66 – 9
+最後揭示買價
+
+01 UNMTH-BUYSHR
+9(12)
+75 –12
+最後揭示買量
+
+01 BEST-SELLPR
+9(05)V9(04)
+87 – 9
+最後揭示賣價
+
+01 UNMTH-SELLSHR
+9(12)
+96 –12
+最後揭示賣量
+
+01 FILLER
+X(03)
+108– 3
+空白
+
+說明︰ (1)本作業於每日下午13：30後主動傳送至證券商主機。
+(2)本作業開放至下午17：00，證券商亦可自行要求該檔案。
+
+
+參、回報訊息處理說明
+
+主機連線因證券商端之畫面及報表皆是由提供系統之資訊公司或證券商之電腦部門所設計，所以畫面及訊息各家不同，由前面之介紹可了解證交所與證券商之間資料傳遞之基本架構及格式，如果有異常情況發生時，請先依提供系統之資訊公司或證券商電腦部門所編之使用手冊處理，如果狀況仍無法排除，請記住當時的狀況及訊息，並與證交所連絡。以下訊息是由證交所電腦主機傳給證券商，證券商終端機所看到的訊息不一定與下表完全相同(因所採用之電腦系統而有所差別)，在此僅將證交所電腦主機所產生之訊息及處理方式說明如下，以供參考。
+委託狀態代碼：
+STATUS
+CODE
+訊 息 內 容
+訊息代號
+證券商應辦理事項
+00
+SUCCEED
+O120
+輸入下一筆訊息
+01
+TIME IS OVER
+O130
+時間超過收盤時間
+結束交易子系統
+02
+TIME IS EARLY
+O130
+時間未到，稍待再輸入委託
+05
+ORDER NOT FOUND
+O130
+檢查各欄位是否有誤
+11
+FUNCTION-CODE INVALID
+O130
+檢查並更正功能碼
+12
+BROKER-NO ERROR
+O130
+檢查並更正證券商代號
+13
+BRANCH-NO ERROR
+O130
+檢查並更正分公司代號
+14
+IVACNO ERROR
+O130
+檢查並更正投資人帳號
+15
+PVC-ID ERROR
+O130
+檢查並更正PVC代號
+18
+ORDER-NO ERROR
+O130
+檢查並更正委託書編號
+19
+IVACNO-FLAG ERROR
+O130
+檢查並更正投資人下單類別註記
+20
+STOCK-NO ERROR
+O130
+檢查並更正股票代號
+21
+PRICE ERROR
+O130
+檢查並更正單價
+22
+QUANTITY ERROR
+O130
+檢查並更正委託數量
+24
+BUY-SELL-CODE ERROR
+O130
+檢查並更正買賣別
+25
+ORDER TYPE ERROR
+O130
+檢查並更正委託類別
+26
+EXCHANGE-CODE ERROR
+O130
+檢查並更正交易類別
+27
+自營商不可買賣證券類股
+O130
+檢查並更正證券代號
+28
+FOREIGNER NOT ALLOWED
+O130
+該股票不允許外資交易
+30
+QUANTITY OVER LIMIT
+O130
+外資買進超過委託額度
+31
+QUANTITY WAS CUT
+O120
+外資買進委託數量被刪減
+32
+DELETE OVER QUANTITY
+O120
+減量數量超過原有數量
+33
+CHANGE，DELETE OR QUERY ONLY
+O130
+總委託金額超過限額，只允許取消，改量及查詢
+35
+BUY QUANTITY OVER ABNORMAL STOCK LIMIT！
+O130
+今日買入委託申報受限股票金額超過證券商可買入金額，請檢查數量
+36
+SELL QUANTITY OVER ABNORAML STOCK LIMIT！
+O130
+今日賣出委託申報受限股票金額超過證券商可賣出金額，請檢查數量
+40
+委託書編號重複
+O130
+請按順序編委託書編號
+43
+該股票已暫停交易
+O130
+請檢查委託資料，該股票已不允許輸入委託。
+46
+PRICE-TYPE ERROR
+O130
+檢查並更正委託價格種類註記
+47
+TIME-IN-FORCE ERROR
+O130
+請檢查並更正委託時效類別註記
+50
+該筆委託已無剩餘量
+O130
+檢查成交回報是否已成交
+89
+ERROR OVER LIMIT
+O130
+欄位錯誤次數超過限制，聯絡證交所電腦操作管理人員解除設定，回連線子系統。
+99
+CALL COMPUTER CENTER
+O130
+
+查詢委託是否已輸入成功或打電話到證交所詢問
+
+
+
+肆、電腦作業注意事項
+一、主機連線證商在接受盤中零股委託時依照委託書編號依次輸入電腦，每筆委託輸入都必須有相對應之委託書，委託書編號不可重複。
+二、「盤中零股可交易證券價格表」與「盤中零股當日成交量值報表」由證交所主動傳送。
+三、請檢查證交所傳回來的每一筆委託回報資料是否正確。
+四、斷線時或是對委託回報資料有疑問時，請先查詢該筆委託是否存在，若是還有疑問，請連絡證交所。
+五、證券商若收到連線訊息或其它不明訊息時，都必須重新進行連線作業，方能繼續盤中零股作業。
+六、盤中零股成交回報併於當日之一般成交回報。
+七、若當日輸入委託或自行買賣申請總金額(含一般交易、盤後定價交易、盤中零股交易、盤後零股交易)超逾其可動用資金淨額二十倍者，本公司得即停止其輸入買賣申報，只允許取消，減量及查詢。

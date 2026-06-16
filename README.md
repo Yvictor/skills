@@ -9,6 +9,7 @@ These skills capture hard-won patterns — the kind of things you learn after wa
 | Skill | Description |
 |-------|-------------|
 | [review-driven-development](skills/review-driven-development/) | Issue-to-merge workflow with iterative review cycles that produce merge-ready PRs |
+| [taiwan-stock-rules](skills/taiwan-stock-rules/) | TWSE broker operation manual knowledge for Taiwan stock market rules, trading workflows, and broker system procedures |
 
 ### review-driven-development
 

@@ -1,0 +1,2536 @@
+# O-106-A10 資訊交換平台主機連線電腦作業手冊
+
+- 更新日期: 104.12.09
+- 來源檔案: assets/source-files/O-106-A10_資訊交換平台主機連線電腦作業手冊.doc
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/brokerDepartment/b002000043.doc
+- SHA256: d6990f64ab7b119f1867e8c90aa27a5910da5d378b2e3cdb6b100ac564b38772
+- 抽取方式: textutil
+
+---
+
+資訊交換平台
+主機連線作業手冊
+
+
+版本：1.4
+2004.8.19
+
+
+資訊交換平台主機連線作業手冊
+
+
+目錄
+
+一、功能說明	1-1
+二、連線架構及通訊協定	2-1
+三、交換交易訊息或檔案的方式	3-1
+四、TCP/IP Socket Session通訊處理層	4-1
+五、訊息格式說明	5-1
+六、錯誤訊息說明	6-1
+七、錯誤訊息處理說明	7-1
+八、電腦作業注意事項	8-1
+
+
+台灣證券交易所
+         資訊交換平台主機連線作業手冊發行紀錄
+發行日期
+內  容  異  動  說  明
+版本
+930426
+新發行
+V1.0
+930510
+取消要求傳送檔案資料訊息(F316/F317)，功能由傳送交易訊息(F320)取代
+交易訊息傳輸作業(F320)及待確認交易通知訊息作業(F318)之定義(P.8)
+所有訊息之FILE TRANSFER HEADER 新增一欄位為RESERVE-AREA (業務雙方自定區)，不使用請填空白
+待確認交易訊息(F318)，STATUS-CODE修改”1006”, “1007”, “1008”
+回覆查詢訊息被處理情形(F331), 新增及修改回覆狀態REPLY-STATUS之種類
+連線子系統錯誤訊息新增”0096”
+檔案傳輸子系統錯誤訊息對照表之STATUS-CODE 由1000 號起續編，修改錯誤訊息”1030”
+V1.1
+930601
+加強說明F314/315 之使用通道(P.7)
+新增檔案傳輸子系統錯誤訊息(1036-1041,及1094)
+V1.2
+930628
+新增CA認證註記4 (ETMPCA)
+新增連線子系統錯誤訊息0089
+新增交換平台連線會員基本資料檔(XF001)
+連線會員必須具備接收其集團成員之所有作業。
+FILE-TRANSFER-HEADER 中之SOURCE-MBID及DESTINATION-MBID 均必須為連線會員
+V1.3
+930819
+修改F314/315 之STATUS-CODE使用方式(P.7,P.28及P.29)
+V1.4
+
+
+壹、功能說明
+本公司所規劃之「電腦資訊交換平台」(以下簡稱本平台)所提供之經濟且便利之網路、連線路徑管理、資料傳輸、資料存證、傳輸通訊協定及傳輸通訊協定轉換功能(參考圖一)可適用於證券金融業者間之各項往來業務，有助於業者間業務電子化之推展。
+
+
+圖一、資訊交換平台提供網路、路徑管理及格式轉換功能
+
+本平台所提供之安全、經濟且便利之網路(如圖二所示)可以解決複雜之連線問題，證券商、機構投資人及銀行間只須簡單的與本平台連線即可開始與其他單位互傳訊息。
+
+
+圖二、證券商、機構投資人、銀行透過資訊交換網路互傳資料
+
+本平台規劃之功能主要用於協助業者推動業務電子化作業，因本平台之設計並非以業務為導向，故不會影響其他單位之業務執行權益，只要是符合法令規定之業務皆歡迎採用本平台作為與其他單位通訊之橋樑。
+
+
+貳、連線架構及通訊協定
+提供二種資料的交換功能
+交易訊息
+檔案傳輸
+
+連線程式架構
+每一種資料型態的交換都需要至少使用二個通道，一個傳送通道及一個接收通道。但因備援考量及為求傳送接收之最大效益，請使用雙線雙送收。
+不同資料型態各自使用獨立的連線通道。
+目前初步規劃每一個業務單位與交換平台連接四個通道：
+檔案傳輸傳送
+檔案傳輸接收
+交易訊息傳送
+交易訊息接收
+
+
+
+業務單位與資訊交換平台連線通道的網路架構
+X.25交易資訊網路
+每一個通道是一個PVC (Permanent Virtual Circuit)
+TCP/IP交易資訊網路
+每一個通道是一個Socket session
+每一個通道都使用全雙工傳輸模式
+現行已與證交所連線者，可延用原連線網路架構。新連線會員請使用TCP/IP交易資訊網路
+各連線通道的資料傳輸協定ETMP – Exchange-Transaction Message Protocol
+分成未連線狀態與已連線狀態(或稱資料傳輸狀態)
+雙方開機後，一直到完成連線作業前，都屬於未連線狀態。一旦完成連線作業，進入資料傳輸狀態，就可以依照各通道的功能（檔案傳輸送、檔案傳輸收、交易訊息送或交易訊息收）進行資料傳輸。
+未連線狀態可進行的作業包括
+連線作業
+結束連線作業
+資料傳輸狀態可進行的作業包括：
+檔案傳輸作業
+接收確認作業
+交易訊息傳輸作業
+待確認交易通知訊息作業
+確定連線作業
+在資料傳輸的過程當中發生任何線路異常、資料異常或Timeout(接收不到資料)等異常狀況，發現異常狀況的一方應立即回到未連線狀態，嘗試重新連線。
+
+
+連線作業的訊息交換協定
+採用證交所已與證券商連線多年通訊經驗之傳輸通訊協定，請至本公司網址”http://www.tse.com.tw/中文/文件下載/電腦規劃部、作業部/電腦規劃部、作業部作業手冊查詢一覽表”中下載「主機連線作業手冊」(TMP)。使用TCP/IP網路請另外下載「TCP/IP網路主機連線作業手冊」。使用資訊交換平台各連線單位請下載「資訊交換平台主機連線作業手冊」(ETMP)。
+但為因應資訊交換平台作為各單位中間訊息傳達及交換之功能，故將原TMP檔案傳輸格式部分欄位擴充，另訂新的傳輸格式供資訊交換平台各連線單位使用(ETMP)，新的傳輸格式說明如下:
+X.25無須建立通道，TCP/IP 通道之建立請依照「TCP/IP網路主機連線作業手冊」執行。
+連線作業包含三次訊息交換。
+
+
+各訊息必須依照順序交換，順序錯誤或發生Timeout，都必須從開機通知訊息L110重新開始。
+業務單位亦可發出開機通知訊息L110，通知交換平台發動連線作業。
+完成連線作業後，進入資料傳輸狀態。
+
+結束連線作業
+由資訊交換平台發起，業務單位回應。
+僅包含一次訊息交換，完成後雙方結束連線程式或關機。
+
+
+
+檔案傳輸作業
+檔案傳輸作業由資料傳送方發起，資料接收方回應。使用通道為資料傳送方之送出通道。
+檔案傳輸作業包括一次起始訊息交換及一次或多次資料訊息交換。
+當交換平台接收傳送方之” 檔案”後，將轉送” 檔案”給接收方，如傳送失敗時（如瞬斷或Timeout），交換平台會嘗試由其它連線正常之通道重傳給接收方一次，若仍失敗（如瞬斷或Timeout或未連線），資料會一直留存直到連線正常才會送出。
+
+
+接收確認作業
+由資料接收方發起，資料傳送方回應。使用通道為資料接收方之送出通道，相對而言，為資料傳送方之TR接收通道。當資料接收方收到檔案/交易資料並回覆後，應先判斷該資料是否需驗章或解密之檢核，如需要則執行驗章、解密處理後，立即發動此作業由送出通道通知原傳送方，確認該筆資料已接收。
+接收確認作業僅包含一次訊息交換。
+當交換平台接收傳送方此作業後，將轉送此作業給接收方，如傳送失敗時（如瞬斷或Timeout），交換平台會嘗試由其它連線正常之通道重傳給接收方一次，若仍失敗（如瞬斷或Timeout或未連線），資料會一直留存直到連線正常才會送出。
+
+
+要求傳送檔案資料作業(取消)
+要求傳送檔案資料作業由要求傳送資料方發起，被要求資料方回應。
+僅包含一次訊息交換。
+當交換平台接收傳送方此作業後，將轉送此作業給接收方，如傳送失敗時（如瞬斷或Timeout），交換平台會嘗試由其它連線正常之通道重傳給接收方一次，若仍失敗（如瞬斷或Timeout或未連線），資料會一直留存直到連線正常才會送出。
+
+
+交易訊息傳輸作業
+交易訊息傳輸作業由資料傳送方發起，資料接收方回應。
+僅包含一次訊息交換。
+當交換平台轉送”交易訊息作業”給接收方失敗時（如瞬斷或Timeout），交換平台會嘗試由其它連線正常之通道重傳給接收方一次，若仍失敗（如瞬斷或Timeout或未連線），該”交易訊息作業”交換平台將不再重傳給接收方。而不再重傳且由交換平台立即發動”待確認交易通知訊息作業”通知原傳送方之功能，依該檔案代號之業務性質決定之。若無此需求功能，資料會一直留存直到連線正常才會送出。
+
+
+待確認交易通知訊息作業(Pending Transaction)
+由交換平台發起，資料原傳送方回應。使用通道為資料原傳送方的TR接收通道。當交換平台轉送”交易訊息作業”給接收方失敗時（如瞬斷或Timeout），交換平台會嘗試由其它連線正常之通道重傳給接收方一次，若仍失敗（如瞬斷或Timeout或未連線），該”交易訊息作業”交換平台將不再重傳給接收方，交換平台將依該檔案代號之業務性質決定是否立即發動此作業通知原傳送方。
+待確認交易通知訊息作業僅包含一次訊息交換。
+3、原傳送方接收此作業後應立即主動向資料接收方查詢該筆資料是否成功，以進行後續交易傳輸作業。
+原傳送方接收此作業後，亦有可能收到接收方所發動之該筆Transaction接收確認作業。
+
+
+十二、查詢訊息被處理情形作業
+1、資料傳送方發起，資訊交換平台回應。
+2、僅包含一次訊息交換。
+
+
+十三、確定連線作業
+1、連線通道為傳送時，資料傳送方發起，資訊交換平台回應。連線通道為接收時，資訊交換平台發起，資料接收方回應。
+2、當 資料傳送方/資訊交換平台 在一預訂的時間內沒有任何資料要傳送時，應發起確定連線作業，告知 資訊交換平台/資料接收方 連線狀態仍正常。
+3、僅包含一次訊息交換。
+
+
+參、交換各種交易訊息或檔案的方式
+各通道都必須先與交換平台完成連線作業，進入資料傳輸狀態。
+A單位傳送檔案到B單位的方式
+A單位可能有其他業務需要傳送檔案訊息到B單位
+A單位可能處理B單位傳來的檔案後，要回覆檔案處理結果
+作業流程
+
+
+訊息流程
+
+
+各個作業(1)、(2)、(3)、(4)皆為互相獨立的作業。當A單位完成該檔案的(1)時，不必等到交換平台完成(2)，就可以立刻進行下一個檔案的(1)。
+當接收方完成接收時，必須發動接收確認作業(3)，但(3)及(4)為互相獨立作業，B單位完成該接收確認作業後，不必等資訊交換平台將該訊息傳送到A單位，就可以立即傳送下一個接收確認。
+
+A單位傳送交易訊息到B單位
+作業流程
+
+
+訊息流程
+
+
+各交易訊息傳輸作業(1)、(2) 、(3)、(4)皆為互相獨立作業，A單位完成該交易訊息傳送作業後，不必等資訊交換平台將該訊息傳送到B單位，就可以立即傳送下一個交易訊息。
+當交換平台轉送”交易訊息作業”給接收方失敗時（如瞬斷或Timeout），交換平台則立即發動此”待確認交易通知作業”(2.1)通知原傳送方
+當接收方完成接收時，必須發動接收確認作業(3)，但(3)及(4)為互相獨立作業，B單位完成該訊息傳送作業後，不必等資訊交換平台將該訊息傳送到A單位，就可以立即傳送下一個接收確認。
+
+
+肆、TCP/IP Socket Session通訊處理層
+
+從應用程式的角度來看，TCP/IP網路的特性與X.25網路有幾點較明顯的不同：
+PVC與Socket Session的不同
+X.25的PVC在線路建置時就已經設定，而Socket session在業務發生前才連線，業務結束或應用程式結束時就斷線(結束session)。
+對於線路異常的偵測情形不同
+X.25的線路或網路元件一旦發生異常，應用程式立即可以得到錯誤訊息，但TCP/IP網路的線路或元件發生異常，應用程式不見得可以立刻得到錯誤訊息。
+資料封包的處理方式不同
+應用程式經X.25網路連續送出多筆資料，接收方的應用程式接收資料時，可分辨出一筆一筆的資料。但透過TCP/IP網路連續傳送的多筆資料，接收方的應用程式無法立即判斷每一筆訊息的開始及結束位置。
+
+因應上述TCP/IP網路的特性，應用程式必須另外具備處理Socket Session通訊的功能，命名為socket層通訊協定，socket layer protocol，簡稱SLP。詳細的SLP內容，請參考證交所網站下載文件的「TCP/IP網路主機連線作業手冊」。
+
+
+SLM訊息
+SLP傳送的訊息稱為Socket Layer Message，簡稱SLM。SLM包括二種訊息：
+SLM控制訊息：例如建立socket完成通知訊息、SLP錯誤訊息等。
+TMP資料訊息：包含任何TMP資料的訊息。
+
+SLM訊息的格式為：
+
+FIELD NAME
+FORMAT
+CONTENTS
+Socket
+HEADER
+Header Code
+X(2)
+0xFEFE
+Control Code
+X(2)
+代表訊息種類
+AP-Message Length
+2-byte integer
+視TMP內容長度決定
+BODY
+TMP訊息內容
+
+
+Trailer
+Trailer code
+X(2)
+0xEFEF
+
+SLM訊息一律由0xFEFE開頭，0xEFEF結尾。Control code用來區別訊息種類。SLM控制訊息不含BODY部分，AP-message Length為0。TMP資料訊息的BODY即為TMP內容，AP-message Length為TMP內容的長度。
+
+二、SLP的基本功能包括：
+由業務單位依約定的Source IP及Source Port Number來進行socket連線(connect)。
+當無資料傳輸發生時，定期傳送確定session連線訊息，簡稱heartbeat，使heartbeat的接收方可確定session連線正常。
+將應用程式要送出的TMP資料轉成SLM訊息後送出，或將收到的TMP資料訊息轉成TMP格式，送給應用程式。
+一旦發生任何異常或在預定的時間內沒有收到heartbeat，必須close socket，重新connect socket。
+伍、訊息格式說明
+MESSAGE ID︰L110
+MESSAGE NAME： 開機通知訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+10
+MESSAGE-TYPE
+X(2)
+00
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+
+1.SUBSYSTEM-NAME  ︰12  -->  連線子系統。
+2.FUNCTION-CODE   ︰10  -->  開機通知作業。
+3.MESSAGE-TYPE    ︰00  -->  開機通知訊息。
+4.SYSTEM-DATE     ︰送出訊息時的系統日期。
+5.SYSTEM-TIME     ︰送出訊息時的系統時間。
+6.STATUS-CODE     ︰若值非0000（SUCCESS），即代表送出訊息者接收上一個訊息後之檢查結果有問題，此時需依檢查結果改正後方能重新連線。請參考錯誤訊息對照表。
+
+
+MESSAGE ID  ︰L120
+MESSAGE NAME︰確認開機通知訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+10
+MESSAGE-TYPE
+X(2)
+01
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+
+
+1.SUBSYSTEM-NAME   ︰12  -->  連線子系統。
+2.FUNCTION-CODE    ：10  -->  開機通知作業。
+3.MESSAGE-TYPE     ：01  -->  確認開機通知訊息。
+4.SYSTEM-DATE      ︰送出訊息時的系統日期。
+5.SYSTEM-TIME      ︰送出訊息時的系統時間。
+6.STATUS-CODE      ︰其值0000（SUCCESS）。
+
+
+MESSAGE ID  ：L130
+MESSAGE NAME：通知登錄訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+20
+MESSAGE-TYPE
+X(2)
+02
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+BODY
+APPEND-NO
+9(3)
+
+
+1.SUBSYSTEM-NAME    ︰12  -->  連線子系統。
+2.FUNCTION-CODE     ︰20  -->  登錄作業。
+3.MESSAGE-TYPE      ︰02  -->  通知登錄訊息。
+4.SYSTEM-DATE       ︰送出訊息時的系統日期。
+5.SYSTEM-TIME       ︰送出訊息時的系統時間。
+6.STATUS-CODE       ︰其值0000（SUCCESS）。
+7.APPEND-NO         ︰其內容為三位數之亂數，並要求連線會員將其附在登錄訊息傳給交換平台，作為計算KEY-VALUE之用。
+
+
+MESSAGE ID  ︰L140
+MESSAGE NAME︰登錄訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+20
+MESSAGE-TYPE
+X(2)
+03
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+BODY
+APPEND-NO
+9(3)
+
+SOURCE-MBID
+X(10)
+
+AP-CODE
+X(2)
+
+KEY-VALUE
+9(3)
+
+1.SUBSYSTEM-NAME     ：12  -->  連線子系統。
+2.FUNCTION-CODE      ：20  -->  登錄作業。
+3.MESSAGE-TYPE       ：03  -->  登錄訊息。
+4.SYSTEM-DATE        ︰送出訊息時的系統日期。
+5.SYSTEM-TIME        ：送出訊息時的系統時間。
+6.STATUS-CODE        ：其值 0000(SUCCESS)。
+7.APPEND-NO          ：登錄訊息之APPEND-NO即為通知登錄訊息之APPEND-NO
+8.SOURCE-MBID        ：連線會員端代號
+9.AP-CODE            ：即為該SESSION欲進行之業務
+SS   -->   FT/TX送   FILE(4K)/交易訊息(4K) SEND
+FR   -->   FT收(4K)  FILE-BASE RCV
+TR   -->   TX收(4K)  交易訊息  RCV  (TRX-BASE)
+      所有之FT/TX送收, 均可申請多套。會員可申請若干套SS，FR，TR，以達即時快速送達之效率。
+
+當有資料需要傳送時，可由任一傳送通道利用AP-CODE(SS)來傳送資料，但會員可自行調配決定傳送檔案或交易資料之傳送通道。
+
+當有資料需要接收時，可由FR/TR群組中之任一連線通道來接收資料，但以會員經由事先申請之AP-CODE(FR/TR)來連線為前題，而決定回傳檔案(FR)或交易資料(TR)。
+
+10.KEY-VALUE︰(APPEND-NO * PASSWORD) 取千位、百位、十位，三位數字。
+11.PASSWORD︰指連線會員端針對各SESSION所事先與交換平台所訂定之密碼,
+ 確認此SESSION為正確之連線會員端所使用。
+MESSAGE ID  ︰L150
+MESSAGE NAME︰應用子系統啟動訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+20
+MESSAGE-TYPE
+X(2)
+04
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+
+1.SUBSYSTEM-NAME      ：12  -->  連線子系統。
+2.FUNCTION-CODE       ：20  -->  登錄作業。
+3.MESSAGE-TYPE        ：04  -->  應用子系統啟動訊息。
+4.SYSTEM-DATE         ︰送出訊息時的系統日期。
+5.SYSTEM-TIME         ：送出訊息時的系統時間。
+6.STATUS-CODE         ：其值0000 (SUCCESS)。
+
+
+MESSAGE ID  ︰L160
+MESSAGE NAME︰確認應用子系統啟動訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+20
+MESSAGE-TYPE
+X(2)
+05
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+
+
+1.SUBSYSTEM-NAME     ︰12  -->  連線子系統。
+2.FUNCTION-CODE      ：20  -->  登錄作業。
+3.MESSAGE-TYPE       ：05  -->  確認應用子系統啟動訊息。
+4.SYSTEM-DATE        ︰送出訊息時的系統日期。
+5.SYSTEM-TIME        ：送出訊息時的系統時間。
+6.STATUS-CODE        ︰其值0000(SUCCESS)。
+
+
+MESSAGE ID  ︰L170
+MESSAGE NAME︰結束連線訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+30
+MESSAGE-TYPE
+X(2)
+06
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+
+1.SUBSYSTEM-NAME     ：12  -->  連線子系統。
+2.FUNCTION-CODE      ：30  -->  離線作業。
+3.MESSAGE-TYPE       ：06  -->  結束訊息。
+4.SYSTEM-DATE        ︰送出訊息時的系統日期。
+5.SYSTEM-TIME        ：送出訊息時的系統時間。
+6.STATUS-CODE        ：若值非0000（SUCCESS），即代表送出訊息者接收上一個訊息後之檢查結果有問題，此時需依檢查結果改正後方能重新連線。請參考錯誤訊息對照表。
+
+
+MESSAGE ID  ︰L180
+MESSAGE NAME︰確認結束連線訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+12
+FUNCTION-CODE
+X(2)
+30
+MESSAGE-TYPE
+X(2)
+07
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+
+1.SUBSYSTEM-NAME      ：12  -->  連線子系統。
+2.FUNCTION-CODE       ：30  -->  離線作業。
+3.MESSAGE-TYPE        ：07  -->  確認結束訊息。
+4.SYSTEM-DATE         ︰送出訊息時的系統日期。
+5.SYSTEM-TIME         ：送出訊息時的系統時間。
+6.STATUS-CODE         ：其值0000(SUCCESS)。
+
+
+MESSAGE ID︰F310
+MESSAGE NAME︰起始訊息(FILE-BASE)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+00
+MESSAGE-TYPE
+X(2)
+00
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+發送端之ID
+DESTINATION-MBID
+X(10)
+目的端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+28
+BODY
+FILE-CODE
+X(5)
+
+FILE-SIZE
+9(8)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+INIT-SUBID
+X(10)
+
+FILE-CODE︰檔案代號        FILE-SIZE︰資料檔案之大小(以byte為單位)
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+TRX-ID：TRANSACTION ID，傳送流水序號，每一會員之SOURCE MBID+TRX-ID為唯一，不可重複，不可使用”0000000000”
+SUBJECT-ID：送出單位所賦予該次傳送檔案之作業代號，以供接收單位回覆該檔案處理結果時帶回給資訊交換平台及送出單位識別，每一會員之SOURCE-MBID + SUBJECT-ID + DESTINATION-MBID為唯一，不可重覆，不可使用”0000000000”
+PROTOCOL︰傳輸協定註記
+0:RAW DATA
+1:FIX
+2:XML
+3:SWIFT
+
+SIGNATURE︰簽章註記
+0： 無簽章
+1： 簽章
+ENCRYPTION︰加密註記
+0： 無加密
+1： 加密
+CA︰認證註記
+    0：無認證
+1：TAICA
+2：金融憑證
+3：工商憑證
+4：ETMP憑證
+POS-DUP-FLAG
+0：無可能重複註記
+1：可能重複註記
+INIT-SUBID
+“ “ ：此檔案為主動傳送 ，必為空白
+：此檔案為回覆之前SUBID 之回覆檔  MESSAGE ID︰F311
+MESSAGE NAME︰回覆起始訊息
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+00
+MESSAGE-TYPE
+X(2)
+01
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE MBID
+X(10)
+目的端之ID
+DESTINATION MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY LENGTH
+9(4)
+28
+BODY
+FILE-CODE
+X(5)
+
+FILE-SIZE
+9(8)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+INIT-SUBID
+X(10)
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號      FILE-SIZE︰資料檔案之大小(以byte為單位)
+TRX-ID：其內容請填入與當次F310傳來之TRX-ID相同內容值
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+SUBJECT-ID：其內容值請填入F310所傳來之SUBJECT-ID內容值
+PROTOCOL︰其內容值請填入F310所傳來之傳輸協定註記
+SIGNATURE：其內容值請填入F310所傳來之簽章註記
+CA︰其內容值請填入F310所傳來之認證註記
+ENCRYPTION︰其內容值請填入F310所傳來之加密註記
+POS-DUP-FLAG：其內容值請填入F310所傳來之可能重複註記
+INIT-SUBID：其內容請填入與當次F310傳來之INIT-SUBID相同內容值
+會員之系統必須對其收到之資料內容檢查TRX-ID, SUBJCT-ID,如欄位內容與前接收資料相同，必須將之剔除，避免資料因線路瞬斷或其它原因造成之重複性問題。
+MESSAGE ID︰F312
+MESSAGE NAME︰傳送資料訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+01
+MESSAGE-TYPE
+X(2)
+02
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+傳送端之ID
+DESTINATION-MBID
+X(10)
+目的端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(5)
+
+EOF
+9(1)
+1或0
+DATA
+X(4000)
+
+
+FILE-CODE︰檔案代號
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+SUBJECT-ID：其內容值請填入F310所傳來之SUBJECT-ID內容值
+TRX-ID：TRANSACTION ID，傳送流水序號，每一會員之SOURCE-MBID+TRX-ID為唯一，不可重覆，不可使用”0000000000”
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+DATA︰資料檔案之內容
+
+
+MESSAGE ID︰F313
+MESSAGE NAME︰回覆資料訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+01
+MESSAGE-TYPE
+X(2)
+03
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+目的端之ID
+DESTINATION-MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+6
+BODY
+FILE-CODE
+X(5)
+
+EOF
+9(1)
+1或0
+
+
+STATUS-CODE︰請參考錯誤訊息對照表
+FILE-CODE︰檔案代號
+SUBJECT-ID：其內容值請填入與當次F312所傳來之SUBJECT-ID內容值
+TRX-ID：其內容請填入與當次F312傳來之TRX-ID相同內容值
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+EOF︰若為檔案最後一筆資料訊息填1，否則為0
+
+
+MESSAGE ID︰F314
+MESSAGE NAME︰接收確認訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+05
+MESSAGE-TYPE
+X(2)
+00
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+傳送端之ID
+DESTINATION-MBID
+X(10)
+目的端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+6
+BODY
+REPLY-FILE-CODE
+X(5)
+
+POS-DUP-FLAG
+X(1)
+
+
+SS通道：傳送 F314時：
+STATUS-CODE︰”0000”  資料接收正確
+“8XXX” 資料經驗章或解密之檢核後，發生之錯誤訊息。（請參照LIBTseca 安控API說明手冊之錯誤碼對照表）
+BODY-LENGTH︰訊息格式中BODY之長度
+REPLY-FILE-CODE：回覆之前確認接收之檔案代號
+TRX-ID：TRANSACTION ID，傳送流水序號，每一會員之SOURCE-MBID+TRX-ID為唯一，不可重覆，不可使用”0000000000”
+SUBJECT-ID：回覆單位將原先由送出單位所賦予之當次檔案作業代號(F310/F320之SUBJECT-ID)填入此欄位，以供原送出該檔案之單位識別該檔案已被接收
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+POS-DUP-FLAG：可能重複註記
+之前已針對某特定SUBJECT-ID 回覆過接收確認訊息，當再次收到可能重複傳送之交易/檔案時，請不要再主動傳送接收確認訊息。
+
+當資料接收方收到檔案/交易資料並回覆後，視作業是否需作驗章或解密之檢核後，立即發動此作業由送出通道通知原傳送方，確認該筆資料已接收。
+
+
+MESSAGE ID︰F315
+MESSAGE NAME︰回覆接收確認訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+05
+MESSAGE-TYPE
+X(2)
+01
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+目的端之ID
+DESTINATION-MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+6
+BODY
+REPLY-FILE-CODE
+X(5)
+
+POS-DUP-FLAG
+X(1)
+
+
+SS通道：會員傳送F314後，平台將回覆 F315，F315之
+STATUS-CODE： ”0000”  資料接收正確
+“XXXX”  資料經平台檢核錯誤
+TR/FR通道：接收平台傳送F314後，會員將回覆 F315，F315之
+STATUS-CODE： ”0000”  資料接收正確
+
+BODY-LENGTH︰訊息格式中BODY之長度
+STATUS-CODE︰請參考錯誤訊息對照表
+TRX-ID：其內容請填入與當次F314傳來之TRX-ID相同內容值
+SUBJECT-ID：其內容請填入與當次F314傳來之REPLY-SUBJECT-ID相同內容值
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+REPLY-FILE-CODE：回覆之前確認接收之檔案代號，其內容請填入與當次F314傳來之REPLY-FILE-CODE相同內容值
+POS-DUP-FLAG：可能重複註記
+
+
+MESSAGE ID︰F316(取消)
+MESSAGE NAME︰要求傳送檔案資料訊息(4K)
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+02
+MESSAGE-TYPE
+X(2)
+04
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+傳送端之ID
+DESTINATION-MBID
+X(10)
+目的端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+BODY-LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(5)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+REQUEST-MESSAGE
+X(4000)
+
+BODY-LENGTH︰訊息格式中BODY之長度
+FILE-CODE︰要求傳送之檔案代號
+TRX-ID：TRANSACTION ID，傳送流水序號，每一會員之SOURCE MBID+TRX-ID為唯一，不可重覆，不可使用”0000000000”
+SUBJECT-ID：送出單位所賦予該次傳送檔案之作業代號，以供接收單位回覆該檔案處理結果時帶回給資訊交換平台及送出單位識別，每一會員之SOURCE-MBID + SUBJECT-ID + DESTINATION-MBID為唯一，不可重覆，不可使用”0000000000”
+PROTOCOL︰傳輸模式註記
+SIGNATURE：簽章註記
+CA︰認證註記
+ENCRYPTION︰加密註記
+POS-DUP-FLAG：可能重複註記
+REQUEST-MESSAGE︰由傳送介面送出之訊息內容，內容為針對各業務需求所訂定之查詢參數欄位
+MESSAGE ID︰F317(取消)
+MESSAGE NAME︰回覆要求傳送檔案資料訊息(4K)
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+02
+MESSAGE-TYPE
+X(2)
+05
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE MBID
+X(10)
+目的端之ID
+DESTINATION MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+BODY- LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(5)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+RESPONSE-MESSAGE
+X(4000)
+
+
+FILE-CODE︰請填入與F316相同之檔案代號
+STATUS-CODE︰請參考錯誤訊息對照表
+TRX-ID：其內容請填入與當次F316傳來之TRX-ID相同內容值
+SUBJECT-ID：請填入與F316相同之SUBJECT-ID內容值
+PROTOCOL︰請填入與F316相同之傳輸模式註記
+SIGNATURE：請填入與F316相同之簽章註記
+CA︰請填入與F316相同之認證註記
+ENCRYPTION︰請填入與F316相同之加密註記
+POS-DUP-FLAG：可能重複註記
+RESPONSE-MESSAGE︰由接收介面送出之單筆訊息內容
+
+MESSAGE ID︰F318
+MESSAGE NAME︰待確認交易通知訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+05
+MESSAGE-TYPE
+X(2)
+18
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+交換平台之ID
+DESTINATION-MBID
+X(10)
+
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+16
+BODY
+REPLY-FILE-CODE
+X(5)
+
+REPLY-MBID
+X(10)
+
+POS-DUP-FLAG
+X(1)
+
+
+BODY-LENGTH︰訊息格式中BODY之長度
+TRX-ID：TRANSACTION ID，回覆前交易(F320)之原傳送流水序號
+SUBJECT-ID：回覆前交易(F320)之原SUBJECT-ID
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+DESTINATION-MBID：回覆前交易(F320)之原傳送端
+REPLY-MBID：回覆前交易(F320)之原目的端
+REPLY-FILE-CODE：回覆前交易(F320)之原檔案代號
+STATUS –CODE ： ”1006” 線路問題
+                “1007” TIMEOUT
+                “1008” 此筆資料從來沒送過(目的端TR未連線)
+
+
+MESSAGE ID︰F319
+MESSAGE NAME︰回覆待確認交易訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+05
+MESSAGE-TYPE
+X(2)
+19
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+
+DESTINATION-MBID
+X(10)
+交換平台之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+16
+BODY
+REPLY-FILE-CODE
+X(5)
+
+REPLY-MBID
+X(10)
+
+POS-DUP-FLAG
+X(1)
+
+
+BODY-LENGTH︰訊息格式中BODY之長度
+STATUS-CODE︰請參考錯誤訊息對照表
+TRX-ID：TRANSACTION ID，請填入與F318相同之傳送流水序號
+SUBJECT-ID：請填入與F318相同之SUBJECT-ID
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+SOURCE-MBID：請填入與F318相同之DESTINATION-MBID
+REPLY-MBID：請填入與F318相同之原目的端
+REPLY-FILE-CODE：請填入與F318相同之檔案代號
+
+
+MESSAGE ID︰F320
+MESSAGE NAME︰傳送交易訊息(4K)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+02
+MESSAGE-TYPE
+X(2)
+14
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+傳送端之ID
+DESTINATION-MBID
+X(10)
+目的端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY-LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(5)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+REQUEST-MESSAGE
+X(4000)
+
+BODY-LENGTH︰訊息格式中BODY之長度        FILE-CODE︰檔案代號
+TRX-ID：TRANSACTION ID，傳送流水序號，每一會員之SOURCE MBID+TRX-ID為唯一，不可重覆，不可使用”0000000000”
+SUBJECT-ID：送出單位所賦予該筆交易資訊之作業代號，以供接收單位回覆該筆交易資訊處理結果時帶回給資訊交換平台及送出單位識別，每一會員之SOURCE-MBID + SUBJECT-ID + DESTINATION-MBID為唯一，不可重覆，不可使用”0000000000”
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+PROTOCOL︰傳輸模式註記
+SIGNATURE：簽章註記
+CA︰認證註記
+ENCRYPTION︰加密註記
+POS-DUP-FLAG：可能重複註記
+REQUEST-MESSAGE︰由傳送介面送出之訊息內容，內容為針對各業務需求所訂定之欄位
+
+MESSAGE ID︰F321
+MESSAGE NAME︰回覆交易訊息(4K)
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+02
+MESSAGE-TYPE
+X(2)
+15
+MESSAEGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE MBID
+X(10)
+目的端之ID
+DESTINATION MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+業務雙方自定區
+BODY- LENGTH
+9(4)
+
+BODY
+FILE-CODE
+X(5)
+
+PROTOCOL
+X(1)
+
+SIGNATURE
+X(1)
+
+CA
+X(1)
+
+ENCRYPTION
+X(1)
+
+POS-DUP-FLAG
+X(1)
+
+RESPONSE-MESSAGE
+X(4000)
+
+
+FILE-CODE︰檔案代號
+STATUS-CODE︰請參考錯誤訊息對照表
+TRX-ID：其內容請填入與當次F320傳來之TRX-ID相同內容值
+SUBJECT-ID：請填入與F320相同之SUBJECT-ID內容值
+RESERVE-AREA：業務雙方自定區，欄位之使用由雙方自行訂定，平台不作檢核
+PROTOCOL︰傳輸模式註記
+SIGNATURE：簽章註記
+CA︰認證註記
+ENCRYPTION︰加密註記
+POS-DUP-FLAG：可能重複註記
+RESPONSE-MESSAGE︰由接收介面送出之訊息內容
+
+MESSAGE ID︰F330
+MESSAGE NAME︰查詢訊息被處理情形
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+03
+MESSAGE-TYPE
+X(2)
+16
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+傳送端之ID
+DESTINATION-MBID
+X(10)
+資訊交換平台之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+請填空白
+BODY-LENGTH
+9(4)
+41
+BODY
+QUERY-KIND
+X(1)
+
+QUERY-SOURCE-MBID
+X(10)
+
+QUERY-DESTINATION-MBID
+X(10)
+
+QUERY-TRX-ID
+X(10)
+
+QUERY-SUBJECT-ID
+X(10)
+
+BODY-LENGTH︰訊息格式中BODY之長度
+TRX-ID︰TRANSACTION ID，必填欄位，傳送流水序號，每一會員之SOURCE-MBID + TRX-ID為唯一，不可重覆，不可使用”0000000000”
+SUBJECT-ID：送出單位所賦予該筆交易資訊之作業代號，以供接收單位回覆該筆交易資訊處理結果時帶回給資訊交換平台及送出單位識別，每一會員之SOURCE-MBID + SUBJECT-ID + DESTINATION-MBID為唯一，不可重覆，不可使用”0000000000”
+QUERY-KIND：
+“1”:必填欄位為QUERY-SOURCE-MBID，QUERY-TRX-ID
+“2”:必填欄位為QUERY-SOURCE-MBID，QUERY-DESTINATION-MBID，QUERY-SUBJECT-ID”
+“3”:查詢會員連線狀況，必填欄位為QUERY-DESTINATION-MBID
+QUERY-SOURCE-MBID：選擇填入欄位，請填入欲查詢之某筆原送出端之值，
+QUERY-DESTINATION-MBID：選擇填入欄位，請填入欲查詢之某筆原接收端之值
+QUERY-TRX-ID：選擇填入欄位，請填入欲查詢之某筆已送出之TRX-ID值
+QUERY-SUBJECT-ID：選擇填入欄位，如欲指定查詢某TRX-ID訊息且屬於某SUBJECT-ID之訊息時，請填入欲查詢之某筆已送出之SUBJECT-ID值，否則請填入”0000000000”
+
+MESSAGE ID︰F331
+MESSAGE NAME︰回覆查詢訊息被處理情形
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+03
+MESSAGE-TYPE
+X(2)
+17
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+
+FILE
+TRANSFER
+HEADER
+SOURCE-MBID
+X(10)
+資訊交換平台之ID
+DESTINATION-MBID
+X(10)
+傳送端之ID
+SUBJECT-ID
+X(10)
+
+TRX-ID
+X(10)
+
+RESERVE AREA
+X(10)
+空白
+BODY-LENGTH
+9(4)
+48
+BODY
+QUERY-KIND
+X(1)
+
+QUERY-SOURCE-MBID
+X(10)
+
+QUERY-DESTINATION-MBID
+X(10)
+
+QUERY-TRX-ID
+X(10)
+
+QUERY-SUBJECT-ID
+X(10)
+
+REPLY-STATUS
+X(4)
+
+REPLY-SS-STATUS
+X(1)
+
+REPLY-FR-STATUS
+X(1)
+
+REPLY-TR-STATUS
+X(1)
+
+BODY-LENGTH︰訊息格式中BODY之長度
+TRX-ID︰其內容請填入與當次F330傳來之TRX-ID相同內容值
+QUERY-KIND：其內容請填入與當次F330傳來之QUERY-KIND相同內容值
+QUERY-SOURCE-MBID：其內容請填入與當次F330傳來之QUERY-SOURCE-MBID相同內容值
+QUERY-DESTINATION-MBID：其內容請填入與當次F330傳來之QUERY- DESTINATION -MBID相同內容值
+QUERY-TRX-ID：其內容請填入與當次F330傳來之QUERY-TRX-ID相同內容值
+QUERY-SUBJECT-ID：其內容請填入與當次F330傳來之QUERY-SUBJECT-ID相同內容值
+
+
+REPLY-STATUS：
+  QUERY-KIND = “1” 時，REPLY-STATUS 如下：
+“0001”:資訊交換平台未收到該筆被查詢資料
+“0002”:該筆資料已存在資訊交換平台，但尚未傳送至指定之目的端
+“0003”:該筆資料已存在資訊交換平台，且已傳送至指定之目的端
+
+QUERY-KIND = “2” 時，REPLY-STATUS 如下：
+“0011”:資訊交換平台未收到該筆被查詢資料
+“0012”:該筆資料已存在資訊交換平台，但尚未傳送至指定之目的端
+“0013”:該筆檔案資料已存在資訊交換平台，且已傳送至指定之目的端，但目的端尚未傳送確認接收訊息(F314)至資訊交換平台
+“0014”:該筆檔案資料已存在資訊交換平台，且已傳送至指定之目的端，且目的端已傳送確認接收訊息至資訊交換平台，但資訊交換平台尚未將確認接收訊息傳回傳送端
+“0015”:該筆檔案資料已存在資訊交換平台，且已傳送至指定之目的端，且目的端已傳送確認接收訊息至資訊交換平台，且資訊交換平台已將確認接收訊息傳回傳送端
+
+REPLY-SS-STATUS：”0” --- > SS連線狀態異常
+                 “1” --- > SS連線狀態正常
+REPLY-FR-STATUS：”0” --- > FR連線狀態異常
+                 “1” --- > FR連線狀態正常
+REPLY-TR-STATUS：”0” --- > TR連線狀態異常
+                 “1” --- > TR連線狀態正常
+MESSAGE ID︰F340
+MESSAGE NAME︰傳送確定連線訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+04
+MESSAGE-TYPE
+X(2)
+08
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+
+傳送端(SS)無資料傳送時，會員端每隔60秒須傳送一次，確定連線正常
+接收端(TR/FR)無資料接收時，交換平台每隔60秒須傳送一次，確定連線正常
+
+
+MESSAGE ID︰F341
+MESSAGE NAME︰回覆確定連線訊息
+
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+X(2)
+22
+FUNCTION-CODE
+X(2)
+04
+MESSAGE-TYPE
+X(2)
+09
+MESSAGE-DATE
+9(8)
+
+MESSAGE-TIME
+9(8)
+
+STATUS-CODE
+X(4)
+0000
+
+
+陸、錯誤訊息說明
+連線子系統錯誤訊息對照表
+STATUS
+CODE
+訊　息　內　容
+錯誤
+訊息代號
+會員 應 處 理 事 項
+0000
+SUCCEED
+ALL
+輸入下一筆訊息
+0001
+APPEND-NO ERROR
+L110
+檢查並更正APPEND-NO
+0002
+MBID ERROR
+L110
+檢查並更正MBID
+0003
+AP-CODE ERROR
+L110
+檢查並更正AP-CODE
+0004
+KEY-VALUE ERROR
+L110
+檢查並更正KEY-VALUE，檢核密碼
+0005
+SYSTEM NOT READY
+L110
+交換平台系統尚未READY, 請稍候
+0006
+TIMING ERROR
+L110
+作業時間錯誤
+0080
+MESSAGE-DATE ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0081
+SUBSYSTEM ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0082
+FUNCTION-CODE ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0083
+MESSAGE-TYPE ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0084
+MESSAGE-TIME ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0085
+STATUS-CODE ERROR
+ALL
+回到連線子系統重新連線或進入離線狀態
+0086
+SESSION SUSPENDED
+(此PVC停止作業)
+ALL
+進入離線狀態
+0089
+INTERNAL ERROR
+ALL
+回到連線子系統重新連線
+0091
+MESSAGE TIME OUT
+ALL
+回到連線子系統重新連線
+0092
+MESSAGE LENGTH ERR
+ALL
+回到連線子系統重新連線
+
+0093
+MESSAGE FORMAT ERR
+ALL
+回到連線子系統重新連線
+0094
+RCV/SEND MSG ERROR(斷線)
+ALL
+回到連線子系統重新連線
+0095
+UNKNOW MESSAGE
+(雙方訊息不同步)
+ALL
+回到連線子系統重新連線或進入離線狀態
+0096
+錯誤次數太多，(此PVC停止作業)
+ALL
+進入離線狀態
+0099
+CALL TSEC
+L110
+表示上次收到不明訊息，需重新連線並通知操作人員與證交所連絡
+
+
+檔案傳輸子系統錯誤訊息對照表
+STATUS
+CODE
+訊　息　內　容
+錯誤
+訊息代號
+證　券　商　應　處　理　事　項
+0000
+normal response
+所有訊息
+繼續下一個作業
+1006
+線路問題(待確認交易)
+F318
+F319
+1007
+TIMEOUT(待確認交易)
+F318
+F319
+1008
+此筆資料從來沒送過(目的端TR未連線) (待確認交易)
+F318
+F319
+1010
+illegal file code
+Fxx0
+回到傳輸子系統之開頭
+1011
+illegal EOF value
+Fxx0
+回到傳輸子系統之開頭
+1012
+illegal file size
+Fxx0
+回到傳輸子系統之開頭
+1013
+timing error
+Fxx0
+回到傳輸子系統之開頭
+1014
+file is not ready
+Fxx0
+所要求之檔案尚未完成
+1017
+file is ready but empty
+Fxx0
+所要求之檔案為空檔，繼續下一個作業
+1019
+abort by initiator
+F030
+回到傳輸子系統，繼續下一個作業
+1020
+trx-id not found
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1021
+duplicate trx-id
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1022
+sub-id not found
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1023
+illegal sub-id
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1024
+duplicate sub-id
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1025
+illegal protocol
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1026
+illegal signature
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1027
+illegal CA
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1028
+illegal encryption
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1029
+illegal init-subid
+Fxx0
+回到傳輸子系統，繼續下一個作業
+
+
+1030
+illegal trx-id
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1031
+Query kind err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1032
+Query-src-mbid err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1033
+Query-des-mbid err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1034
+Query-trx-id err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1035
+Query-subject-id err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1036
+Pos-dup-flag err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1037
+Response-msg err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1038
+Reply-mbid err
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1039
+Ft-header src-mbid不為 Query src/des  之一方
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1040
+File-code 與ctrl-header not match
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1041
+Src-mbid 未申請與des-mbid進行該項業務
+Fxx0
+回到傳輸子系統，繼續下一個作業
+1080
+illegal message date
+所有訊息
+回到連線子系統
+1081
+illegal subsystem name
+所有訊息
+回到連線子系統
+1082
+illegal function code
+所有訊息
+回到連線子系統
+1083
+illegal message type
+所有訊息
+回到連線子系統
+1084
+illegal message time
+所有訊息
+回到連線子系統
+1085
+illegal status code
+所有訊息
+回到連線子系統
+1086
+illegal src-mbid
+所有訊息
+回到連線子系統
+1087
+illegal des-mbid
+所有訊息
+回到連線子系統
+1088
+illegal body length
+所有訊息
+回到連線子系統
+1089
+internal error
+所有訊息
+回到連線子系統
+1092
+FT count error
+所有訊息
+回到連線子系統
+1093
+request count error
+所有訊息
+回到連線子系統
+
+1094
+確定連線次數太多
+所有訊息
+回到連線子系統
+1099
+CALL TSEC
+L010
+請打電話到證交所詢問
+柒、錯誤訊息處理說明
+
+主機連線因會員端之畫面及報表皆是由提供系統之資訊公司或會員之電腦部門所設計，所以畫面及訊息各家不同，由前幾章之介紹可了解交換平台與會員之間資料傳遞之基本架構及格式，如果有異常情況發生時，請先依提供系統之資訊公司或會員電腦部門所編之使用手冊處理，如果狀況仍無法排除，請記錄並留下當時的狀況及訊息，並與本公司電腦作業部連絡。
+
+
+捌、電腦作業注意事項
+
+會員之系統必須對其收到之資料內容檢查TRX-ID, SUBJCT-ID,如欄位內容與之前接收資料相同，必須將之剔除，避免資料因線路瞬斷或其它原因造成之重複性問題。
+
+資料之加密請針對完整檔案進行加密後，再傳送。資料之簽章請附加於完整資料檔案之後。
+
+接收確認作業，當資料接收方收到檔案/交易資料並回覆後，應立即發動此作業由送出通道通知原傳送方，確認該筆資料已接收。之前已針對某特定SUBJECT-ID 回覆過接收確認訊息，當再次收到可能重複傳送之交易/檔案時，請不要再主動傳送接收確認作業。
+
+待確認交易通知訊息作業，原傳送方接收此作業後應立即以自動或人工介入之方式主動向資料接收方查詢該筆資料是否成功。原傳送方應考慮資料傳送順序控管之必要性，以便進行後續交易傳輸作業。
+
+倘若無法順利傳送或接收作業時，請改以電話聯絡本公司電腦作業部查詢該作業情形。
+
+請至本公司網址”http://www.tse.com.tw/中文/文件下載/電腦規劃部、作業部/電腦規劃部、作業部作業手冊查詢一覽表”中下載「主機連線作業手冊」(TMP)。使用TCP/IP網路請另外下載「TCP/IP網路主機連線作業手冊」。使用資訊交換平台各連線單位請下載「資訊交換平台主機連線作業手冊」(ETMP)。
+
+
+PAGE
+
+
+送
+
+收
+
+收
+
+送
+
+收
+
+送
+
+收
+
+送
+
+檔案傳輸
+
+檔案傳輸
+
+檔案傳輸
+
+送
+
+收
+
+收
+
+送
+
+送
+
+收
+
+收
+
+送
+
+交易訊息
+
+交易訊息
+
+交易訊息
+
+業務單位
+
+業務單位
+
+資訊交換平台
+
+未連線狀態
+
+連線作業
+結束連線作業
+
+資料傳輸狀態
+檔案傳輸作業
+接收確認作業
+交易訊息傳輸作業
+待確認交易通知訊息作業
+確定連線作業
+
+發生任何異
+常狀況
+
+- 38 -
+
+開機通知訊息L110
+
+確認開機通知訊息L120
+
+通知登錄訊息L130
+
+AP啟動訊息L150
+
+登錄訊息L140
+
+確認AP啟動訊息L160
+
+資訊交換平台
+
+業務單位
+
+回覆要求傳送檔案資料訊息
+F317
+
+重覆交換資料訊息直到資料傳送完成為止
+
+回覆資料訊息F313
+
+資料訊息F312
+
+回覆起始訊息F311
+
+起始訊息F310
+
+資料接收單位
+
+資料傳送單位
+
+資料接收單位
+
+要求傳送檔案資料訊息F316
+
+回覆接收確認訊息F315
+
+接收確認訊息F314
+
+資料接收單位
+
+資料傳送單位
+
+資料傳送單位
+
+回覆結束連線訊息L180
+
+結束連線訊息L170
+
+資訊交換平台
+
+業務單位
+
+回覆查詢訊息被處理情形訊息F331
+331
+
+查詢訊息被處理情形訊息F330
+
+資訊交換平台
+
+資料傳送單位
+
+- 8 -
+
+- 7 -
+
+- 6 -
+
+- 5 -
+
+資訊交換平台
+
+B業務單位
+
+A業務單位
+
+送
+
+收
+
+收
+
+送
+
+送
+
+收
+
+收
+
+送
+
+檔案傳輸
+
+檔案傳輸
+
+檔案傳輸
+
+檔案傳輸作業
+
+檔案傳輸作業
+
+(1)
+
+(2)
+
+接收確認作業
+
+接收確認作業
+
+(3)
+
+(4)
+
+(4)
+
+(3)
+
+F313
+
+F312
+
+(2)
+
+(1)
+
+F310
+
+F311
+
+資訊交換平台
+
+B業務單位
+
+A業務單位
+
+送
+
+收
+
+收
+
+送
+
+送
+
+收
+
+收
+
+送
+
+檔案傳輸
+
+檔案傳輸
+
+檔案傳輸
+
+F313
+
+F312
+
+F311
+
+F310
+
+F315
+
+F314
+
+F315
+
+F314
+
+
+(2)
+
+(1)
+
+交易訊息傳輸作業
+
+
+交易訊息傳輸作業
+
+
+資訊交換平台
+
+B業務單位
+
+A業務單位
+
+送
+
+收
+
+收
+
+送
+
+送
+
+收
+
+收
+
+送
+
+交易訊息
+
+交易訊息
+
+交易訊息
+
+- 39 -
+
+- 4 -
+
+
+完成連線作業
+
+- 3 -
+
+- 2 -
+
+- 1 -
+
+- 47 -
+
+- 46 -
+
+- 45 -1-
+
+- 44 -
+
+- 43 -
+
+資訊交換平台
+
+B業務單位
+
+A業務單位
+
+待確認交易通知訊息F318
+
+- 42 -
+
+回覆待確認交易訊息F319
+
+- 41 -
+
+資料原傳送方
+
+資訊交換平台
+
+(2.1)
+
+F318
+
+F319
+
+收
+
+送
+
+- 40 -
+
+- 39 -
+
+- 45 -
+
+- 37 -
+
+- 36 -
+
+- 35 -
+
+- 34 -
+
+- 33 -
+
+- 32 -
+
+- 31 -
+
+- 30 -
+
+- 29 -
+
+- 28 -
+
+- 27 -
+
+- 26 -
+
+- 25 -
+
+- 24 -
+
+- 23 -
+
+- 22 -
+
+- 21 -
+
+- 20 -
+
+- 19 -
+
+- 18 -
+
+- 17 -
+
+- 16 -
+
+- 15 -
+
+- 14 -
+
+- 13 -
+
+確定連線訊息F340
+
+資訊交換平台
+資料接收單位
+
+資料傳送單位
+資訊交換平台
+
+回覆確定連線訊息F341
+
+傳送交易訊息F320
+
+回覆交易訊息F321
+
+ EMBED Visio.Drawing.6
+
+
+資料接收單位
+
+資料傳送單位
+
+業務應用程式
+
+Socket通訊處理層
+
+
+業務應用程式
+
+Socket通訊處理層
+
+
+TMP
+
+TMP
+
+H
+
+T
+
+TMP
+
+TMP
+
+H
+
+T
+
+TMP
+
+H
+
+T
+
+TMP
+
+H
+
+T
+
+- 12 -
+
+- 11 -
+
+- 10 -
+
+- 9 -
+
+(4)
+
+(3)
+
+接收確認作業
+
+接收確認作業
+
+F315
+
+F314
+
+F315
+
+F314
+
+
+F321
+
+F320
+
+
+F321
+
+F320
+
+(4)
+
+(3)
+
+(2)
+
+(1)
+
+資訊交換平台
+
+B業務單位
+
+A業務單位
+
+送
+
+收
+
+收
+
+送
+
+送
+
+收
+
+收
+
+送
+
+檔案傳輸
+
+檔案傳輸
+
+檔案傳輸

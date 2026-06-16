@@ -1,0 +1,6 @@
+interface:
+  display_name: "Taiwan Stock Rules"
+  short_description: "TWSE broker manual rule knowledge"
+  default_prompt: "Use $taiwan-stock-rules to answer a Taiwan stock market rule question with TWSE manual sources."
+policy:
+  allow_implicit_invocation: true

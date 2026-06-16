@@ -1,0 +1,1839 @@
+# O-033-A10 ETN申購賣回平台--證券商端電腦作業手冊
+
+- 更新日期: 112.12.20
+- 來源檔案: assets/source-files/O-033-A10_ETN申購賣回平台--證券商端電腦作業手冊.doc
+- 原始 URL: https://dsp.twse.com.tw/public/static/downloads/computerPlanningOperationsDepartment/O-033-A10 ETN申購賣回平台--證券商端電腦作業手冊_20231220142325.doc
+- SHA256: ce97855a4a9edec7f3ba747203b23831f460f3aae71bc0ec989c680de0804fce
+- 抽取方式: textutil
+
+---
+
+ETN申購賣回平台---證券商端電腦作業說明
+
+壹、系統功能	2
+
+貳、電腦作業流程	4
+
+參、訊息格式說明	7
+
+肆、錯誤訊息處理說明	44
+
+伍、電腦作業注意事項	47
+
+陸、網際網路傳輸平台	48
+
+
+                台灣證券交易所
+ETN申購賣回平台---證券商電腦作業手冊發行紀錄
+發行日期
+內  容  異  動  說  明
+版本
+20181031
+新發行
+(預計實施日期:108/04/29)
+V1.0
+20190104
+1.修改：ME3 MEF MEG MEK
+2.文字勘誤
+V1.1
+20190329
+1.調整ME3主動傳送後亦可要求查詢。
+2.調整MEC 截止時間
+3.新增註解：中文請使用BIG5碼
+4.文字勘誤
+5.新增網際網路傳輸平台登入說明
+6.調整ME3 欄位說明
+V1.2
+20231220
+1.修改：MEN欄位說明。
+2.新增網際網路傳輸平台說明文字
+V1.3
+
+
+壹、系統功能
+一、架構說明︰
+
+
+說明︰
+(一)利用單筆訊息與檔案傳輸通訊協定進行資料接收。
+(二)傳送筆數限制：略。
+(三)傳送次數限制：30次。
+(四)傳送申報作業檔案，為證券商傳送一筆申報檔，即回覆一筆錯誤訊息檔，必需等到交易所回覆錯誤訊息檔回來，方可再進行另一筆傳送。
+(五)交易所回覆的錯誤訊息檔，將有錯的資料回覆ERROR CODE，正確的資料回覆”00”，證券商必需將有錯的資料根據回覆ERROR CODE，更改資料重覆傳送，已正確的資料不必再傳送，如此來回作業，直到錯誤訊息檔都為”00”為止，才可說是作業完成。
+
+
+二、業務範圍
+證券商ETN作業(上市櫃合併)之業務共有以下幾項︰
+(一)證券商之申購賣回基本資料檔(PRF)查詢作業(ME3)。
+(二)證券商之剩餘可供申請單位數查詢作業(MEN)。
+(三)證券商之申請申購賣回檔申報作業(ME4)。
+(四)證券商之申請申購賣回檔查詢作業(ME5)。
+(五)證券商之申請賣回部位圈存檔查詢作業(ME6)。
+(六)證券商之初審回覆檔查詢作業(MEC)。
+(七)證券商之T日實際申購賣回價金檔查詢作業(MEF)。
+(八)證券商之申購足額明細確認檔查詢作業(MEG)。
+(九)證券商之申購足額明細確認檔申報作業(MEH)。
+(十)證券商之申購賣回足額明細確認檔(複審)查詢作業(MEK)。
+(十一)證券商之申購/賣回款項應收應付檔查詢作業(MEO)。
+(十二)證券商之投資人名冊檔查詢作業(MEP)。
+(十三)證券商之終止上市款項應收應付檔查詢作業(MES)。
+
+
+貳、電腦作業流程
+(1) 申購贖回流程
+ EMBED Visio.Drawing.11
+ EMBED Visio.Drawing.11
+
+(2)終止上市流程
+ EMBED Visio.Drawing.15
+
+
+
+參、訊息格式說明
+
+由前一章之說明可知交易所與證券商之間的資料傳遞必定是以事先約好的格式相互傳送，證券商在送出檔案前都必須檢查每一個欄位，若欄位需填入中文，編碼請使用BIG5碼。證交所電腦會累計欄位錯誤的次數，若超過30次，剩餘資料將回錯誤次數太多而不繼續處理。
+本章將對各約定之格式逐一說明。
+
+
+一、證券商之申購賣回基本資料檔(PRF)查詢作業
+
+(一) 要求申購賣回基本資料檔(PRF)
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申購賣回基本資料檔(PRF)之單筆訊息
+                          格式(ME3)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+ME3
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“03”說明BODY的長度
+    4.FILE-CODE     ︰“ME3”表要求申購賣回基本資料檔(PRF) 檔查詢
+
+(二) 申購賣回基本資料檔(PRF)
+檔案結構：U　    檔案長度：200　        檔案代號：ME3
+欄位名稱
+長度
+說　　　　　　　明
+ME3-ETN-ID
+X(06)
+ETN代號
+ME3-PROC-DATE
+9(08)
+處理日
+ME3-ANNOUNCE-YMD
+9(08)
+公告日(T)
+ME3-NAV
+9(5)v9(4)
+收盤指標價值
+ME3-BASE-VALUE
+9(08)
+基本單位數
+ME3-TOTAL-ISSUES
+9(13)
+發行單位數
+ME3-ISSUES-DIFF
+S9(9)
+交易差異數
+ME3-CRT-C
+X(01)
+現金申購
+ME3-RDM-C
+X(01)
+現金賣回
+ME3-PRE-CRE-VALUE
+9(14)
+每預收申購款
+ME3-PRE-RDM-VALUE
+9(14)
+每預估賣回款
+ME3-CRE-VALUE-P
+9(14)
+前一日每實際申購總價金
+ME3-RDM-VALUE-P
+9(14)
+前一日每實際賣回總價金
+ME3-DIFF-CRE-VALUE
+S9(14)
+前一日申購總價金差異額
+ME3-DIFF-RDM-VALUE
+S9(14)
+前一日賣回總價金差異額
+ME3-LAST-TRADE-DATE
+9(08)
+最後交易日
+ME3-EXPIRE-DATE
+9(08)
+到期日
+ME3-LAST-LIST-DATE
+9(08)
+下市日
+ME3-CRT-STOP-TIME
+9(04)
+申購截止時間
+ME3-RDM-STOP-TIME
+9(04)
+賣回截止時間
+FILLER
+X(18)
+空白
+欄位說明：
+ME3-PROC-DATE: 處理日為發行人上傳之營業日期。
+ME3-ANNOUNCE-YMD: 公告日。
+ME3-NAV: 收盤指標價值若因跨時區無法及時結算，則以前一日收盤指標價值替代。
+ME3-BASE-VALUE: 基本單位數為一個申購賣回數量(單位:股)。
+發行單位數計算方式: T-1已發行單位數 + T-1交易差異數。
+交易差異數計算方式: +T-1初審成功申購-T-1初審成功賣回
+                  -T-2複審失敗申購
+                  +T-1發行人申報增加庫存造市用單位數。
+                         (賣回無複審失敗)
+ME3-CRT-C: 現金申購，Y(有)或N(無)。
+ME3-RDM-C: 現金賣回，Y(有)或N(無)。
+ME3-PRE-CRE-VALUE、ME3-PRE-RDM-VALUE:為預估金額，僅供參考。
+ME3-PRE-CRE-VALUE: 若ETN無開放申購，此值為0。
+ME3-CRE-VALUE-P: 若ETN無開放申購，此值為0。
+ME3-DIFF-CRE-VALUE: 若ETN無開放申購，此值為0。
+ME3-CRE-VALUE-P、ME3-RDM-VALUE-P、ME3-DIFF-CRE-VALUE、ME3-DIFF-RDM-VALUE: 跨時區ETN以處理日可算得最新資料替代。
+最後交易日、到期日、下市日為發行人於公開資訊觀測站申報資料。
+ME3-CRT-STOP-TIME: 申購截止時間(HHMM)。
+ME3-RDM-STOP-TIME: 賣回截止時間(HHMM)。
+查詢開放時間為0800 – 1530。
+交易所0800主動傳送，證券商亦可要求查詢。
+
+二、證券商之剩餘可供申請單位數查詢作業
+
+(一) 要求剩餘可供申請單位數
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送剩餘可供申請單位數之單筆訊息
+                          格式(MEN)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+09
+BODY
+FILE-CODE
+X(3)
+MEN
+ETN-ID
+X(6)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“09”說明BODY的長度
+    4.FILE-CODE     ︰“MEN”表要求剩餘可供申請單位數檔查詢
+    5.ETN-ID        ︰ 填入所要求傳送資料之ETN代號
+(二) 剩餘可供申請單位數
+檔案結構：U　    檔案長度 50　        檔案代號：MEN
+欄位名稱
+長度
+說　　　　　　　明
+MEN-ETN-ID
+X(06)
+ETN代號
+MEN-CRE-REMAIN
+9(13)
+剩餘可供申請單位數
+FILLER
+X(31)
+空白
+欄位說明：
+剩餘可供申請單位數僅代表當下數值，並非保證可申請。
+當日每筆申購申請及發行人申報增加庫存造市用單位數即時累加從當日可供申請單位數扣除後為剩餘可供申請單位數，賣回申請不釋出。
+當日（T）可供申請單位數：最新申報生效發行單位數-（T日已發行單位數+T-1日賣回單位數）。
+※賣回俟券註銷才釋出額度，採從嚴控管。
+※最新申報生效發行單位數係指主管機關核准生效可發行單位數。
+發行人若無開放申購，查詢之額度為提供發行人申報增加庫存造市用單位數使用。
+查詢開放時間為0900 – 1530。
+三、證券商之申請申購賣回檔申報作業
+(一) 申請申購賣回申報檔
+           檔案結構：U　    檔案長度：100　      檔案代號：ME4
+欄位名稱
+長　度
+說明
+ME4-TRAN-CODE
+X(01)
+異動碼
+ME4-ETN-ID
+X(06)
+ETN代號
+ME4-BROKER-ID
+X(04)
+券商代表號
+ME4-TX-DATE
+9(08)
+申請日
+ME4-SEQNO
+9(03)
+流水號
+ME4-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+ME4-APPLICATION-UNITS
+9(03)
+申請基數
+ME4-ACNT-BROKER
+X(04)
+開戶證券商代號
+ME4-ACNT-IVACNO
+9(07)
+申請人帳號
+ME4-ID-CODE
+X(03)
+身份碼
+ME4-CONTACT
+X(20)
+證券商連絡人
+ME4-CONTACT-TEL
+X(20)
+證券商連絡人電話
+ME4-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+FILLER
+X(18)
+空白
+
+欄位說明：
+{ME4-ETN-ID, ME4-BROKER-ID, ME4-TX-DATE, ME4-SEQNO}為唯一鍵值
+ME4-TRAN-CODE: I(新增)或D(刪除)。
+交易種類若為賣回，新增單會對集保庫存部位進行即時圈存；刪除單則會對集保庫存部位進行即時解圈。
+如欲刪除賣回單，解圈資料須確保與已圈存資料一致，否則會回傳錯誤訊息。
+如欲對已上傳資料進行修改，請先進行刪除後，接收到成功訊息後再新增。
+ME4-BROKER-ID: 總公司代表號，一般券商第四碼需為0；大型券商第三四碼需為00。
+ME4-TX-DATE: 申請日日期。
+ME4-SEQNO: 流水號，最大值999。(最多1000筆)
+ME4-TX-KIND: 1(申購)或2(賣回)。
+ME4-APPLICATION-UNITS: 申購賣回基本單位數之數量(BASKET)。
+ME4-ACNT-BROKER: 證券商代號。
+ME4-ACNT-IVACNO: 申請人帳號。
+ME4-CONTACT、ME4-CONTACT-TEL: 證券商聯絡人及電話。
+申請為額度內申報，可使用MEN進行剩餘可供申請單位數查詢。
+申報開放時間為0900 – 各ETN截止時間。
+單次上傳最大上限為5000筆
+
+(二) 申請申購賣回申報正確或錯誤回覆檔
+           檔案結構：U　    檔案長度：100　    檔案代號：ME4
+欄位名稱
+長　度
+說明
+ME4-TRAN-CODE
+X(01)
+異動碼
+ME4-ETN-ID
+X(06)
+ETN代號
+ME4-BROKER-ID
+X(04)
+券商代表號
+ME4-TX-DATE
+9(08)
+申請日
+ME4-SEQNO
+9(03)
+流水號
+ME4-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+ME4-APPLICATION-UNITS
+9(03)
+申請基數
+ME4-ACNT-BROKER
+X(04)
+開戶證券商代號
+ME4-ACNT-IVACNO
+9(07)
+申請人帳號
+ME4-ID-CODE
+X(03)
+身份碼
+ME4-CONTACT
+X(20)
+證券商連絡人
+ME4-CONTACT-TEL
+X(20)
+證券商連絡人電話
+ME4-ERROR-CODE
+X(02)
+錯誤代碼
+FILLER
+X(18)
+空白
+
+欄位說明：
+每一筆資料皆會回覆正確或錯誤訊息於ME4-ERROR-CODE欄位，回      覆 ”00”為資料正確，其他代碼表示有錯，請參照錯誤訊息處理說明。
+進行即時圈存/即時解圈若發生錯誤代碼為25或26之錯誤，表示圈存資料仍於在途中，請依錯誤內容指示聯繫交易所，稍後重傳ME4。
+申贖期間終止時，圈存在途中視為圈存失敗；解圈在途中視為解圈成功。
+若單次申報含賣回之刪除單接續同一筆賣回之新增單，由於同一批資料會同時傳送集保，解圈尚未成功前，圈存會出現錯誤代碼為44之錯誤，表示解圈仍在途中，不可異動。(若新增接續同一筆刪除，結果亦同)
+圈存結果可透過ME5或ME6(1530後)進行確認。
+四、證券商之申請申購賣回檔查詢作業
+(一) 要求申請申購賣回檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申請申購賣回檔之單筆訊息
+                          格式(ME5)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+07
+BODY
+FILE-CODE
+X(3)
+ME5
+BRK-ID
+X(4)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“07”說明BODY的長度
+    4.FILE-CODE     ︰“ME5”表要求申請申購賣回檔查詢
+5.BRK-ID        ︰ 填入所要求傳送資料之證券商代號
+                   若填入****表示查詢整個集團
+
+(二) 申請申購賣回檔
+檔案結構：U　    檔案長度 100　        檔案代號：ME5
+欄位名稱
+長度
+說　　　　　　　明
+ME5-ETN-ID
+X(06)
+ETN代號
+ME5-BROKER-ID
+X(04)
+券商代表號
+ME5-TX-DATE
+9(08)
+申請日
+ME5-SEQNO
+9(03)
+流水號
+ME5-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+ME5-APPLICATION-UNITS
+9(03)
+申請基數
+ME5-ACNT-BROKER
+X(04)
+開戶證券商代號
+ME5-ACNT-IVACNO
+9(07)
+申請人帳號
+ME5-ID-CODE
+X(03)
+身份碼
+ME5-CONTACT
+X(20)
+證券商連絡人
+ME5-CONTACT-TEL
+X(20)
+證券商連絡人電話
+FILLER
+X(21)
+空白
+欄位說明：
+查詢開放時間為0900 – 1530。
+五、證券商之申請賣回部位圈存檔查詢作業
+(一) 要求申請賣回部位圈存檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申請賣回部位圈存檔之單筆訊息
+                          格式(ME6)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+07
+BODY
+FILE-CODE
+X(3)
+ME6
+BRK-ID
+X(4)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“07”說明BODY的長度
+    4.FILE-CODE     ︰“ME6”表要求申請賣回部位圈存檔查詢
+5.BRK-ID        ︰ 填入所要求傳送資料之證券商代號
+                   若填入****表示查詢整個集團
+
+
+(二) 申請賣回部位圈存檔
+檔案結構：U　    檔案長度 100　        檔案代號：ME6
+欄位名稱
+長度
+說　　　　　　　明
+ME6-ETN-ID
+X(06)
+ETN代號
+ME6-BROKER-ID
+X(04)
+券商代表號
+ME6-TX-DATE
+9(08)
+申請日
+ME6-SEQNO
+9(03)
+流水號
+ME6-TX-KIND
+X(01)
+交易種類：2賣回
+ME6-APPLICATION-UNITS
+9(03)
+申請基數
+ME6-ACNT-BROKER
+X(04)
+開戶證券商代號
+ME6-ACNT-IVACNO
+9(07)
+申請人帳號
+ME6-STATUS
+X(01)
+庫存部位(Y:OK / N:ERROR)
+ME6-CONTACT
+X(20)
+證券商連絡人
+ME6-CONTACT-TEL
+X(20)
+證券商連絡人電話
+FILLER
+X(23)
+空白
+欄位說明：
+各檔ETN申贖截止時間最晚為1530。
+查詢開放時間為1530 – 1800。
+
+六、證券商之初審回覆檔查詢作業
+(一) 要求初審回覆檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送初審回覆檔之單筆訊息
+                          格式(MEC)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+07
+BODY
+FILE-CODE
+X(3)
+MEC
+BRK-ID
+X(4)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“07”說明BODY的長度
+    4.FILE-CODE     ︰“MEC”表要求初審回覆檔查詢
+5.BRK-ID        ︰ 填入所要求傳送資料之證券商代號
+                   若填入****表示查詢整個集團
+
+(二) 初審回覆檔
+檔案結構：U　    檔案長度 100　        檔案代號：MEC
+欄位名稱
+長度
+說　　　　　　　明
+MEC-ETN-ID
+X(06)
+ETN代號
+MEC-BROKER-ID
+X(04)
+券商代表號
+MEC-TX-DATE
+9(08)
+申請日
+MEC-SEQNO
+9(03)
+流水號
+MEC-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+MEC-APPLICATION-UNITS
+9(03)
+申請基數
+MEC-ACNT-BROKER
+X(04)
+開戶證券商代號
+MEC-ACNT-IVACNO
+9(07)
+申請人帳號
+MEC-ID-CODE
+X(03)
+身份碼
+MEC-CONTACT
+X(20)
+證券商連絡人
+MEC-CONTACT-TEL
+X(20)
+證券商連絡人電話
+MEC-RESULT
+X(01)
+成功與否
+FILLER
+X(20)
+空白
+欄位說明：
+MEC-RESULT: Y(成功)或N(失敗)或空白(發行人尚未回覆)。
+查詢開放時間為0900 - 1700。
+七、證券商之T日實際申購賣回價金檔查詢作業
+(一) 要求T日實際申購賣回價金檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送T日實際申購賣回價金檔之單筆訊息
+                          格式(MEF)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+03
+BODY
+FILE-CODE
+X(3)
+MEF
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“03”說明BODY的長度
+    4.FILE-CODE     ︰“MEF”表要求T日實際申購賣回價金檔查詢
+(二) T日實際申購賣回價金檔
+檔案結構：U　    檔案長度 100         檔案代號：MEF
+欄位名稱
+長度
+說　　　　　　　明
+MEF-TX-DATE
+9(08)
+申請日（T）
+MEF-ETN-ID
+X(06)
+ETN代號
+MEF-BASE-VALUE
+9(08)
+基本單位數
+MEF-NAV
+9(5)v9(4)
+指標價值（T日收盤指標價值）
+MEF-CRE-BASKET-VALUE-P
+9(14)
+每申購基數總價金
+MEF-RDM-BASKET-VALUE-P
+9(14)
+每賣回基數總價金
+MEF-ERROR-FLAG
+X(01)
+價金檔異常註記(Y/ )
+FILLER
+X(40)
+空白
+欄位說明：
+MEF-TX-DATE: 申購賣回申請日期。
+MEF-NAV: 為T日收盤指標價值。
+MEF-CRE-BASKET-VALUE-P: 每申購基數 ETN之總價金。
+MEF-RDM-BASKET-VALUE-P: 每賣回基數 ETN之總價金。
+MEF-ERROR-FLAG: Y表示發行人未上傳實際申購賣回價金檔。(價金檔以前一日資料替代)
+T+1日查詢T日資料。
+查詢開放時間為0900 - 1530。
+
+八、證券商之申購足額明細確認檔查詢作業
+(一) 要求申購足額明細確認檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申購足額明細確認檔之單筆訊息
+                          格式(MEG)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+07
+BODY
+FILE-CODE
+X(3)
+MEG
+BRK-ID
+X(4)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“07”說明BODY的長度
+    4.FILE-CODE     ︰“MEG”表要求申購足額明細確認檔查詢
+5.BRK-ID        ︰ 填入所要求傳送資料之證券商代號
+                   若填入****表示查詢整個集團
+
+(二) 申購足額明細確認檔
+檔案結構：U　    檔案長度 150　        檔案代號：MEG
+欄位名稱
+長度
+說　　　　　　　明
+MEG-ETN-ID
+X(06)
+ETN代號
+MEG-BROKER-ID
+X(04)
+券商代表號
+MEG-TX-DATE
+9(08)
+申請日
+MEG-SEQNO
+9(03)
+流水號
+MEG-TX-KIND
+X(01)
+交易種類：1申購
+MEG-APPLICATION-UNITS
+9(03)
+申請基數
+MEG-ACNT-BROKER
+X(04)
+開戶證券商代號
+MEG-ACNT-IVACNO
+9(07)
+申請人帳號
+MEG-ID-CODE
+X(03)
+身份碼
+MEG-CONTACT
+X(20)
+證券商連絡人
+MEG-CONTACT-TEL
+X(20)
+證券商連絡人電話
+MEG-AMOUNT
+9(18)
+總價金
+MEG-AMOUNT-FLAG
+X(01)
+總價金異常註記(Y/ )
+MEG-BRK-CFM
+X(01)
+證券商確認(Y/N)
+FILLER
+X(51)
+空白
+欄位說明：
+MEG-AMOUNT: 依照實際申購賣回價金檔之每基數總價金加計申請基數計算。
+MEG-AMOUNT-FLAG: Y表示發行人未上傳實際申購賣回價金檔，款項收付依照前一日之每基數總價金計算，差額由發行人與證券商自行補收付。
+查詢開放時間為0930 – 1200。
+九、證券商之申購足額明細確認檔申報作業
+(一) 申購足額明細確認檔申報檔
+           檔案結構：U　    檔案長度：50　      檔案代號：MEH
+欄位名稱
+長　度
+說明
+MEH-ETN-ID
+X(06)
+ETN代號
+MEH-BROKER-ID
+X(04)
+券商代表號
+MEH-TX-DATE
+9(08)
+申請日
+MEH-SEQNO
+9(03)
+流水號
+MEH-BRK-CFM
+X(01)
+證券商確認(Y/N)
+MEH-ERROR-CODE
+X(02)
+錯誤代碼(空白)
+FILLER
+X(26)
+空白
+
+欄位說明：
+{MEH-ETN-ID, MEH-BROKER-ID, MEH-TX-DATE, MEH-SEQNO}為唯一鍵值
+經查詢申購足額明細確認檔(MEG)之總價金資訊，確認無誤後，傳送MEH。
+申報開放時間為0930 – 1200。
+上傳後，可透過MEG查詢，亦可透過申購賣回足額明細確認檔(MEK)進行查詢。
+
+(二) 申購足額明細確認檔申報正確或錯誤回覆檔
+           檔案結構：U　    檔案長度：50　    檔案代號：MEH
+欄位名稱
+長　度
+說明
+MEH-ETN-ID
+X(06)
+ETN代號
+MEH-BROKER-ID
+X(04)
+券商代表號
+MEH-TX-DATE
+9(08)
+申請日
+MEH-SEQNO
+9(03)
+流水號
+MEH-BRK-CFM
+X(01)
+證券商確認(Y/N)
+MEH-ERROR-CODE
+X(02)
+錯誤代碼
+FILLER
+X(26)
+空白
+
+欄位說明：
+每一筆資料皆會回覆正確或錯誤訊息於MEH-ERROR-CODE欄位，回      覆 ”00”為資料正確，其他代碼表示有錯，請參照錯誤訊息處理說明。
+十、證券商之申購賣回足額明細確認檔(複審)查詢作業
+(一) 要求申購賣回足額明細確認檔(複審)
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申購賣回足額明細確認檔(複審)之單筆訊息格式(MEK)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+07
+BODY
+FILE-CODE
+X(3)
+MEK
+BRK-ID
+X(4)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“07”說明BODY的長度
+    4.FILE-CODE     ︰“MEK”表要求傳送申購賣回足額明細確認檔(複審)查詢
+5.BRK-ID        ︰ 填入所要求傳送資料之證券商代號
+                   若填入****表示查詢整個集團
+(二) 申購賣回足額明細確認檔(複審)
+檔案結構：U　    檔案長度：150　        檔案代號：MEK
+欄位名稱
+長度
+說　　　　　　　明
+MEK-ETN-ID
+X(06)
+ETN代號
+MEK-BROKER-ID
+X(04)
+券商代表號
+MEK-TX-DATE
+9(08)
+申請日
+MEK-SEQNO
+9(03)
+流水號
+MEK-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+MEK-APPLICATION-UNITS
+9(03)
+申請基數
+MEK-ACNT-BROKER
+X(04)
+開戶證券商代號
+MEK-ACNT-IVACNO
+9(07)
+申請人帳號
+MEK-ID-CODE
+X(03)
+身份碼
+MEK-CONTACT
+X(20)
+證券商連絡人
+MEK-CONTACT-TEL
+X(20)
+證券商連絡人電話
+MEK-AMOUNT
+9(18)
+總價金
+MEK-AMOUNT-FLAG
+X(01)
+總價金異常註記(Y/ )
+MEK-BRK-CFM
+X(01)
+證券商確認(Y/N)
+MEK-ISSUER-CFM
+X(01)
+發行人複審確認(Y/N)
+MEK-CFM-END
+X(01)
+確認時間截止註記(Y/)
+FILLER
+X(49)
+空白
+欄位說明：
+MEK-AMOUNT: 依照實際申購賣回價金檔之每基數總價金加計申請基數計算。
+MEK-AMOUNT-FLAG: Y表示發行人未上傳實際申購賣回價金檔，款項收付依照前一日之每基數總價金計算，差額由發行人與證券商自行補收付。
+MEK-BRK-CFM 和 MEK-ISSUER-CFM 皆為Y交易才成立。
+MEK-CFM-END: 超過截止時間(1200)，則顯示Y。
+賣回無複審確認失敗，因此MEK-BRK-CFM 和 MEK-ISSUER-CFM皆為Y。
+查詢開放時間為0930 – 1530。
+十一、證券商之申購/賣回款項應收應付檔查詢作業
+(一) 要求申購/賣回款項應收應付檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送申購/賣回款項應收應付檔之單筆訊息
+                          格式(MEO)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+15
+BODY
+FILE-CODE
+X(3)
+MEO
+BRK-ID
+X(4)
+
+TX-DATE
+9(8)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“15”說明BODY的長度
+    4.FILE-CODE     ︰“MEO”表要求申購/賣回款項應收應付檔查詢
+5.BRK-ID        ︰ 填入總公司或自營商進行查詢
+    6.TX-DATE       ︰ 填入所要求傳送資料之申購賣回申請日
+
+(二) 申購/賣回款項應收應付檔
+檔案結構：U　    檔案長度：100　        檔案代號：MEO
+欄位名稱
+長度
+說　　　　　　　明
+MEO-BROKER-ID
+X(04)
+券商代號/發行人代號
+MEO-TX-DATE
+9(08)
+申購賣回申請日
+MEO-MARKET
+X(01)
+市場別
+MEO-TX-KIND
+X(01)
+交易種類：1申購、2賣回
+MEO-RECEIVE-DATE
+9(08)
+券商/發行人應收日期
+MEO-RECEIVE-AMT
+9(18)
+券商/發行人應收金額
+MEO-PAY-DATE
+9(08)
+券商/發行人應付日期
+MEO-PAY-AMT
+9(18)
+券商/發行人應付金額
+FILLER
+X(34)
+空白
+欄位說明：
+投資人申購/賣回申請日次一營業日下午1230產製。
+MEO-BROKER-ID: 總公司代表號，一般券商第四碼需為0；大型券商第三四碼需為00)。
+MEO-TX-DATE: 申購賣回申請日，目前為前一交易日。
+MEO-MARKET: T(集中市場)、O(櫃買市場)。
+若為集中市場，款項收付請洽交易所；若為櫃買市場，款項收付請洽櫃買中心。
+查詢開放時間為1230 – 1530。
+十二、證券商之投資人名冊檔查詢作業
+(一) 要求投資人名冊檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送投資人名冊檔之單筆訊息
+                          格式(MEP)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+13
+BODY
+FILE-CODE
+X(3)
+MEP
+BRK-ID
+X(4)
+
+ETN-ID
+X(6)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“13”說明BODY的長度
+    4.FILE-CODE     ︰“MEP”表要求投資人名冊檔查詢
+5.BRK-ID        ︰ 填入總公司或自營商進行查詢
+    6.ETN-ID        ︰ 填入所要求傳送資料之ETN代號
+
+(二) 投資人名冊檔
+檔案結構：U　    檔案長度：70　        檔案代號：MEP
+欄位名稱
+長度
+說　　　　　　　明
+MEP-ETN-ID
+X(06)
+ETN代號
+MEP-ACNT-BROKER
+X(04)
+開戶證券商代號
+MEP-ACNT-IVACNO
+9(07)
+申請人帳號
+MEP-LAST-LIST-DATE
+9(08)
+下市日
+MEP-NORMAL-STOCK-NOS
+9(13)
+庫存部位
+MEP-HOLD
+X(01)
+控管註記
+MEP-AMOUNT
+9(18)
+總價金
+FILLER
+X(13)
+空白
+欄位說明：
+投資人名冊為下市日1330產製。
+MEP-ACNT-BROKER: 證券商代號。
+MEP-ACNT-IVACNO: 投資人帳號。
+MEP-HOLD: 集保標記之控管註記 空白:無註記1:扣押 2:設質 3.法院提存。
+MEP-AMOUNT: 依最後交易日之收盤指標價值加計庫存部位計算。
+查詢開放時間為0900 – 1700。
+
+十三、證券商之終止上市款項應收應付檔查詢作業
+(一) 要求終止上市款項應收應付檔
+        MESSAGE ID︰F050
+        MESSAGE NAME︰要求傳送終止上市款項應收應付檔之單筆訊息
+                          格式(MES)
+FIELD NAME
+FORMAT
+CONTENTS
+CONTROL
+HEADER
+SUBSYSTEM-NAME
+9(2)
+20
+FUNCTION-CODE
+9(2)
+02
+MESSAGE-TYPE
+9(2)
+04
+MESSAGE-TIME
+9(6)
+
+STATUS-CODE
+9(2)
+00
+FILE
+TRANSFER
+HEADER
+SOURCE ID
+X(4)
+證券商之ID
+DESTINATION ID
+X(4)
+證交所之ID
+BODY-LENGTH
+9(4)
+15
+BODY
+FILE-CODE
+X(3)
+MES
+BRK-ID
+X(4)
+
+LAST-LIST-DATE
+9(8)
+
+
+欄位說明:
+    1.SYBSYSTEM-NAME︰“20”表補送資料是透過檔案傳輸子系統
+2.DESTINATION-ID︰“0000”表證交所
+    3.BODY-LENGH    ︰“15”說明BODY的長度
+    4.FILE-CODE     ︰“MES”表要求終止上市款項應收應付檔查詢
+    5.BRK-ID        ︰ 填入總公司或自營商進行查詢
+6.LAST-LIST-DATE︰ 填入所要求傳送資料之下市日
+
+(二) 終止上市款項應收應付檔
+檔案結構：U　    檔案長度：100　        檔案代號：MES
+欄位名稱
+長度
+說　　　　　　　明
+MES-BROKER-ID
+X(04)
+券商代號/發行人代號
+MES-MARKET
+X(01)
+市場別
+MES-LAST-LIST-DATE
+9(08)
+下市日
+MES-RP-DATE
+9(08)
+券商/發行人應收應付日期
+MES-RECEIVE-AMT
+9(18)
+券商/發行人應收金額
+MES-PAY-AMT
+9(18)
+券商/發行人應付金額
+FILLER
+X(43)
+空白
+欄位說明：
+下市日當日1400產製。
+終止上市款項應收應付檔不含設質及法院提存之總價金，此部分由發行人保留處理。
+MES-BROKER-ID: 總公司代號/自營商代號。
+MES-LAST-LIST-DATE: 下市日。
+MES-MARKET: T(集中市場)、O(櫃買市場)。
+若為集中市場，款項收付請洽交易所；若為櫃買市場，款項收付請洽櫃買中心。
+查詢開放時間為0900 – 1700。
+
+
+【申購賣回流程範例說明：】
+假定發行人已於交易日前一日(T-1日, 20181101)上傳申購賣回基本資料檔(PRF):
+查詢申購賣回基本資料檔(PRF)(ME3)
+交易日(T日)08:00至15:30證券商可查詢申購賣回基本資料檔(PRF) ME3，查當日可進行申購賣回之ETN商品。
+
+(ME3)股票代號:021234，開放現金申購、現金賣回
+ETN
+-IDPROC
+-DATEANNO
+UNCE
+-YMDNAVBASE
+-VALUETOTAL
+-ISSUESISSUES
+-DIFFCRT
+-C
+RDM
+-C
+…LAST
+-TRADE
+-DATEEXPIRE
+-DATELAST
+-LIST
+-DATECRT
+-STOP
+-TIMERDM
+-STOP
+-TIME021234201811012018110230.01000050000-10000YY………………021235201811012018110240.01000030000+5000YY………………＊第一筆:股票代號021234，處理日期20181101，公告日20181102，收盤指標價值30.0，基本單位數10000，發行單位數50000，交易差異數-10000。
+＊第二筆:股票代號021235，處理日期20181101，公告日20181102，收盤指標價值40.0，基本單位數10000，發行單位數30000，交易差異數+5000。
+
+新增申請申購賣回資料(ME4)
+交易日(T日)09:00至各ETN申購賣回截止時間前，可進行申請申購賣回作業。
+【申購賣回資料之鍵值】
+鍵值包含{ETN-ID, BROKER-ID, TX-DATE, SEQNO}，其中BROKER-ID總公司代表號，SEQNO為同一集團之流水號。鍵值相同系統視為同一筆申請資料。
+
+申報申請申購賣回資料(ME4)
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0, 011070-3
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODEI0212341020201811020011510210110680000……I0212341020201811020022110210110703000……P0212351020201811020032110210110703000……＊第一筆:證券商1021股票代號021234，流水號001，申購申請5個基本單位數。
+＊第二筆:證券商1021股票代號021234，流水號002，賣回申請1個基本單位數。
+＊第三筆:證券商1021股票代號021235，流水號003，賣回申請1個基本單位數，異動碼輸入錯誤。
+
+接收申請申購賣回資料回覆檔
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0, 011070-3
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODEI0212341020201811020011510210110680000……00I0212341020201811020022110210110703000……00P0212351020201811020032110210110703000……02＊前兩筆成功(ERROR-CODE=00)，最後一筆失敗(ERROR-CODE=02, 異動碼錯誤)。
+＊第二筆賣回申請單，亦表示即時圈存成功。
+
+修改申請申購賣回資料(ME4)
+承2，若要將第一筆申購申請單，改成申購3個基本單位數，必須先進行刪除成功後再新增。
+
+申報申請申購賣回資料(ME4)
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODED0212341020201811020011510210110680000……＊先刪除申請申購賣回資料(ME4)。
+＊確保刪除內容與新增時一致(除了異動碼調整外，其餘須保持一致)。
+接收申請申購賣回資料回覆檔
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODED0212341020201811020011510210110680000……00＊刪除成功。
+申報申請申購賣回資料(ME4)
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODEI0212341020201811020011310210110680000……＊待成功回覆後，再新增申請申購賣回資料(ME4)
+
+
+接收申請申購賣回資料回覆檔
+(ME4)證券商（1021）、股票代號:021234、帳號011068-0
+TRAN
+-CODEETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELERROR
+-CODEI0212341020201811020011310210110680000……00＊新增成功。
+
+查詢申請申購賣回資料(ME5)
+申購賣回截止時間前，可進行申報過的資料查詢。
+
+(ME5)證券商（1021）、股票代號:021234
+ETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TEL0212341020201811020011310210110680000……0212341020201811020022110210110703000……＊BRK-ID填入1021，查詢1021之申購賣回資料。
+
+查詢賣回部位圈存檔(ME6)
+T日15:30至18:00證券商可查詢賣回圈存結果。
+
+(ME6)證券商（1021）、股票代號:021234
+ETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOSTATUSCONTACTCONTACT
+-TEL0212341020201811020022110210110703Y……＊BRK-ID填入1021，查詢1021之賣回圈存結果。
+
+查詢初審回覆檔(MEC)
+T日17:00前證券商可查詢發行人初審結果。
+
+(MEC)證券商（1021）、股票代號:021234
+ETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELRESULT0212341020201811020011310210110680000……Y0212341020201811020022110210110703000……Y＊BRK-ID填入1021，查詢1021之初審結果。
+
+查詢T日實際申購賣回價金檔(MEF)
+T+1日09:00至15:30前可查詢發行人上傳之T日實際申購賣回價金檔
+
+股票代號:021234、021235
+TX-DATEETN
+-IDBASE-VALUENAVCRE-BASKET-VALUE-PRDM-BASKET-VALUE-PERROR-FLAG2018110202123410000(股)00030.0000301000301000201811020212355000(股)00040.0000201000201000＊第一筆:股票代號021234，基本單位數10000，T日收盤指標價值為30.00，每申購基數總價金及每賣回基數總價金為發行人上傳(可能加計或扣除手續費用)。
+＊第二筆:股票代號021235，基本單位數5000，T日收盤指標價值為40.00，每申購基數總價金及每賣回基數總價金為發行人上傳(可能加計或扣除手續費用)。
+
+查詢申購足額明細確認檔(MEG)，再進行確認作業(MEH)
+T+1日09:30至12:00前，必須針對T日之申購資料進行價金確認，已收足投資人申購款項，請將確認註記標記Y，倘若投資人款項不足或其他因素要取消申購，請標記N；賣回已由發行人於初審進行確認，毋須再進行確認。
+
+(MEG)證券商（1021）
+ETN
+-IDBROKER
+-IDTX-DATESEQNOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID-CODECONTACTCONTACT
+-TELAMOUNTAMOUNT
+-FLAGBRK
+-CFM0212341020201811020011310210110680000……903000＊BRK-ID填入1021，查詢1021之申購足額明細確認檔。
+＊第一筆:股票代號021234，申購3個基本單位數，總價金301000 * 3 = 903000。
+
+申報申購足額明細確認檔(MEH)
+(MEH)證券商（1021）
+ETN
+-ID
+BROKER
+-ID
+TX-DATE
+SEQNO
+BRK-CFM
+ERROR-CODE
+021234
+1020
+20181102
+001
+Y
+
+＊股票代號021234，證券商代表號1020，申請日20181102，流水號001進行確認。
+
+
+接收申購足額明細確認檔回覆檔
+(MEH)證券商（1021）
+ETN
+-ID
+BROKER
+-ID
+TX-DATE
+SEQNO
+BRK-CFM
+ERROR-CODE
+021234
+1020
+20181102
+001
+Y
+00
+＊股票代號021234，證券商代表號1020，申請日20181102，流水號001確認成功。
+
+查詢申購賣回足額明細確認檔(複審)(MEK)
+T+1日09:00至15:30前可查詢申購賣回明細確認檔，複審確認時間截止時間為12:00，於截止時間後系統會自動標記註記；此檔可用於查詢T日之申購賣回明細(含價金)及發行人及證券商確認狀態。
+複審確認截止時間12:00後，證券商與發行人確認皆為Y視為複審成功。
+
+(MEK)證券商（1021）
+ETN
+-IDBROKER
+-IDTX-DATESEQ
+NOTX
+-KINDAPPLICATION
+-UNITSACNT
+-BROKERACNT
+-IVACNOID
+-CODECONTACTCONTACT
+-TELAMOUNTAMOUNT
+-FLAGBRK
+-CFMISSUER
+-CFM
+CFM
+-END
+0212341020201811020011310210110680………903000YYY0212341020201811020022110210110703………301000Y(自動)Y(自動)Y＊BRK-ID填入1021，查詢1021之申購賣回足額明細確認檔(複審)。
+＊第一筆:證券商確認Y，發行人確認Y，確認時間截止註記Y。
+＊第二筆:證券商確認Y，發行人確認Y，確認時間截止註記Y。
+＊倘若證券商確認或發行人確認非Y，則代表複審失敗。
+
+查詢申購賣回款項應收應付檔(MEO)
+T+1日12:30至15:30前可查詢申購賣回款項應收應付檔，此檔案提供給總公司或自營商查詢。此應收應付檔做為後續付款之依據，倘若需對照明細，可透過MEK進行複查(BRK-ID填入****可查詢同一集團資料)。
+
+(MEO)總公司（1020）
+BROKER
+-IDTX-DATEMARKETTX-KINDRECEIVE-DATERECEIVE-AMTPAY-DATEPAY-AMT102020181102T120181106020181105903000102020181102T220181106301000201811050＊BRK-ID 填入1020，TX-DATE填入20181102，查詢申請日為20181102之申購賣回款項應收應付檔。
+＊第一筆:證券商1020，市場別為集中市場，申購科目，收款日20181106，應收金額0，付款日20181105，應付金額903000。
+＊第二筆:證券商1020，市場別為集中市場，賣回科目，收款日20181106，應收金額301000，付款日20181105，應付金額0。
+＊集中市場與櫃買市場之收付請各自洽證交所及櫃買中心辦理。
+【終止上市流程範例說明：】
+以下假設20191104僅有一檔ETN-ID 021234 下市:
+查詢投資人名冊(MEP)
+下市日13:30申贖平台產製ETN投資人名冊，並以最後交易日之收盤指標價值計算價金，提供給總公司或自營商查詢。
+
+(MEP)總公司（1020）
+ETN
+-IDACNT
+-BROKERACNT
+-IVACNOLAST-LIST-DATENORMAL-STOCK-NOSHOLDAMOUNT021234102101106802019110410000(股)30000002123410210110680201911045000(股)115000002123410210110680201911045000(股)3150000＊BRK-ID 填入1020，ETN-ID填入021234，查詢股票代號:021234之投資人名冊。
+＊假設最後交易日指標價值為30.0000進行價金計算。
+＊第一筆:證券商1021，投資人帳號0110680，下市日20191104，庫存部位10000，控管註記無，總價金300000。
+＊第二筆:證券商1021，投資人帳號0110680，下市日20191104，庫存部位5000，控管註記扣押，總價金150000。
+＊第三筆:證券商1021，投資人帳號0110680，下市日20191104，庫存部位5000，控管註記法院提存，總價金150000。
+＊應收應付款僅統計註記無及註記扣押之部位，設質及法院提存由發行人自行處理。
+
+查詢終止上市款項應收應付檔(MES)
+下市日2:00後可查詢終止上市款項應收應付檔，此檔案提供給總公司或自營商查詢。此應收應付檔做為後續付款之依據，倘若需對照明細，可透過MEP進行複查。
+
+(MES)總公司（1020）
+BROKER
+-ID
+MARKET
+LAST-LIST-DATE
+RP-DATE
+RECEIVE-AMT
+PAY-AMT
+1020
+T
+20191104
+20191105
+450000
+0
+…
+…
+…
+…
+…
+…
+＊BRK-ID 填入1020，LAST-LIST-DATE填入20191104，查詢下市日為20191104之終止上市款項應收應付檔。
+＊第一筆:證券商1020，市場別為集中市場，終止上市科目，收付款日20191105，應收金額450000，應付金額0。
+＊集中市場與櫃買市場之收付請各自洽證交所及櫃買中心辦理。
+
+
+肆、錯誤訊息處理說明
+
+主機連線因證券商端之畫面及報表皆是由提供系統之資訊公司或證券商之電腦部門所設計，所以畫面及訊息各家不同，由前幾章之介紹可了解交易所與證券商之間資料傳遞之基本架構及格式，如果有異常情況發生時，請先依提供系統之資訊公司或證券商電腦部門所編之使用手冊處理，如果狀況仍無法排除，請記住當時的狀況及訊息，並與交易所電腦作業部連絡。以下訊息是由交易所電腦主機傳給證券商，證券商終端機所看到的訊息不一定與下表完全相同(因所採用之電腦系統而有所差別)，在此僅將交易所電腦主機所產生之訊息及處理方式說明如下，以供參考。
+
+
+
+錯誤代碼
+錯誤訊息
+00
+該筆資料正確
+01
+數字欄位錯誤
+02
+異動碼錯誤
+03
+交易種類錯誤
+04
+申請日期錯誤
+05
+主檔查無此筆資料
+06
+新增資料失敗，請先刪除後再進行新增
+07
+公告日期錯誤
+08
+申請種類錯誤
+09
+撥付類別錯誤
+10
+ETN無開放申購，申購欄位數值錯誤
+11
+ETN單位數錯誤
+12
+發行人不得辦理自行發行ETN之申購賣回申請
+13
+券商代表號和券商代號不屬於同一集團
+14
+ETN代號錯誤
+15
+券商代表號錯誤
+16
+開戶證券商代號錯誤
+17
+申請人帳號錯誤
+18
+證券商確認只能為Y或N
+19
+發行人初審/複審確認只能為Y或N
+20
+下市日期錯誤
+21
+與前日發行差異數錯誤
+22
+發行單位數錯誤
+23
+此帳號不可交易
+24
+超過核准發行單位數 (剩餘可供申請單位數不足)
+25
+等待圈存結果逾時，請聯繫交易所，稍後重傳ME4
+26
+等待解圈結果逾時，請聯繫交易所，稍後重傳ME4
+27
+解圈資料與圈存資料不一致，請確認欄位正確性
+28
+集保回覆: 餘額不足，請聯繫集保
+29
+集保回覆: 客戶狀況代號錯誤，請聯繫集保
+30
+集保回覆: 證券代號錯誤，請聯繫集保
+31
+集保回覆: 無該帳號資料，請聯繫集保
+32
+集保回覆: 交易數額輸入錯誤，請聯繫集保
+33
+集保回覆: 未申請圈存不得做此交易，請聯繫集保
+34
+集保回覆錯誤代碼: M***，請聯繫集保
+35
+申購時間超過
+36
+贖回時間超過
+37
+處理日期錯誤
+38
+資料日期錯誤
+39
+交易種類僅能為申報增加庫存造市用單位數
+40
+流動量提供者代號錯誤
+41
+流動量提供者帳號錯誤
+42
+豁免日期錯誤
+43
+上市日期錯誤
+44
+賣回資料圈存/解圈在途中，不可異動
+45
+基本單位數與PRF不一致
+46
+本日不開放ETN申購/賣回/增加庫存造市用單位數作業
+47
+限制由發行人同集團上傳或查詢
+48
+證券商代號須為總公司或自營商代號
+49
+該筆毋須進行確認
+50
+超過單次申報筆數上限或筆數不正確
+51
+淨值欄位必須大於0
+52
+查無該筆證券商確認和發行人複審確認之資料
+53
+已申報PRF後，不得進行初審
+54
+申購賣回價金確認時間尚未截止
+97
+集保系統錯誤，請稍後再傳送
+98
+交易所系統錯誤，請稍後再傳送
+99
+錯誤總筆數已超過30筆
+
+
+伍、電腦作業注意事項
+
+一、證券商ETN作業傳送檔案完畢後，請務必檢查證交所傳回來的錯誤回覆檔訊息，資料是否正確。證交所錯誤回覆檔未傳回來時，請勿再傳送檔案。
+陸、網際網路傳輸平台
+    一、證券商端ETN申購賣回平台(WEB)登入網頁︰
+    正式網址:   HYPERLINK "https://clear.twse.com.tw/etn/logon.jsp" https://clear.twse.com.tw/etn/logon.jsp
+    測試網址:   HYPERLINK "https://cleartest.twse.com.tw/etn/logon.jsp" https://cleartest.twse.com.tw/etn/logon.jsp
+    二、如何登入
+    (1)券商管理員:券商ID即「總公司代號」；用戶ID固定為「總公司代號」+「01」；預設密碼與用戶ID相同。(登入需共用憑證晶片卡)。
+※ETN申購賣回平台管理帳號不同於網際網路傳輸平台其他子系統，各自管理。
+※券商管理員若忘記密碼請洽本公司交易部重新設定。
+
+(2)券商管理員登入成功後，請使用【管理員作業】建立使用者。
+※證券商端內部使用者帳密，由各券商自行管理。
+
+(3)再以該使用者帳號登入後，即可進行ETN申購賣回平台各項作業。(詳細請參考網站上之證券商端操作手冊)
+
+
+PAGE  1
+
+
+ PAGE   \* MERGEFORMAT 48
+
+
+連線通訊協定
+
+單筆訊息與檔案
+傳輸通訊協定
+
+
+E
+T
+N作業
+
+結算作業
+
+成交回報通訊協定
+委託輸入通訊協定
+
+TCP/IP
+交易網路
