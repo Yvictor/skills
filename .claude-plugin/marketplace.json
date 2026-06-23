@@ -17,6 +17,15 @@
       "author": {
         "name": "Yvictor"
       }
+    },
+    {
+      "name": "hermes-tweet",
+      "description": "Hermes Agent X/Twitter plugin guidance for Xquik automation with read-first workflows and approval-gated actions",
+      "source": "./plugins/hermes-tweet",
+      "version": "0.1.6",
+      "author": {
+        "name": "Xquik"
+      }
     }
   ]
 }

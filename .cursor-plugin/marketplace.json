@@ -11,6 +11,11 @@
       "name": "dev-workflow",
       "source": "plugins/dev-workflow",
       "description": "Development workflow skills including review-driven development for issue-to-merge lifecycle with iterative review cycles."
+    },
+    {
+      "name": "hermes-tweet",
+      "source": "plugins/hermes-tweet",
+      "description": "Hermes Agent X/Twitter plugin guidance for Xquik automation with read-first workflows and approval-gated actions."
     }
   ]
 }
