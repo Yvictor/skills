@@ -1,0 +1,32 @@
+{
+  "name": "hermes-tweet",
+  "displayName": "Hermes Tweet",
+  "version": "0.1.6",
+  "description": "Hermes Agent X/Twitter plugin guidance for Xquik automation with read-first workflows and approval-gated actions.",
+  "author": {
+    "name": "Xquik"
+  },
+  "publisher": "Xquik",
+  "homepage": "https://github.com/Xquik-dev/hermes-tweet#readme",
+  "repository": "https://github.com/Xquik-dev/hermes-tweet",
+  "license": "MIT",
+  "keywords": [
+    "hermes-agent",
+    "hermes-plugin",
+    "xquik",
+    "twitter",
+    "x",
+    "social-media",
+    "automation",
+    "claude-code",
+    "codex",
+    "skills"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "hermes-agent",
+    "xquik",
+    "social-media"
+  ],
+  "skills": "./skills/"
+}
